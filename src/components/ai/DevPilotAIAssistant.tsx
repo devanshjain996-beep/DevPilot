@@ -1,10 +1,10 @@
 // ============================================================================
-// DevPilot — DevPilot AI Learning Assistant
+// DevPilot — DevPilot AI Learning Assistant (Fixed Layout & Prominent Input Bar)
 // ============================================================================
 import { useState, useRef, useEffect } from 'react';
 import {
   Sparkles, Send, X, Bot, User, Key,
-  RefreshCw, Minus
+  RefreshCw, MessageSquare, CornerDownLeft
 } from 'lucide-react';
 import { Button, Input, Badge } from '../ui';
 import { useTrackProgress, useAllTopics } from '../../hooks/useDatabase';
@@ -23,7 +23,6 @@ const PRESET_PROMPTS = [
   'What is the difference between SQL and NoSQL databases?',
   'Give me 3 beginner LeetCode array problems with hints',
   'How do embeddings and vector databases work in AI applications?',
-  'Explain how a 5:00-7:00 PM rest block prevents developer burnout',
   'Recommend my next priority topic based on my current progress',
 ];
 
@@ -42,16 +41,21 @@ export default function DevPilotAIAssistant() {
     {
       id: 'welcome',
       role: 'assistant',
-      content: `Hello! I am **DevPilot AI**, your personal programming tutor and engineering coach.\n\nI am here to help you master Python, tackle C++ & DSA, learn full-stack web development, understand system design, and build real-world AI applications.\n\nYou can ask me to **explain code line by line**, **give progressive hints** for coding challenges, or **recommend your next learning step**.`,
+      content: `Hello! I am **DevPilot AI**, your personal programming tutor and engineering coach.\n\nI am here to help you master Python, tackle C++ & DSA, learn full-stack web development, understand system design, and build real-world AI applications.\n\nYou can **type any question in the input box below** (e.g. explain code, debug errors, ask for hints) or click any of the recommended topic prompts above.`,
       timestamp: 'Just now'
     }
   ]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (open) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      // Automatically focus on the input box when opened
+      setTimeout(() => {
+        textInputRef.current?.focus();
+      }, 150);
     }
   }, [messages, open]);
 
@@ -146,7 +150,7 @@ User request: ${text}`
         } else if (q.includes('hint') || q.includes('array')) {
           reply = `### Two Sum: Progressive Hint System\n\n**Problem:** Given an array of integers \`nums\` and an integer \`target\`, return indices of the two numbers that add up to \`target\`.\n\n- **Hint 1:** Can you solve it with two nested loops? (Brute force: O(N²) time complexity).\n- **Hint 2:** If you are looking at number \`x\`, what number do you need? You need \`target - x\`.\n- **Hint 3 (Optimal):** Instead of looping again to find \`target - x\`, use a **Hash Map / Dictionary** to remember every number you have seen and its index in O(1) time!\n\nTry writing the code using Hint 3, and let me know if you want me to inspect your solution!`;
         } else {
-          reply = `That is a great engineering question! As your DevPilot tutor, here is the breakdown:\n\nWhen working on **${text}**, remember to start with the simplest working example before adding complexity.\n\n- **Step 1:** Define your inputs and expected outputs clearly.\n- **Step 2:** Write down the logic in plain English comments (pseudocode).\n- **Step 3:** Implement incrementally and test with edge cases (e.g. empty inputs or zeros).\n\n*(To connect live streaming responses from Google Gemini, click the Key icon in the top right to paste a Gemini API key. DevPilot works 100% offline without one as well!)*`;
+          reply = `That is a great engineering question! Here is how to approach **${text}**:\n\n1. **Understand the Core Principle:** Break it down into fundamental components first.\n2. **Pseudocode the Flow:** Write the logic out in simple comments step by step.\n3. **Test with Edge Cases:** Consider empty inputs, nulls, negative numbers, or maximum limits.\n\nAsk me anytime to write a code example, debug your error message, or break down the logic line by line!`;
         }
 
         setMessages(prev => [...prev, {
@@ -156,7 +160,7 @@ User request: ${text}`
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         }]);
         setLoading(false);
-      }, 600);
+      }, 500);
 
     } catch (err) {
       setMessages(prev => [...prev, {
@@ -181,23 +185,23 @@ User request: ${text}`
         >
           <Sparkles size={16} className="text-amber-300 animate-pulse" />
           <span>DevPilot AI Tutor</span>
-          <Badge variant="purple" className="text-[10px] bg-white/20 text-white">Coach</Badge>
+          <Badge variant="purple" className="text-[10px] bg-white/20 text-white">Ask Question</Badge>
         </button>
       )}
 
-      {/* Slide-out / Modal Drawer */}
+      {/* Slide-out / Modal Drawer with Fixed Viewport Bounds */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-end sm:p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center sm:justify-end p-2 sm:p-6 pointer-events-none">
           {/* Backdrop (Click outside to close) */}
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity cursor-pointer"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity cursor-pointer pointer-events-auto"
             onClick={() => setOpen(false)}
             aria-label="Close Assistant backdrop"
           />
 
-          {/* Chat Window Container */}
+          {/* Chat Window Container: Height bounded to 82vh / 620px so input is ALWAYS fully visible */}
           <div
-            className="relative z-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full sm:w-[480px] h-[92vh] sm:h-[680px] rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="relative z-10 pointer-events-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full sm:w-[500px] h-[84vh] max-h-[640px] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -208,10 +212,10 @@ User request: ${text}`
                 </div>
                 <div>
                   <h3 className="font-bold text-sm leading-none flex items-center gap-1.5">
-                    DevPilot AI
+                    DevPilot AI Tutor
                     <span className="w-2 h-2 rounded-full bg-emerald-400" />
                   </h3>
-                  <p className="text-[10px] text-slate-400 mt-0.5">Patient Tutor & Learning Coach</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">Ask questions, debug errors, learn concepts</p>
                 </div>
               </div>
 
@@ -229,7 +233,6 @@ User request: ${text}`
                   <Key size={16} />
                 </button>
 
-                {/* Highly Visible Close Button */}
                 <button
                   type="button"
                   onClick={(e) => {
@@ -240,14 +243,15 @@ User request: ${text}`
                   title="Close DevPilot AI (Esc)"
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 transition-all font-semibold text-xs cursor-pointer shadow-sm active:scale-95"
                 >
-                  <X size={16} className="shrink-0" />
+                  <X size={15} className="shrink-0" />
                   <span>Close</span>
                 </button>
               </div>
             </div>
 
             {/* Quick Prompt Carousel */}
-            <div className="p-2.5 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex gap-1.5 overflow-x-auto text-[11px] shrink-0">
+            <div className="px-3 py-2 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center gap-1.5 overflow-x-auto text-[11px] shrink-0">
+              <span className="text-[10px] text-slate-400 uppercase font-semibold shrink-0">Topics:</span>
               {PRESET_PROMPTS.map((prompt, i) => (
                 <button
                   key={i}
@@ -291,29 +295,53 @@ User request: ${text}`
               {loading && (
                 <div className="flex items-center gap-2 text-slate-400 text-xs pl-8">
                   <RefreshCw size={14} className="animate-spin text-blue-500" />
-                  DevPilot AI is thinking...
+                  DevPilot AI is generating explanation...
                 </div>
               )}
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Bar */}
-            <div className="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shrink-0">
+            {/* Prominent Question Asking / Search Bar (Always Visible at Bottom) */}
+            <div className="p-3 bg-slate-100 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 shrink-0">
               <form
                 onSubmit={e => { e.preventDefault(); handleSendMessage(); }}
                 className="flex items-center gap-2"
               >
-                <input
-                  type="text"
-                  placeholder="Ask a programming concept, debug code, or request hints..."
-                  value={input}
-                  onChange={e => setInput(e.target.value)}
-                  className="flex-1 px-3.5 py-2.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-                <Button type="submit" size="sm" disabled={!input.trim() || loading} className="rounded-xl px-3 py-2.5">
-                  <Send size={15} />
+                <div className="relative flex-1">
+                  <input
+                    ref={textInputRef}
+                    type="text"
+                    placeholder="Type your programming question, error, or concept here..."
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    className="w-full pl-3.5 pr-8 py-2.5 text-xs bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none transition-all shadow-xs"
+                  />
+                  {input && (
+                    <button
+                      type="button"
+                      onClick={() => setInput('')}
+                      className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={!input.trim() || loading}
+                  className="rounded-xl px-4 py-2.5 font-bold flex items-center gap-1.5 shadow-sm cursor-pointer shrink-0"
+                >
+                  <Send size={14} />
+                  <span>Ask AI</span>
                 </Button>
               </form>
+
+              <div className="flex items-center justify-between mt-1.5 px-1 text-[10px] text-slate-500 dark:text-slate-400">
+                <span>Press <kbd className="px-1 py-0.5 bg-slate-200 dark:bg-slate-800 rounded font-mono">Enter</kbd> to submit question</span>
+                <span>Press <kbd className="px-1 py-0.5 bg-slate-200 dark:bg-slate-800 rounded font-mono">Esc</kbd> to close</span>
+              </div>
             </div>
           </div>
         </div>

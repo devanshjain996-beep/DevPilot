@@ -3,10 +3,10 @@
 // ============================================================================
 import { useState, useRef, useEffect } from 'react';
 import {
-  Brain, Sparkles, Send, X, Bot, User, Code2, AlertCircle, Key,
-  Lightbulb, RefreshCw, ChevronRight, Terminal, BookOpen, Layers
+  Sparkles, Send, X, Bot, User, Key,
+  RefreshCw, Minus
 } from 'lucide-react';
-import { Button, Input, Textarea, Badge } from '../ui';
+import { Button, Input, Badge } from '../ui';
 import { useTrackProgress, useAllTopics } from '../../hooks/useDatabase';
 import { useProfile } from '../../store/useStore';
 import { cn } from '../../utils/helpers';
@@ -55,6 +55,21 @@ export default function DevPilotAIAssistant() {
     }
   }, [messages, open]);
 
+  // Press ESC to close assistant
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showKeyModal) {
+          setShowKeyModal(false);
+        } else if (open) {
+          setOpen(false);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [open, showKeyModal]);
+
   // Handle local intelligent mock responses or live API calls
   const handleSendMessage = async (textToSend?: string) => {
     const text = textToSend || input;
@@ -72,7 +87,7 @@ export default function DevPilotAIAssistant() {
     setLoading(true);
 
     try {
-      // If user provided a Gemini API Key in localStorage, we can query Gemini!
+      // If user provided a Gemini API Key in localStorage, query Gemini
       if (apiKey) {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
           method: 'POST',
@@ -156,24 +171,39 @@ User request: ${text}`
 
   return (
     <>
-      {/* Floating Action Pill */}
-      <button
-        onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-blue-600 via-violet-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2.5 font-bold text-xs transition-all hover:scale-105 active:scale-95 border border-white/20"
-      >
-        <Sparkles size={16} className="text-amber-300 animate-pulse" />
-        <span>DevPilot AI Tutor</span>
-        <Badge variant="purple" className="text-[10px] bg-white/20 text-white">Coach</Badge>
-      </button>
+      {/* Floating Action Pill (Only shown when closed) */}
+      {!open && (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Open DevPilot AI Assistant"
+          className="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-blue-600 via-violet-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2.5 font-bold text-xs transition-all hover:scale-105 active:scale-95 border border-white/20 cursor-pointer"
+        >
+          <Sparkles size={16} className="text-amber-300 animate-pulse" />
+          <span>DevPilot AI Tutor</span>
+          <Badge variant="purple" className="text-[10px] bg-white/20 text-white">Coach</Badge>
+        </button>
+      )}
 
       {/* Slide-out / Modal Drawer */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-end sm:p-6 bg-black/50 backdrop-blur-xs">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full sm:w-[480px] h-[90vh] sm:h-[680px] rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-end sm:p-6">
+          {/* Backdrop (Click outside to close) */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity cursor-pointer"
+            onClick={() => setOpen(false)}
+            aria-label="Close Assistant backdrop"
+          />
+
+          {/* Chat Window Container */}
+          <div
+            className="relative z-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full sm:w-[480px] h-[92vh] sm:h-[680px] rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Header */}
-            <div className="p-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-white shrink-0">
+            <div className="p-3.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-white shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center shrink-0">
                   <Bot size={18} className="text-white" />
                 </div>
                 <div>
@@ -185,22 +215,33 @@ User request: ${text}`
                 </div>
               </div>
 
-              <div className="flex items-center gap-1.5">
+              {/* Header Action Buttons (Key & Prominent Close Button) */}
+              <div className="flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={() => setShowKeyModal(true)}
                   title="Configure Gemini API Key"
                   className={cn(
-                    'p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors',
+                    'p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer',
                     apiKey && 'text-emerald-400'
                   )}
                 >
                   <Key size={16} />
                 </button>
+
+                {/* Highly Visible Close Button */}
                 <button
-                  onClick={() => setOpen(false)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpen(false);
+                  }}
+                  aria-label="Close Chatbot"
+                  title="Close DevPilot AI (Esc)"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 transition-all font-semibold text-xs cursor-pointer shadow-sm active:scale-95"
                 >
-                  <X size={18} />
+                  <X size={16} className="shrink-0" />
+                  <span>Close</span>
                 </button>
               </div>
             </div>
@@ -210,8 +251,9 @@ User request: ${text}`
               {PRESET_PROMPTS.map((prompt, i) => (
                 <button
                   key={i}
+                  type="button"
                   onClick={() => handleSendMessage(prompt)}
-                  className="px-2.5 py-1 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-blue-500 hover:text-blue-500 whitespace-nowrap transition-colors"
+                  className="px-2.5 py-1 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-blue-500 hover:text-blue-500 whitespace-nowrap transition-colors cursor-pointer"
                 >
                   {prompt}
                 </button>
@@ -286,7 +328,11 @@ User request: ${text}`
                 <Key size={16} className="text-emerald-500" />
                 Configure AI API Provider (Optional)
               </h4>
-              <button onClick={() => setShowKeyModal(false)} className="text-slate-400 hover:text-white">
+              <button
+                type="button"
+                onClick={() => setShowKeyModal(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-md"
+              >
                 <X size={16} />
               </button>
             </div>

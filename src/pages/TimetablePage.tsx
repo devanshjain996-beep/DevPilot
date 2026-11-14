@@ -24,7 +24,7 @@ import {
   updateTimetableStatus, updateTimetableEntry, addTimetableEntry,
   deleteTimetableEntry, initTimetableForDate, resetTimetableForDate,
   lockExpiredSlotsForDate, applyHolidayToDate, removeSlotWithException,
-  calculateTimetableStats
+  repairAndSyncTimetable, calculateTimetableStats
 } from '../hooks/useDatabase';
 import { todayStr, formatDate, formatDay, cn, priorityColor } from '../utils/helpers';
 import { DEFAULT_TIMETABLE } from '../data/roadmapData';
@@ -145,9 +145,9 @@ export default function TimetablePage() {
     }
   }, [selectedDate, autoSundays, dailySettings]);
 
-  // Seed timetable for date on mount and navigation
+  // Seed & automatically repair timetable for date on mount and navigation
   useEffect(() => {
-    initTimetableForDate(selectedDate, DEFAULT_TIMETABLE);
+    repairAndSyncTimetable(selectedDate);
   }, [selectedDate]);
 
   // Calculate stats using unified robust formula

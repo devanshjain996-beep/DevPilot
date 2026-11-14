@@ -40,6 +40,7 @@ import {
   updateTimetableStatus,
   updateTask,
   lockExpiredSlotsForDate,
+  repairAndSyncTimetable,
   calculateTimetableStats,
 } from '../hooks/useDatabase';
 import { todayStr, formatDate, formatDay, percentage, cn, statusBg } from '../utils/helpers';
@@ -96,9 +97,9 @@ export default function DashboardPage() {
   const { tracks, overallPercentage } = useTrackProgress();
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Periodically check and lock expired slots on dashboard
+  // Automatically repair, sync schedule, and periodically check and lock expired slots on dashboard
   useEffect(() => {
-    lockExpiredSlotsForDate(today);
+    repairAndSyncTimetable(today);
     const timer = setInterval(() => {
       setCurrentTime(new Date());
       lockExpiredSlotsForDate(today);

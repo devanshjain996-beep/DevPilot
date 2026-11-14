@@ -5,12 +5,22 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { db } from '../store/db';
 import { todayStr, weekRange, percentage, generateId } from '../utils/helpers';
-import { ALL_TRACKS, DEFAULT_TIMETABLE, HOLIDAY_STUDY_MORNING_SLOTS } from '../data/roadmapData';
+import { ALL_TRACKS, DEFAULT_TIMETABLE, HOLIDAY_MORNING_SLOTS } from '../data/roadmapData';
 import type {
   LearningTopic, TimetableEntry, Task, DSAProblem, Project,
   Subject, Goal, StudyLog, WeeklySlot, ScheduleException, DailySettings,
   ExceptionType, HolidayMode
 } from '../types';
+
+export function isTaskSlotWithCheckbox(entry: TimetableEntry): boolean {
+  if (entry.slotId === 'slot-college' || entry.category === 'college') {
+    return false;
+  }
+  if (entry.isBlocked || entry.category === 'personal') {
+    return false;
+  }
+  return true;
+}
 
 // ── Topic operations ──
 export function useTopics(trackId?: string) {
@@ -143,17 +153,16 @@ export async function applyHolidayToDate(date: string, mode: HolidayMode, reason
   const existingEntries = await db.timetable.where('date').equals(date).toArray();
 
   if (mode === 'holiday-study') {
-    // 1. Divide 6 AM - 2 PM into study sessions
-    // Remove old college or holiday morning slots
+    // 1. On holiday: completely remove 6 AM - 2 PM college slot, 5 AM wakeup, and any old morning slots
     const toDelete = existingEntries
-      .filter(e => e.slotId === 'slot-college' || e.slotId?.startsWith('hslot-'))
+      .filter(e => e.slotId === 'slot-college' || e.slotId === 'slot-wakeup' || e.slotId?.startsWith('hslot-'))
       .map(e => e.id);
     if (toDelete.length > 0) {
       await db.timetable.bulkDelete(toDelete);
     }
 
-    // Insert the 5 structured study sessions
-    const morningSlots: TimetableEntry[] = HOLIDAY_STUDY_MORNING_SLOTS.map(s => ({
+    // Insert the 9 gapless holiday morning slots from 6:00 AM to 2:00 PM (Zero Gaps: wake up, workout, breakfast, Python, Web Dev, Break, System Design, College Academics, Review)
+    const morningSlots: TimetableEntry[] = HOLIDAY_MORNING_SLOTS.map(s => ({
       ...s,
       id: generateId(),
       date,
@@ -161,38 +170,40 @@ export async function applyHolidayToDate(date: string, mode: HolidayMode, reason
     }));
     await db.timetable.bulkAdd(morningSlots);
 
-    // Ensure 3 PM - 4 PM College Academics and other slots are restored to active study tasks
+    // Ensure 3:00 PM – 4:00 PM College Academics and evening study slots are ACTIVE STUDY TASKS WITH CHECKBOXES!
     const remaining = await db.timetable.where('date').equals(date).toArray();
     for (const e of remaining) {
-      if (e.slotId === 'slot-academics' || e.slotId === 'slot-python' || e.slotId === 'slot-cpp-dsa' || e.slotId === 'slot-webdev' || e.slotId === 'slot-planning') {
+      if (['slot-academics', 'slot-python', 'slot-cpp-dsa', 'slot-webdev', 'slot-planning'].includes(e.slotId || '')) {
         await db.timetable.update(e.id, {
+          activity: e.slotId === 'slot-academics' ? 'College Academics (Revision & Assignments)' : e.activity,
+          category: e.slotId === 'slot-academics' ? 'academics' : e.category,
           isBlocked: false,
           isExempt: false,
+          isHoliday: false,
         });
       }
     }
   } else if (mode === 'holiday-no-study') {
-    // 2. Day off / No Study: Excused day with no checkboxes
+    // 2. Day off / No Study: Excused day with zero checkboxes, cut off from weekly progress
     const toDelete = existingEntries
-      .filter(e => e.slotId?.startsWith('hslot-'))
+      .filter(e => e.slotId === 'slot-college' || e.slotId === 'slot-wakeup' || e.slotId?.startsWith('hslot-'))
       .map(e => e.id);
     if (toDelete.length > 0) {
       await db.timetable.bulkDelete(toDelete);
     }
 
-    const currentEntries = await db.timetable.where('date').equals(date).toArray();
-    for (const e of currentEntries) {
-      if (e.slotId === 'slot-college') {
-        await db.timetable.update(e.id, {
-          activity: 'Free Time & Rest (Holiday)',
-          category: 'personal',
-          isBlocked: true,
-          isExempt: true,
-          status: 'exempt',
-          locked: false,
-        });
-      } else {
-        // Mark all tasks on a No Study Day as excused free time
+    const dayOffMorning: TimetableEntry[] = [
+      { slotId: 'hslot-wakeup', time: '6:00 – 6:15 AM', startHour: 6, endHour: 6.25, activity: 'Wake up & stretch', category: 'personal', isBlocked: true, isExempt: true, isHoliday: true, status: 'exempt', id: generateId(), date },
+      { slotId: 'hslot-workout', time: '6:15 – 7:00 AM', startHour: 6.25, endHour: 7, activity: 'Morning walk & light exercise', category: 'personal', isBlocked: true, isExempt: true, isHoliday: true, status: 'exempt', id: generateId(), date },
+      { slotId: 'hslot-breakfast', time: '7:00 – 8:00 AM', startHour: 7, endHour: 8, activity: 'Freshen up & breakfast', category: 'personal', isBlocked: true, isExempt: true, isHoliday: true, status: 'exempt', id: generateId(), date },
+      { slotId: 'hslot-dayoff-am', time: '8:00 AM – 2:00 PM', startHour: 8, endHour: 14, activity: 'Personal Day Off & Free Time', category: 'personal', isBlocked: true, isExempt: true, isHoliday: true, status: 'exempt', id: generateId(), date },
+    ];
+    await db.timetable.bulkAdd(dayOffMorning);
+
+    // Convert other slots to excused day-off rest
+    const remaining = await db.timetable.where('date').equals(date).toArray();
+    for (const e of remaining) {
+      if (!e.slotId?.startsWith('hslot-')) {
         await db.timetable.update(e.id, {
           isBlocked: true,
           isExempt: true,
@@ -210,13 +221,33 @@ export async function applyHolidayToDate(date: string, mode: HolidayMode, reason
       await db.timetable.bulkDelete(toDelete);
     }
 
-    // Ensure college slot exists
+    // Ensure 5:00 - 5:45 AM wakeup exists
+    const wakeup = existingEntries.find(e => e.slotId === 'slot-wakeup');
+    if (!wakeup) {
+      await db.timetable.add({
+        id: generateId(),
+        slotId: 'slot-wakeup',
+        time: '5:00 – 5:45 AM',
+        startHour: 5,
+        endHour: 5.75,
+        activity: 'Wake up, get ready & breakfast',
+        category: 'personal',
+        isBlocked: true,
+        status: 'pending',
+        date,
+      });
+    }
+
+    // Ensure college slot exists (6:00 AM – 2:00 PM, locked, no checkbox)
     const college = existingEntries.find(e => e.slotId === 'slot-college');
     if (college) {
       await db.timetable.update(college.id, {
+        time: '6:00 AM – 2:00 PM',
+        startHour: 6,
+        endHour: 14,
         activity: 'College',
         category: 'college',
-        isBlocked: true, // Fixed college hours, locked institutional routine, no checkbox
+        isBlocked: true, // Fixed college routine, no checkbox
         isHoliday: false,
         isExempt: false,
         status: 'pending',
@@ -240,14 +271,30 @@ export async function applyHolidayToDate(date: string, mode: HolidayMode, reason
       });
     }
 
-    // Ensure 3-4 PM College Academics is active study task with checkbox
+    // Ensure 3:00 - 4:00 PM College Academics is ACTIVE STUDY TASK WITH CHECKBOX!
     const academics = existingEntries.find(e => e.slotId === 'slot-academics');
     if (academics) {
       await db.timetable.update(academics.id, {
-        activity: 'College academics, revision & assignments',
+        activity: 'College Academics (Revision & Assignments)',
+        category: 'academics',
+        isBlocked: false, // Active study task with checkbox!
+        isExempt: false,
+        isHoliday: false,
+      });
+    } else {
+      await db.timetable.add({
+        id: generateId(),
+        slotId: 'slot-academics',
+        time: '3:00 – 4:00 PM',
+        startHour: 15,
+        endHour: 16,
+        activity: 'College Academics (Revision & Assignments)',
         category: 'academics',
         isBlocked: false,
+        isHoliday: false,
         isExempt: false,
+        status: 'pending',
+        date,
       });
     }
 
@@ -258,6 +305,7 @@ export async function applyHolidayToDate(date: string, mode: HolidayMode, reason
         await db.timetable.update(e.id, {
           isBlocked: false,
           isExempt: false,
+          isHoliday: false,
         });
       }
     }
@@ -281,8 +329,8 @@ export async function lockExpiredSlotsForDate(date: string) {
   const entries = await db.timetable.where('date').equals(date).toArray();
 
   for (const entry of entries) {
-    // College institutional hours and personal breaks have NO checkbox and are not marked missed
-    if (entry.isExempt || entry.isBlocked || entry.category === 'personal' || entry.category === 'college') {
+    // Only lock tasks that have a study checkbox (3-4 PM Academics, Python, C++, WebDev, Planning, etc.)
+    if (!isTaskSlotWithCheckbox(entry)) {
       continue;
     }
     if (entry.status === 'completed') {
@@ -315,19 +363,14 @@ export function calculateTimetableStats(entries: TimetableEntry[], isNoStudyDay?
     };
   }
 
-  // Required slots: Not exempt, not personal break, and not college institutional hours (3-4 PM Academics IS included)
-  const required = entries.filter(e =>
-    !e.isExempt &&
-    !e.isBlocked &&
-    e.category !== 'personal' &&
-    e.category !== 'college'
-  );
+  // Required slots: All slots that have a study checkbox (3-4 PM College Academics IS included, College 6 AM - 2 PM is excluded)
+  const required = entries.filter(e => !e.isExempt && isTaskSlotWithCheckbox(e));
 
   const completed = required.filter(e => e.status === 'completed').length;
   const missed = required.filter(e => e.status === 'missed').length;
   const inProgress = required.filter(e => e.status === 'in-progress').length;
   const upcoming = required.filter(e => e.status === 'upcoming' || e.status === 'pending').length;
-  const exempt = entries.filter(e => e.isExempt || e.isBlocked || e.category === 'personal' || e.category === 'college').length;
+  const exempt = entries.filter(e => e.isExempt || !isTaskSlotWithCheckbox(e)).length;
   const totalRequired = required.length;
   const completionPct = totalRequired > 0 ? Math.round((completed / totalRequired) * 100) : 100;
 
@@ -357,8 +400,8 @@ export async function initTimetableForDate(date: string, entries: Omit<Timetable
 
   if (existingCount === 0) {
     if (holidayMode === 'holiday-study') {
-      // Initialize with morning divided study sessions
-      const morningSlots = HOLIDAY_STUDY_MORNING_SLOTS
+      // Initialize with morning gapless divided sessions (6 AM - 2 PM) - NO "6:00 AM – 2:00 PM" slot!
+      const morningSlots = HOLIDAY_MORNING_SLOTS
         .filter(e => !excludedSlotIds.has(e.slotId || ''))
         .map(s => ({
           ...s,
@@ -367,29 +410,37 @@ export async function initTimetableForDate(date: string, entries: Omit<Timetable
           status: 'pending' as const,
         }));
 
+      // Afternoon & evening slots (including 3-4 PM College Academics as an active study task!)
       const afternoonSlots = entries
-        .filter(e => e.slotId !== 'slot-college' && !excludedSlotIds.has(e.slotId || ''))
+        .filter(e => e.slotId !== 'slot-college' && e.slotId !== 'slot-wakeup' && !excludedSlotIds.has(e.slotId || ''))
         .map(e => ({
           ...e,
           id: generateId(),
           date,
+          activity: e.slotId === 'slot-academics' ? 'College Academics (Revision & Assignments)' : e.activity,
+          isBlocked: e.slotId === 'slot-academics' ? false : e.isBlocked,
           status: 'pending' as const,
         }));
 
       await db.timetable.bulkAdd([...morningSlots, ...afternoonSlots]);
     } else if (holidayMode === 'holiday-no-study') {
-      const dayOffSlots = entries
-        .filter(e => !excludedSlotIds.has(e.slotId || ''))
+      const dayOffMorning: TimetableEntry[] = [
+        { slotId: 'hslot-wakeup', time: '6:00 – 6:15 AM', startHour: 6, endHour: 6.25, activity: 'Wake up & stretch', category: 'personal', isBlocked: true, isExempt: true, isHoliday: true, status: 'exempt', id: generateId(), date },
+        { slotId: 'hslot-workout', time: '6:15 – 7:00 AM', startHour: 6.25, endHour: 7, activity: 'Morning walk & light exercise', category: 'personal', isBlocked: true, isExempt: true, isHoliday: true, status: 'exempt', id: generateId(), date },
+        { slotId: 'hslot-breakfast', time: '7:00 – 8:00 AM', startHour: 7, endHour: 8, activity: 'Freshen up & breakfast', category: 'personal', isBlocked: true, isExempt: true, isHoliday: true, status: 'exempt', id: generateId(), date },
+        { slotId: 'hslot-dayoff-am', time: '8:00 AM – 2:00 PM', startHour: 8, endHour: 14, activity: 'Personal Day Off & Free Time', category: 'personal', isBlocked: true, isExempt: true, isHoliday: true, status: 'exempt', id: generateId(), date },
+      ];
+      const afternoonSlots = entries
+        .filter(e => e.slotId !== 'slot-college' && e.slotId !== 'slot-wakeup' && !excludedSlotIds.has(e.slotId || ''))
         .map(e => ({
           ...e,
           id: generateId(),
           date,
-          activity: e.slotId === 'slot-college' ? 'Free Time & Rest (Holiday)' : e.activity,
           isBlocked: true,
           isExempt: true,
           status: 'exempt' as const,
         }));
-      await db.timetable.bulkAdd(dayOffSlots);
+      await db.timetable.bulkAdd([...dayOffMorning, ...afternoonSlots]);
     } else {
       // Normal Day
       const allowedEntries = entries.filter(e => !excludedSlotIds.has(e.slotId || ''));
@@ -431,48 +482,13 @@ export async function deleteTimetableEntry(id: string) {
   await db.timetable.delete(id);
 }
 
-export async function resetTimetableForDate(date: string, entries: Omit<TimetableEntry, 'id' | 'date' | 'status'>[]) {
+export async function resetTimetableForDate(date: string, _entries: Omit<TimetableEntry, 'id' | 'date' | 'status'>[]) {
   await db.timetable.where('date').equals(date).delete();
 
-  // Retrieve active exceptions
-  const exceptions = await db.scheduleExceptions.toArray();
-  const activeExceptions = exceptions.filter(ex => ex.startDate <= date && date <= ex.endDate);
-  const excludedSlotIds = new Set(activeExceptions.map(ex => ex.slotId));
-
-  // Check holiday
   const ds = await db.dailySettings.get(date);
-  const isHoliday = ds?.isHoliday ?? false;
+  const holidayMode: HolidayMode = ds?.holidayMode || (ds?.isHoliday ? (ds?.isNoStudyDay ? 'holiday-no-study' : 'holiday-study') : 'normal');
 
-  const allowedEntries = entries.filter(e => !excludedSlotIds.has(e.slotId || ''));
-
-  const items: TimetableEntry[] = allowedEntries.map(e => {
-    const isCollege = e.slotId === 'slot-college' || e.category === 'college';
-    if (isHoliday && isCollege) {
-      return {
-        ...e,
-        id: generateId(),
-        date,
-        activity: 'Free Time (Holiday)',
-        category: 'personal',
-        isHoliday: true,
-        isBlocked: true,
-        isExempt: true,
-        status: 'exempt' as const,
-      };
-    }
-    return {
-      ...e,
-      id: generateId(),
-      date,
-      status: 'pending' as const,
-    };
-  });
-
-  if (items.length > 0) {
-    await db.timetable.bulkAdd(items);
-  }
-
-  await lockExpiredSlotsForDate(date);
+  await applyHolidayToDate(date, holidayMode);
 }
 
 // ── Task operations ──

@@ -225,28 +225,32 @@ export const ALL_TRACKS = [
   { id: 'ai-ml', name: 'AI/ML Development', color: 'rose', topics: AIML_TOPICS },
 ];
 
-// Default timetable with stable slot IDs
+// Default timetable for Normal College Days
 export const DEFAULT_TIMETABLE = [
   { slotId: 'slot-wakeup', time: '5:00 – 5:45 AM', startHour: 5, endHour: 5.75, activity: 'Wake up, get ready & breakfast', category: 'personal', isBlocked: true },
-  { slotId: 'slot-college', time: '6:00 AM – 2:00 PM', startHour: 6, endHour: 14, activity: 'College', category: 'college', isBlocked: true }, // Locked fixed college hours, no checkbox (like breaks/lunch)
+  { slotId: 'slot-college', time: '6:00 AM – 2:00 PM', startHour: 6, endHour: 14, activity: 'College', category: 'college', isBlocked: true }, // Fixed college hours, locked institutional routine, no checkbox
   { slotId: 'slot-lunch', time: '2:00 – 3:00 PM', startHour: 14, endHour: 15, activity: 'Lunch & rest', category: 'personal', isBlocked: true },
-  { slotId: 'slot-academics', time: '3:00 – 4:00 PM', startHour: 15, endHour: 16, activity: 'College academics, revision & assignments', category: 'academics', isBlocked: false }, // Has active checkbox, locks if missed after 4 PM
-  { slotId: 'slot-python', time: '4:00 – 5:00 PM', startHour: 16, endHour: 17, activity: 'Python learning & practice', category: 'python', isBlocked: false },
+  { slotId: 'slot-academics', time: '3:00 – 4:00 PM', startHour: 15, endHour: 16, activity: 'College Academics (Revision & Assignments)', category: 'academics', isBlocked: false }, // Dedicated study task with active checkbox! Locks if missed after 4 PM
+  { slotId: 'slot-python', time: '4:00 – 5:00 PM', startHour: 16, endHour: 17, activity: 'Python learning & practice', category: 'python', isBlocked: false }, // Study task with checkbox
   { slotId: 'slot-freetime', time: '5:00 – 7:00 PM', startHour: 17, endHour: 19, activity: 'Free Time & Personal Break', category: 'personal', isBlocked: true },
-  { slotId: 'slot-cpp-dsa', time: '7:00 – 8:00 PM', startHour: 19, endHour: 20, activity: 'C++ & DSA practice', category: 'cpp-dsa', isBlocked: false },
+  { slotId: 'slot-cpp-dsa', time: '7:00 – 8:00 PM', startHour: 19, endHour: 20, activity: 'C++ & DSA practice', category: 'cpp-dsa', isBlocked: false }, // Study task with checkbox
   { slotId: 'slot-dinner', time: '8:00 – 8:30 PM', startHour: 20, endHour: 20.5, activity: 'Dinner & break', category: 'personal', isBlocked: true },
-  { slotId: 'slot-webdev', time: '8:30 – 9:15 PM', startHour: 20.5, endHour: 21.25, activity: 'Web Development / System Design', category: 'webdev', isBlocked: false },
-  { slotId: 'slot-planning', time: '9:15 – 9:30 PM', startHour: 21.25, endHour: 21.5, activity: 'Revision & tomorrow\'s planning', category: 'planning', isBlocked: false },
+  { slotId: 'slot-webdev', time: '8:30 – 9:15 PM', startHour: 20.5, endHour: 21.25, activity: 'Web Development / System Design', category: 'webdev', isBlocked: false }, // Study task with checkbox
+  { slotId: 'slot-planning', time: '9:15 – 9:30 PM', startHour: 21.25, endHour: 21.5, activity: 'Revision & tomorrow\'s planning', category: 'planning', isBlocked: false }, // Study task with checkbox
   { slotId: 'slot-sleep', time: '9:30 PM', startHour: 21.5, endHour: 22, activity: 'Sleep', category: 'personal', isBlocked: true },
 ];
 
-// Holiday Study Plan: 6:00 AM – 2:00 PM divided into structured study sessions
-export const HOLIDAY_STUDY_MORNING_SLOTS = [
-  { slotId: 'hslot-revision', time: '6:00 – 8:00 AM', startHour: 6, endHour: 8, activity: 'Morning Revision & Problem Solving', category: 'cpp-dsa', isBlocked: false, isHoliday: true },
-  { slotId: 'hslot-python', time: '8:00 – 10:00 AM', startHour: 8, endHour: 10, activity: 'Python Mastery Deep Practice', category: 'python', isBlocked: false, isHoliday: true },
-  { slotId: 'hslot-webdev', time: '10:00 – 11:30 AM', startHour: 10, endHour: 11.5, activity: 'Full-Stack Web Development Project', category: 'webdev', isBlocked: false, isHoliday: true },
-  { slotId: 'hslot-sysdesign', time: '11:30 AM – 1:00 PM', startHour: 11.5, endHour: 13, activity: 'System Design & Architecture', category: 'webdev', isBlocked: false, isHoliday: true },
-  { slotId: 'hslot-acad-study', time: '1:00 – 2:00 PM', startHour: 13, endHour: 14, activity: 'College Academics Lab & Exercises', category: 'academics', isBlocked: false, isHoliday: true },
+// Holiday morning schedule (6:00 AM – 2:00 PM) with ZERO gaps, covering wake up, workout, freshen up, and divided study
+export const HOLIDAY_MORNING_SLOTS = [
+  { slotId: 'hslot-wakeup', time: '6:00 – 6:15 AM', startHour: 6, endHour: 6.25, activity: 'Wake up, hydrate & morning meditation', category: 'personal', isBlocked: true, isHoliday: true },
+  { slotId: 'hslot-workout', time: '6:15 – 7:00 AM', startHour: 6.25, endHour: 7, activity: 'Morning Workout & Exercise', category: 'personal', isBlocked: true, isHoliday: true },
+  { slotId: 'hslot-breakfast', time: '7:00 – 7:30 AM', startHour: 7, endHour: 7.5, activity: 'Freshen up, shower & healthy breakfast', category: 'personal', isBlocked: true, isHoliday: true },
+  { slotId: 'hslot-python', time: '7:30 – 9:00 AM', startHour: 7.5, endHour: 9, activity: 'Python Mastery & Core Practice', category: 'python', isBlocked: false, isHoliday: true }, // Study task with checkbox!
+  { slotId: 'hslot-webdev', time: '9:00 – 10:30 AM', startHour: 9, endHour: 10.5, activity: 'Full-Stack Web Development Project', category: 'webdev', isBlocked: false, isHoliday: true }, // Study task with checkbox!
+  { slotId: 'hslot-break', time: '10:30 – 11:00 AM', startHour: 10.5, endHour: 11, activity: 'Morning Break & Refreshment', category: 'personal', isBlocked: true, isHoliday: true },
+  { slotId: 'hslot-sysdesign', time: '11:00 AM – 12:30 PM', startHour: 11, endHour: 12.5, activity: 'System Design & Architecture Study', category: 'webdev', isBlocked: false, isHoliday: true }, // Study task with checkbox!
+  { slotId: 'hslot-acad-study', time: '12:30 – 1:30 PM', startHour: 12.5, endHour: 13.5, activity: 'College Academics & Core Subjects Practice', category: 'academics', isBlocked: false, isHoliday: true }, // Study task with checkbox!
+  { slotId: 'hslot-review', time: '1:30 – 2:00 PM', startHour: 13.5, endHour: 14, activity: 'Quick Review & Code Wrap-up', category: 'planning', isBlocked: false, isHoliday: true }, // Study task with checkbox!
 ];
 
 export const DEFAULT_WEEKLY_SCHEDULE: WeeklySlot[] = [

@@ -66,6 +66,29 @@ export async function updateTimetableStatus(id: string, status: TimetableEntry['
   await db.timetable.update(id, { status });
 }
 
+export async function updateTimetableEntry(id: string, data: Partial<TimetableEntry>) {
+  await db.timetable.update(id, data);
+}
+
+export async function addTimetableEntry(entry: Omit<TimetableEntry, 'id'>) {
+  await db.timetable.add({ ...entry, id: generateId() });
+}
+
+export async function deleteTimetableEntry(id: string) {
+  await db.timetable.delete(id);
+}
+
+export async function resetTimetableForDate(date: string, entries: Omit<TimetableEntry, 'id' | 'date' | 'status'>[]) {
+  await db.timetable.where('date').equals(date).delete();
+  const items: TimetableEntry[] = entries.map(e => ({
+    ...e,
+    id: generateId(),
+    date,
+    status: 'pending' as const,
+  }));
+  await db.timetable.bulkAdd(items);
+}
+
 // ── Task operations ──
 export function useTasks(date?: string) {
   return useLiveQuery(() =>

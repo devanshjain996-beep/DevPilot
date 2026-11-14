@@ -90,7 +90,7 @@ export default function DashboardPage() {
   // ── 4. Daily completion percentage ──
   const dailyCompletion = useMemo(() => {
     const ttDone = timetable.filter(
-      (e) => e.status === 'completed' || e.isBlocked,
+      (e) => e.status === 'completed',
     ).length;
     const taskDone = todayTasks.filter((t) => t.status === 'completed').length;
     const total = timetable.length + todayTasks.length;
@@ -294,7 +294,6 @@ export default function DashboardPage() {
                       className={cn(
                         'flex items-center justify-between px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700',
                         entry.status === 'completed' && 'opacity-60',
-                        entry.isBlocked && 'opacity-50',
                       )}
                     >
                       <div className="flex items-center gap-3 min-w-0">

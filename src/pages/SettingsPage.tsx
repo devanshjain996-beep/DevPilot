@@ -170,12 +170,12 @@ export default function SettingsPage() {
         </h3>
 
         <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
-          <div className="p-3.5 rounded-xl bg-red-950/20 border border-red-500/30 flex items-start gap-3">
-            <Shield className="text-red-400 shrink-0 mt-0.5" size={18} />
+          <div className="p-3.5 rounded-xl bg-blue-950/20 border border-blue-500/30 flex items-start gap-3">
+            <Shield className="text-blue-400 shrink-0 mt-0.5" size={18} />
             <div className="space-y-1">
-              <span className="font-bold text-red-300">Strict Rule: 5:00 PM – 7:00 PM Unavailable Block</span>
+              <span className="font-bold text-blue-300">Customizable Schedule & Free Time</span>
               <p className="text-slate-300 leading-relaxed">
-                As per your profile instructions, the 5:00 PM to 7:00 PM window is permanently enforced as strictly unavailable. No study tasks or coding sessions will ever be automatically assigned into this window.
+                Your timetable is fully customizable. You can edit any time slot, change activities, and move your free time/break window (e.g. 5–7 PM, 2–4 PM, or any other time) according to your preferences.
               </p>
             </div>
           </div>

@@ -20,12 +20,13 @@
   - `2:00 – 3:00 PM`: Lunch & rest
   - `3:00 – 4:00 PM`: College academics, revision & assignments
   - `4:00 – 5:00 PM`: Python learning & practice
-  - `5:00 – 7:00 PM`: ⛔ **Unavailable — Strictly Blocked** *(non-negotiable rest period)*
+  - `5:00 – 7:00 PM`: Free Time & Personal Break *(customizable — shift to 2–4 PM or convert to study anytime)*
   - `7:00 – 8:00 PM`: C++ and DSA practice
   - `8:00 – 8:30 PM`: Dinner & break
   - `8:30 – 9:15 PM`: Web Development / System Design
   - `9:15 – 9:30 PM`: Revision & tomorrow's planning
   - `9:30 PM`: Sleep
+- **Full Customization & In-Place Editing**: Edit any slot's time range, activity description, category, or break status; add custom time blocks; delete slots; or reset to defaults.
 - **Completion Tracking**: Mark items as Completed, Skipped, Rescheduled, or Pending.
 - **Calendar & Navigation**: Day-by-day navigation with completion percentages and weekly overview calendar.
 

@@ -140,7 +140,7 @@ export default function WeeklyPlannerPage() {
                 </span>
                 <p className="text-xs text-slate-300 mt-0.5">
                   • <strong>4:00 – 5:00 PM:</strong> Python Learning & Practice<br />
-                  • <strong>5:00 – 7:00 PM:</strong> ⛔ Strictly Unavailable / Rest Block<br />
+                  • <strong>5:00 – 7:00 PM:</strong> Free Time / Break (or your custom hours)<br />
                   • <strong>7:00 – 8:00 PM:</strong> C++ & DSA Practice
                 </p>
               </div>

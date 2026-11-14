@@ -232,7 +232,7 @@ export const DEFAULT_TIMETABLE = [
   { time: '2:00 – 3:00 PM', startHour: 14, endHour: 15, activity: 'Lunch & rest', category: 'personal' },
   { time: '3:00 – 4:00 PM', startHour: 15, endHour: 16, activity: 'College academics, revision & assignments', category: 'academics' },
   { time: '4:00 – 5:00 PM', startHour: 16, endHour: 17, activity: 'Python learning & practice', category: 'python' },
-  { time: '5:00 – 7:00 PM', startHour: 17, endHour: 19, activity: '⛔ Unavailable — strictly blocked', category: 'blocked', isBlocked: true },
+  { time: '5:00 – 7:00 PM', startHour: 17, endHour: 19, activity: 'Free Time & Personal Break', category: 'personal', isBlocked: false },
   { time: '7:00 – 8:00 PM', startHour: 19, endHour: 20, activity: 'C++ & DSA practice', category: 'cpp-dsa' },
   { time: '8:00 – 8:30 PM', startHour: 20, endHour: 20.5, activity: 'Dinner & break', category: 'personal' },
   { time: '8:30 – 9:15 PM', startHour: 20.5, endHour: 21.25, activity: 'Web Development / System Design', category: 'webdev' },

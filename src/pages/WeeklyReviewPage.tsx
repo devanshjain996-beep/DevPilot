@@ -99,7 +99,7 @@ export default function WeeklyReviewPage() {
 
 ## 1. Study Hours & Daily Timetable
 - **Weekly Study Hours Completed:** ${estimatedHours} hours
-- **Fixed Block Observed:** 5:00 PM – 7:00 PM strictly kept unavailable (Rest / Personal)
+- **Daily Routine:** Followed personal timetable with dedicated study & break blocks
 
 ## 2. Technical Curriculum Progress
 - **Python Mastery:** ${pythonDone} / ${pythonTotal} topics completed (${Math.round((pythonDone/pythonTotal)*100)}%)

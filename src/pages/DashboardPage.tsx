@@ -16,6 +16,9 @@ import {
   AlertCircle,
   ClipboardList,
   Lock,
+  GraduationCap,
+  Palmtree,
+  Coffee,
 } from 'lucide-react';
 import {
   Card,
@@ -33,6 +36,7 @@ import {
   useSubjects,
   useStudyLogs,
   useAllTopics,
+  useDailySettings,
   updateTimetableStatus,
   updateTask,
   lockExpiredSlotsForDate,
@@ -83,6 +87,7 @@ export default function DashboardPage() {
   const { profile } = useProfile();
   const timetable = useTodayTimetable();
   const todayTasks = useTasks(today);
+  const dailySettings = useDailySettings(today);
   const allTopics = useAllTopics();
   const studyLogs = useStudyLogs();
   const goals = useGoals();
@@ -101,16 +106,19 @@ export default function DashboardPage() {
     return () => clearInterval(timer);
   }, [today]);
 
-  // Calculate timetable stats excluding exempt/holiday slots
-  const timetableStats = useMemo(() => calculateTimetableStats(timetable), [timetable]);
+  // Calculate timetable stats excluding exempt/holiday slots, or 0 if rest day
+  const timetableStats = useMemo(() => {
+    return calculateTimetableStats(timetable, dailySettings?.isNoStudyDay);
+  }, [timetable, dailySettings]);
 
   // ── 4. Daily completion percentage ──
   const dailyCompletion = useMemo(() => {
+    if (dailySettings?.isNoStudyDay) return 100;
     const taskDone = todayTasks.filter((t) => t.status === 'completed').length;
     const reqDone = timetableStats.completed + taskDone;
     const reqTotal = timetableStats.totalRequired + todayTasks.length;
     return reqTotal > 0 ? Math.round((reqDone / reqTotal) * 100) : 100;
-  }, [timetableStats, todayTasks]);
+  }, [timetableStats, todayTasks, dailySettings]);
 
   // ── 5. Weekly study hours ──
   const weeklyData = useMemo(() => {
@@ -313,7 +321,11 @@ export default function DashboardPage() {
                   .sort((a, b) => a.startHour - b.startHour)
                   .map((entry) => {
                     const currentHour = currentTime.getHours() + currentTime.getMinutes() / 60;
-                    const isRequired = !entry.isExempt && !entry.isHoliday && !entry.isBlocked && entry.category !== 'personal';
+                    const isCollegeBlock = entry.slotId === 'slot-college' || entry.category === 'college';
+                    const isPersonalBreak = entry.isBlocked || entry.category === 'personal';
+                    const hasTaskCheckbox = !isCollegeBlock && !isPersonalBreak && !dailySettings?.isNoStudyDay;
+
+                    const isRequired = hasTaskCheckbox;
                     const isExpired = isRequired && (currentHour >= entry.endHour || entry.status === 'missed');
                     const isCompleted = entry.status === 'completed';
 
@@ -324,10 +336,29 @@ export default function DashboardPage() {
                           'flex items-center justify-between px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700',
                           isCompleted && 'opacity-60 bg-emerald-500/[0.02] border-emerald-500/30',
                           isExpired && 'border-red-500/30 bg-red-500/[0.02]',
+                          isCollegeBlock && 'border-blue-500/30 bg-blue-500/[0.02]',
                         )}
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          {isExpired ? (
+                          {isCollegeBlock ? (
+                            <div
+                              title="College Hours (6:00 AM – 2:00 PM) · Fixed Institutional Routine"
+                              className="w-4 h-4 rounded border border-blue-400/30 bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0"
+                            >
+                              <GraduationCap size={10} />
+                            </div>
+                          ) : !hasTaskCheckbox ? (
+                            <div
+                              title={entry.activity}
+                              className="w-4 h-4 rounded border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center shrink-0"
+                            >
+                              {dailySettings?.isNoStudyDay ? (
+                                <Palmtree size={10} className="text-indigo-400" />
+                              ) : (
+                                <Coffee size={10} />
+                              )}
+                            </div>
+                          ) : isExpired ? (
                             <button
                               type="button"
                               disabled
@@ -361,17 +392,25 @@ export default function DashboardPage() {
                           </div>
                         </div>
 
-                        {isExpired ? (
+                        {isCollegeBlock ? (
+                          <Badge variant="info" className="shrink-0 ml-2 gap-1 text-[10px]">
+                            <GraduationCap size={9} /> College Routine
+                          </Badge>
+                        ) : isExpired ? (
                           <Badge variant="danger" className="shrink-0 ml-2 gap-1 text-[10px]">
                             <Lock size={9} /> Missed
                           </Badge>
                         ) : entry.isHoliday ? (
                           <Badge variant="success" className="shrink-0 ml-2 text-[10px]">
-                            Holiday Free Time
+                            Holiday Study
+                          </Badge>
+                        ) : dailySettings?.isNoStudyDay ? (
+                          <Badge variant="purple" className="shrink-0 ml-2 text-[10px]">
+                            Day Off
                           </Badge>
                         ) : entry.isBlocked ? (
                           <Badge variant="purple" className="shrink-0 ml-2 text-[10px]">
-                            Free Time
+                            Break
                           </Badge>
                         ) : (
                           <Badge

@@ -1,7 +1,7 @@
 // ============================================================================
 // DevPilot — Daily Timetable Page (Upgraded & Robust Routine Engine)
 // ============================================================================
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   format, addDays, subDays, startOfWeek, endOfWeek, startOfMonth,
   endOfMonth, parseISO, getDay
@@ -11,7 +11,8 @@ import {
   XCircle, RotateCcw, Circle, CalendarDays, ListChecks,
   AlertTriangle, Percent, Edit2, Trash2, Coffee, Sparkles, RefreshCw,
   Lock, Sun, Palmtree, Sliders, Check, HelpCircle, AlertCircle,
-  Eye, CheckSquare, Layers, ShieldCheck
+  Eye, CheckSquare, Layers, ShieldCheck, GraduationCap, BookOpen,
+  BedDouble, Utensils, Laptop
 } from 'lucide-react';
 import {
   Card, PageHeader, Badge, Button, Modal, Input, Select, Tabs,
@@ -29,7 +30,7 @@ import { todayStr, formatDate, formatDay, cn, priorityColor } from '../utils/hel
 import { DEFAULT_TIMETABLE } from '../data/roadmapData';
 import type {
   TaskStatus, Priority, TimetableEntry, ScheduleException,
-  ExceptionType, SlotVisualStatus
+  ExceptionType, SlotVisualStatus, HolidayMode
 } from '../types';
 
 // ── Category → color map ──
@@ -77,7 +78,8 @@ export function getSlotVisualStatus(
   now: Date
 ): SlotVisualStatus {
   if (entry.status === 'completed') return 'completed';
-  if (entry.isExempt || entry.isHoliday || entry.isBlocked || entry.category === 'personal') {
+  // College institutional hours and personal breaks are exempt routine blocks
+  if (entry.isExempt || entry.isBlocked || entry.category === 'personal' || entry.category === 'college') {
     return 'exempt';
   }
 
@@ -116,11 +118,10 @@ export default function TimetablePage() {
 
   // Switch holiday confirmation modal state
   const [switchConfirmOpen, setSwitchConfirmOpen] = useState(false);
-  const [targetHolidayState, setTargetHolidayState] = useState<boolean>(false);
+  const [targetHolidayMode, setTargetHolidayMode] = useState<HolidayMode>('normal');
 
   // Auto-prompt holiday state
   const showHolidayPrompt = useMemo(() => {
-    // Only prompt if not yet answered for this specific date
     return dailySettings === undefined;
   }, [dailySettings]);
 
@@ -139,7 +140,7 @@ export default function TimetablePage() {
     if (autoSundays && dailySettings === undefined) {
       const isSunday = getDay(parseISO(selectedDate)) === 0;
       if (isSunday) {
-        applyHolidayToDate(selectedDate, true, 'Automatic Sunday Holiday');
+        applyHolidayToDate(selectedDate, 'holiday-no-study', 'Automatic Sunday Rest Day');
       }
     }
   }, [selectedDate, autoSundays, dailySettings]);
@@ -151,8 +152,8 @@ export default function TimetablePage() {
 
   // Calculate stats using unified robust formula
   const stats = useMemo(() => {
-    return calculateTimetableStats(entries);
-  }, [entries]);
+    return calculateTimetableStats(entries, dailySettings?.isNoStudyDay);
+  }, [entries, dailySettings]);
 
   // Filtered entries
   const filteredEntries = useMemo(() => {
@@ -189,23 +190,23 @@ export default function TimetablePage() {
     }
   };
 
-  // Holiday toggle with safety check for expired college slot
-  const handleRequestHolidayChange = (makeHoliday: boolean) => {
-    if (isToday) {
+  // Holiday mode change handler
+  const handleRequestModeChange = (targetMode: HolidayMode) => {
+    if (isToday && targetMode === 'normal') {
       const currentHour = currentTime.getHours() + currentTime.getMinutes() / 60;
-      // College ends at 14:00 (2:00 PM)
-      if (!makeHoliday && currentHour >= 14) {
-        setTargetHolidayState(false);
+      // If switching to normal after 2 PM, warn user
+      if (currentHour >= 14) {
+        setTargetHolidayMode('normal');
         setSwitchConfirmOpen(true);
         return;
       }
     }
-    applyHolidayToDate(selectedDate, makeHoliday);
+    applyHolidayToDate(selectedDate, targetMode);
   };
 
-  const handleConfirmSwitchHoliday = async () => {
+  const handleConfirmSwitch = async () => {
     setSwitchConfirmOpen(false);
-    await applyHolidayToDate(selectedDate, targetHolidayState);
+    await applyHolidayToDate(selectedDate, targetHolidayMode);
   };
 
   // Checkbox toggle handler
@@ -219,7 +220,6 @@ export default function TimetablePage() {
     }
 
     if (entry.status === 'completed') {
-      // Allow un-completing only if slot hasn't expired yet
       await updateTimetableStatus(entry.id, 'pending');
     } else {
       await updateTimetableStatus(entry.id, 'completed');
@@ -227,12 +227,13 @@ export default function TimetablePage() {
   };
 
   const activeExceptionsCount = exceptions.length;
+  const currentHolidayMode = dailySettings?.holidayMode || (dailySettings?.isHoliday ? (dailySettings?.isNoStudyDay ? 'holiday-no-study' : 'holiday-study') : 'normal');
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="My Daily Timetable"
-        subtitle="Command your day with automatic missed-slot locking, intelligent holiday handling, and recurring exceptions."
+        subtitle="Command your day with automatic missed-slot locking, intelligent holiday study dividing, and cut-off rest days."
         action={
           <div className="flex flex-wrap items-center gap-2">
             {activeExceptionsCount > 0 && (
@@ -273,51 +274,92 @@ export default function TimetablePage() {
 
       {activeTab === 'daily' ? (
         <>
-          {/* Holiday Status Banner */}
-          {dailySettings?.isHoliday ? (
-            <Card className="p-3.5 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* ── Schedule Mode Selector & Status Card ── */}
+          <Card className="p-3.5 border-slate-200 dark:border-slate-800">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg">
-                  <Palmtree size={18} />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-sm text-emerald-400">🌴 Holiday Mode Active</span>
-                    <Badge variant="success">College Converted to Free Time</Badge>
+                {currentHolidayMode === 'normal' && (
+                  <div className="p-2 bg-blue-500/10 text-blue-500 rounded-lg">
+                    <GraduationCap size={20} />
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    College hours (6:00 AM – 2:00 PM) are excused and do not reduce your completion percentage.
+                )}
+                {currentHolidayMode === 'holiday-study' && (
+                  <div className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg">
+                    <Laptop size={20} />
+                  </div>
+                )}
+                {currentHolidayMode === 'holiday-no-study' && (
+                  <div className="p-2 bg-indigo-500/10 text-indigo-500 rounded-lg">
+                    <Palmtree size={20} />
+                  </div>
+                )}
+
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-bold text-sm text-slate-900 dark:text-white">
+                      {currentHolidayMode === 'normal' && '📚 Normal College Routine'}
+                      {currentHolidayMode === 'holiday-study' && '💻 Holiday Study Plan Active'}
+                      {currentHolidayMode === 'holiday-no-study' && '🌴 Rest Day (No Study) Active'}
+                    </span>
+                    {currentHolidayMode === 'normal' && (
+                      <Badge variant="info">College 6 AM – 2 PM (No Task Checkbox)</Badge>
+                    )}
+                    {currentHolidayMode === 'holiday-study' && (
+                      <Badge variant="success">6 AM – 2 PM Divided into Study Sessions</Badge>
+                    )}
+                    {currentHolidayMode === 'holiday-no-study' && (
+                      <Badge variant="purple">Cut off from Weekly Progress · Excused</Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    {currentHolidayMode === 'normal' && 'College attendance is fixed routine. 3–4 PM College Academics has task checkbox (locks if missed).'}
+                    {currentHolidayMode === 'holiday-study' && 'Morning college hours divided into Python, Web Dev, System Design, and College Academics practice.'}
+                    {currentHolidayMode === 'holiday-no-study' && 'Full rest day. Automatically cut off from this week\'s study progress so your score is not penalized.'}
                   </p>
                 </div>
               </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => handleRequestHolidayChange(false)}
-                className="text-xs shrink-0"
-              >
-                Switch to Normal Day
-              </Button>
-            </Card>
-          ) : (
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl text-xs">
-              <div className="flex items-center gap-2">
-                <Badge variant="info">📚 Normal Routine</Badge>
-                <span className="text-slate-600 dark:text-slate-400">
-                  College hours (6:00 AM – 2:00 PM) and regular study schedule are active.
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
+
+              {/* Mode switch pills */}
+              <div className="flex items-center gap-1.5 shrink-0 self-end lg:self-center bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl text-xs">
                 <button
                   type="button"
-                  onClick={() => handleRequestHolidayChange(true)}
-                  className="font-medium text-blue-500 hover:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
+                  onClick={() => handleRequestModeChange('normal')}
+                  className={cn(
+                    'px-2.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer flex items-center gap-1',
+                    currentHolidayMode === 'normal'
+                      ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  )}
                 >
-                  <Sun size={13} /> Mark today as Holiday
+                  <GraduationCap size={13} /> Normal Day
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRequestModeChange('holiday-study')}
+                  className={cn(
+                    'px-2.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer flex items-center gap-1',
+                    currentHolidayMode === 'holiday-study'
+                      ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  )}
+                >
+                  <Laptop size={13} /> Holiday Study
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRequestModeChange('holiday-no-study')}
+                  className={cn(
+                    'px-2.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer flex items-center gap-1',
+                    currentHolidayMode === 'holiday-no-study'
+                      ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  )}
+                >
+                  <Palmtree size={13} /> Day Off
                 </button>
               </div>
             </div>
-          )}
+          </Card>
 
           {/* Date navigation & Statistics Header */}
           <Card className="p-4 space-y-4">
@@ -330,7 +372,13 @@ export default function TimetablePage() {
                   </p>
                   <div className="flex items-center justify-center gap-1.5 mt-0.5">
                     {isToday && <Badge variant="info">Today</Badge>}
-                    {dailySettings?.isHoliday && <Badge variant="success">Holiday</Badge>}
+                    {dailySettings?.isNoStudyDay ? (
+                      <Badge variant="purple">Rest Day (Excused)</Badge>
+                    ) : dailySettings?.isHoliday ? (
+                      <Badge variant="success">Holiday Study</Badge>
+                    ) : (
+                      <Badge variant="default">Normal Day</Badge>
+                    )}
                   </div>
                 </div>
                 <Button variant="ghost" size="sm" onClick={nextDay}><ChevronRight size={18} /></Button>
@@ -351,7 +399,7 @@ export default function TimetablePage() {
                     'text-base font-bold',
                     stats.completionPct >= 80 ? 'text-emerald-500' : stats.completionPct >= 50 ? 'text-amber-500' : 'text-blue-400',
                   )}>
-                    {stats.completionPct}%
+                    {dailySettings?.isNoStudyDay ? 'Excused (100%)' : `${stats.completionPct}%`}
                   </span>
                 </div>
               </div>
@@ -360,8 +408,10 @@ export default function TimetablePage() {
             {/* Quick Metrics Strip */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-2 border-t border-slate-200 dark:border-slate-800 text-xs">
               <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <p className="text-[11px] text-slate-400 font-medium">Required Slots</p>
-                <p className="text-base font-bold text-slate-900 dark:text-white mt-0.5">{stats.totalRequired}</p>
+                <p className="text-[11px] text-slate-400 font-medium">Required Study Slots</p>
+                <p className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
+                  {dailySettings?.isNoStudyDay ? '0 (Day Off)' : stats.totalRequired}
+                </p>
               </div>
               <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                 <p className="text-[11px] text-emerald-400 font-medium">Completed</p>
@@ -380,7 +430,7 @@ export default function TimetablePage() {
                 <p className="text-base font-bold text-slate-400 mt-0.5">{stats.upcoming}</p>
               </div>
               <div className="p-2.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
-                <p className="text-[11px] text-indigo-400 font-medium">Free / Exempt</p>
+                <p className="text-[11px] text-indigo-400 font-medium">College & Breaks</p>
                 <p className="text-base font-bold text-indigo-400 mt-0.5">{stats.exempt}</p>
               </div>
             </div>
@@ -467,7 +517,7 @@ export default function TimetablePage() {
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                 )}
               >
-                Exempt / Break ({stats.exempt})
+                College & Breaks ({stats.exempt})
               </button>
             </div>
 
@@ -497,7 +547,13 @@ export default function TimetablePage() {
                 const isMissed = visualStatus === 'missed';
                 const isCompleted = visualStatus === 'completed';
                 const isInProgress = visualStatus === 'in-progress';
-                const isExempt = visualStatus === 'exempt';
+
+                // Does this slot have a task completion checkbox?
+                // College (6 AM - 2 PM) and personal breaks do NOT have checkboxes.
+                // 3 PM - 4 PM College Academics & study sessions DO have checkboxes!
+                const isCollegeBlock = entry.slotId === 'slot-college' || entry.category === 'college';
+                const isPersonalBreak = entry.isBlocked || entry.category === 'personal';
+                const hasTaskCheckbox = !isCollegeBlock && !isPersonalBreak && !dailySettings?.isNoStudyDay;
 
                 return (
                   <Card
@@ -507,27 +563,46 @@ export default function TimetablePage() {
                       CAT_COLOR[entry.category] || 'border-l-slate-400',
                       isInProgress && 'ring-2 ring-blue-500/50 shadow-md bg-blue-500/5',
                       isMissed && 'border-l-red-500 bg-red-500/[0.02]',
-                      isCompleted && 'border-l-emerald-500 bg-emerald-500/[0.02]'
+                      isCompleted && 'border-l-emerald-500 bg-emerald-500/[0.02]',
+                      isCollegeBlock && 'border-l-blue-600 bg-blue-500/[0.03]'
                     )}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      {/* Left: Checkbox + Time + Activity details */}
+                      {/* Left: Checkbox / Icon + Time + Activity details */}
                       <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
-                        {/* Status Checkbox */}
+                        {/* Status Checkbox or Institutional Routine Icon */}
                         <div className="pt-0.5 sm:pt-0 shrink-0">
-                          {isMissed ? (
+                          {isCollegeBlock ? (
+                            <div
+                              title="College Hours (6:00 AM – 2:00 PM) · Fixed Institutional Routine"
+                              className="w-5 h-5 rounded-md border border-blue-400/40 bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0"
+                            >
+                              <GraduationCap size={13} />
+                            </div>
+                          ) : !hasTaskCheckbox ? (
+                            <div
+                              title={entry.activity}
+                              className="w-5 h-5 rounded-md border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center shrink-0"
+                            >
+                              {entry.activity.toLowerCase().includes('lunch') ? (
+                                <Utensils size={12} />
+                              ) : entry.activity.toLowerCase().includes('sleep') ? (
+                                <BedDouble size={12} />
+                              ) : dailySettings?.isNoStudyDay ? (
+                                <Palmtree size={12} className="text-indigo-400" />
+                              ) : (
+                                <Coffee size={12} />
+                              )}
+                            </div>
+                          ) : isMissed ? (
                             <button
                               type="button"
                               disabled
-                              title="Time has expired for this slot. It is permanently locked."
+                              title="Time has expired for this study task. It is permanently locked."
                               className="w-5 h-5 rounded-md border-2 border-red-500/40 bg-red-500/10 text-red-500 flex items-center justify-center cursor-not-allowed opacity-80"
                             >
                               <Lock size={12} />
                             </button>
-                          ) : isExempt ? (
-                            <div className="w-5 h-5 rounded-md border border-indigo-400/30 bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
-                              {entry.isHoliday ? <Sun size={12} /> : <Coffee size={12} />}
-                            </div>
                           ) : (
                             <button
                               type="button"
@@ -576,6 +651,13 @@ export default function TimetablePage() {
                               {entry.category}
                             </Badge>
 
+                            {/* College fixed routine indicator */}
+                            {isCollegeBlock && (
+                              <Badge variant="info" className="gap-1 text-[10px]">
+                                <GraduationCap size={10} /> College Routine
+                              </Badge>
+                            )}
+
                             {/* Dynamic visual status badge */}
                             {isInProgress && (
                               <Badge variant="info" className="animate-pulse gap-1">
@@ -592,19 +674,25 @@ export default function TimetablePage() {
 
                             {isMissed && (
                               <Badge variant="danger" className="gap-1">
-                                <Lock size={10} /> Time Expired · Missed
+                                <Lock size={10} /> Missed · Locked
                               </Badge>
                             )}
 
-                            {entry.isHoliday && (
+                            {entry.isHoliday && !dailySettings?.isNoStudyDay && (
                               <Badge variant="success" className="gap-1 text-[10px]">
-                                <Palmtree size={10} /> Holiday Free Time
+                                <Laptop size={10} /> Holiday Study Session
                               </Badge>
                             )}
 
-                            {entry.isBlocked && !entry.isHoliday && (
+                            {dailySettings?.isNoStudyDay && (
                               <Badge variant="purple" className="gap-1 text-[10px]">
-                                <Coffee size={10} /> Free Time / Break
+                                <Palmtree size={10} /> Day Off Rest
+                              </Badge>
+                            )}
+
+                            {entry.isBlocked && !isCollegeBlock && !entry.isHoliday && (
+                              <Badge variant="purple" className="gap-1 text-[10px]">
+                                <Coffee size={10} /> Rest Break
                               </Badge>
                             )}
                           </div>
@@ -719,12 +807,12 @@ export default function TimetablePage() {
         <WeeklyOverview selectedDate={selectedDate} onSelectDate={setSelectedDate} />
       )}
 
-      {/* ── DAILY HOLIDAY PROMPT MODAL ── */}
+      {/* ── DAILY SCHEDULE / HOLIDAY PROMPT MODAL ── */}
       <HolidayPromptModal
         open={showHolidayPrompt}
         date={selectedDate}
-        onSelect={async (isHoliday) => {
-          await applyHolidayToDate(selectedDate, isHoliday);
+        onSelect={async (mode) => {
+          await applyHolidayToDate(selectedDate, mode);
         }}
       />
 
@@ -740,14 +828,14 @@ export default function TimetablePage() {
             <div>
               <p className="font-semibold text-sm">Notice: 6:00 AM – 2:00 PM Slot Has Ended</p>
               <p className="mt-1 text-slate-600 dark:text-slate-300">
-                You are switching today from a Holiday back to a Normal Day after 2:00 PM.
-                Because the scheduled college slot has already passed, it will be accurately recorded as <strong>Missed</strong> and locked.
+                You are switching today back to a Normal Day after 2:00 PM.
+                College hours (6:00 AM – 2:00 PM) will remain recorded as normal institutional routine, while 3:00 PM – 4:00 PM College Academics will maintain its active status.
               </p>
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="ghost" onClick={() => setSwitchConfirmOpen(false)}>Cancel</Button>
-            <Button variant="danger" onClick={handleConfirmSwitchHoliday}>Confirm Switch to Normal Day</Button>
+            <Button variant="primary" onClick={handleConfirmSwitch}>Confirm Switch to Normal Day</Button>
           </div>
         </div>
       </Modal>
@@ -788,10 +876,10 @@ export default function TimetablePage() {
           setAutoSundays(val);
           localStorage.setItem('devpilot_auto_sundays_holiday', String(val));
         }}
-        onAddHoliday={async (holidayDate, reason) => {
-          await applyHolidayToDate(holidayDate, true, reason);
+        onAddHoliday={async (holidayDate, mode, reason) => {
+          await applyHolidayToDate(holidayDate, mode, reason);
           setCustomHolidayModalOpen(false);
-          alert(`Holiday marked for ${formatDate(holidayDate)}: ${reason}`);
+          alert(`Schedule configured for ${formatDate(holidayDate)}: ${reason}`);
         }}
       />
 
@@ -814,7 +902,7 @@ export default function TimetablePage() {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// 1. DAILY HOLIDAY PROMPT MODAL
+// 1. DAILY SCHEDULE / HOLIDAY PROMPT MODAL (3 Options)
 // ──────────────────────────────────────────────────────────────────────────────
 function HolidayPromptModal({
   open,
@@ -823,7 +911,7 @@ function HolidayPromptModal({
 }: {
   open: boolean;
   date: string;
-  onSelect: (isHoliday: boolean) => Promise<void>;
+  onSelect: (mode: HolidayMode) => Promise<void>;
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -831,61 +919,81 @@ function HolidayPromptModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-6 text-center space-y-5">
+      <div className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-6 text-center space-y-5">
         <div className="w-14 h-14 mx-auto rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
-          <Sun size={28} />
+          <Calendar size={28} />
         </div>
 
         <div>
           <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider">
-            Daily Routine Check · {formatDate(date)}
+            Daily Routine Plan · {formatDate(date)}
           </span>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-1">
-            Is today a holiday?
+            What is your schedule for today?
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-            Select your schedule mode. On holidays, College (6:00 AM – 2:00 PM) is replaced with Free Time and will not penalize your completion score.
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-md mx-auto">
+            Choose your daily structure. On normal days, College (6 AM – 2 PM) is fixed routine. On holidays, you can divide morning hours into focused study sessions or take a complete Day Off cut off from weekly progress.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-          {/* YES, HOLIDAY */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+          {/* 1. NORMAL COLLEGE DAY */}
           <button
             type="button"
             disabled={loading}
             onClick={async () => {
               setLoading(true);
-              await onSelect(true);
+              await onSelect('normal');
               setLoading(false);
             }}
-            className="flex flex-col items-center p-4 rounded-xl border-2 border-emerald-500/30 hover:border-emerald-500 bg-emerald-500/5 hover:bg-emerald-500/15 text-left transition-all cursor-pointer group"
+            className="flex flex-col p-4 rounded-xl border-2 border-blue-500/30 hover:border-blue-500 bg-blue-500/5 hover:bg-blue-500/15 text-left transition-all cursor-pointer group"
           >
-            <Palmtree size={22} className="text-emerald-500 group-hover:scale-110 transition-transform mb-2" />
-            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-              YES, IT IS A HOLIDAY
+            <GraduationCap size={22} className="text-blue-500 group-hover:scale-110 transition-transform mb-2" />
+            <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
+              Normal College Day
             </span>
             <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-              College replaced with Free Time
+              6 AM – 2 PM College (locked, no checkbox). 3–4 PM College Academics active.
             </span>
           </button>
 
-          {/* NO, NORMAL DAY */}
+          {/* 2. HOLIDAY WITH STUDY PLAN */}
           <button
             type="button"
             disabled={loading}
             onClick={async () => {
               setLoading(true);
-              await onSelect(false);
+              await onSelect('holiday-study');
               setLoading(false);
             }}
-            className="flex flex-col items-center p-4 rounded-xl border-2 border-blue-500/30 hover:border-blue-500 bg-blue-500/5 hover:bg-blue-500/15 text-left transition-all cursor-pointer group"
+            className="flex flex-col p-4 rounded-xl border-2 border-emerald-500/30 hover:border-emerald-500 bg-emerald-500/5 hover:bg-emerald-500/15 text-left transition-all cursor-pointer group"
           >
-            <Clock size={22} className="text-blue-500 group-hover:scale-110 transition-transform mb-2" />
-            <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
-              NO, NORMAL DAY
+            <Laptop size={22} className="text-emerald-500 group-hover:scale-110 transition-transform mb-2" />
+            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+              Holiday (Study Plan)
             </span>
             <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-              Standard college & study routine
+              Divides 6 AM – 2 PM into Python, Web Dev, System Design & Academics.
+            </span>
+          </button>
+
+          {/* 3. NO STUDY (DAY OFF) */}
+          <button
+            type="button"
+            disabled={loading}
+            onClick={async () => {
+              setLoading(true);
+              await onSelect('holiday-no-study');
+              setLoading(false);
+            }}
+            className="flex flex-col p-4 rounded-xl border-2 border-indigo-500/30 hover:border-indigo-500 bg-indigo-500/5 hover:bg-indigo-500/15 text-left transition-all cursor-pointer group"
+          >
+            <Palmtree size={22} className="text-indigo-500 group-hover:scale-110 transition-transform mb-2" />
+            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+              No Study (Day Off)
+            </span>
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+              Full rest day. Automatically cut off from this week's study progress.
             </span>
           </button>
         </div>
@@ -1118,9 +1226,10 @@ function AdvanceHolidayModal({
   onClose: () => void;
   autoSundays: boolean;
   onToggleAutoSundays: (val: boolean) => void;
-  onAddHoliday: (date: string, reason: string) => Promise<void>;
+  onAddHoliday: (date: string, mode: HolidayMode, reason: string) => Promise<void>;
 }) {
   const [date, setDate] = useState(todayStr());
+  const [mode, setMode] = useState<HolidayMode>('holiday-study');
   const [reason, setReason] = useState('Festival / College Holiday');
 
   return (
@@ -1131,10 +1240,10 @@ function AdvanceHolidayModal({
           <label className="flex items-center justify-between cursor-pointer">
             <div>
               <p className="font-semibold text-slate-900 dark:text-white">
-                Automatically treat Sundays as holidays
+                Automatically treat Sundays as Day Off
               </p>
               <p className="text-[11px] text-slate-500 mt-0.5">
-                When enabled, Sundays automatically excuse college hours without prompting.
+                When enabled, Sundays are automatically cut off from weekly study progress.
               </p>
             </div>
             <input
@@ -1157,6 +1266,16 @@ function AdvanceHolidayModal({
             value={date}
             onChange={e => setDate(e.target.value)}
           />
+          <Select
+            label="Plan Type for this Holiday"
+            value={mode}
+            onChange={e => setMode(e.target.value as HolidayMode)}
+            options={[
+              { value: 'holiday-study', label: 'Holiday Study Plan (Divide 6 AM - 2 PM into study)' },
+              { value: 'holiday-no-study', label: 'No Study (Day Off - cut off from weekly progress)' },
+              { value: 'normal', label: 'Normal College Day' },
+            ]}
+          />
           <Input
             label="Reason / Occasion"
             placeholder="e.g. Diwali, College Fest, Semester Break"
@@ -1167,7 +1286,7 @@ function AdvanceHolidayModal({
 
         <div className="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-700">
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => onAddHoliday(date, reason)}>Save Holiday</Button>
+          <Button onClick={() => onAddHoliday(date, mode, reason)}>Save Schedule Plan</Button>
         </div>
       </div>
     </Modal>
@@ -1326,7 +1445,7 @@ function SlotEditModal({
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// 6. WEEKLY CALENDAR OVERVIEW COMPONENT
+// 6. WEEKLY CALENDAR OVERVIEW COMPONENT (With Cut-Off Day Off Exclusion)
 // ──────────────────────────────────────────────────────────────────────────────
 function WeeklyOverview({ selectedDate, onSelectDate }: { selectedDate: string; onSelectDate: (d: string) => void }) {
   const weekStart = startOfWeek(parseISO(selectedDate), { weekStartsOn: 1 });
@@ -1350,7 +1469,9 @@ function DayCard({ date, isSelected, onSelect }: { date: string; isSelected: boo
     initTimetableForDate(date, DEFAULT_TIMETABLE);
   }, [date]);
 
-  const stats = useMemo(() => calculateTimetableStats(entries), [entries]);
+  const stats = useMemo(() => {
+    return calculateTimetableStats(entries, dailySettings?.isNoStudyDay);
+  }, [entries, dailySettings]);
 
   return (
     <Card
@@ -1367,7 +1488,11 @@ function DayCard({ date, isSelected, onSelect }: { date: string; isSelected: boo
       </p>
       <div className="flex items-center justify-center gap-1 mt-1">
         {today && <Badge variant="info" className="text-[10px]">Today</Badge>}
-        {dailySettings?.isHoliday && <Badge variant="success" className="text-[10px]">Holiday</Badge>}
+        {dailySettings?.isNoStudyDay ? (
+          <Badge variant="purple" className="text-[10px]">Day Off</Badge>
+        ) : dailySettings?.isHoliday ? (
+          <Badge variant="success" className="text-[10px]">Holiday Study</Badge>
+        ) : null}
       </div>
       <div className="mt-3">
         <ProgressBar
@@ -1377,11 +1502,13 @@ function DayCard({ date, isSelected, onSelect }: { date: string; isSelected: boo
           color={stats.completionPct >= 80 ? 'emerald' : stats.completionPct >= 50 ? 'amber' : 'blue'}
         />
         <p className="text-xs mt-1 text-slate-500 dark:text-slate-400">
-          {stats.completed}/{stats.totalRequired} req
+          {dailySettings?.isNoStudyDay ? 'Excused' : `${stats.completed}/${stats.totalRequired} req`}
         </p>
       </div>
-      {stats.completionPct === 100 && stats.totalRequired > 0 && (
-        <span className="text-emerald-400 text-xs font-semibold">✓ 100%</span>
+      {stats.completionPct === 100 && (
+        <span className="text-emerald-400 text-xs font-semibold">
+          {dailySettings?.isNoStudyDay ? '🌴 Rest' : '✓ 100%'}
+        </span>
       )}
     </Card>
   );

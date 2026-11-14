@@ -39,11 +39,15 @@ export interface ScheduleException {
   createdAt: string;
 }
 
+export type HolidayMode = 'normal' | 'holiday-study' | 'holiday-no-study';
+
 export interface DailySettings {
   date: string; // YYYY-MM-DD
   isHoliday: boolean;
+  holidayMode?: HolidayMode;
   holidayReason?: string;
   answeredPrompt: boolean;
+  isNoStudyDay?: boolean;
   updatedAt: string;
 }
 

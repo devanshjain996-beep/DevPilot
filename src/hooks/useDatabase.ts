@@ -5,10 +5,11 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { db } from '../store/db';
 import { todayStr, weekRange, percentage, generateId } from '../utils/helpers';
-import { ALL_TRACKS } from '../data/roadmapData';
+import { ALL_TRACKS, DEFAULT_TIMETABLE, HOLIDAY_STUDY_MORNING_SLOTS } from '../data/roadmapData';
 import type {
   LearningTopic, TimetableEntry, Task, DSAProblem, Project,
-  Subject, Goal, StudyLog, WeeklySlot, ScheduleException, DailySettings, ExceptionType
+  Subject, Goal, StudyLog, WeeklySlot, ScheduleException, DailySettings,
+  ExceptionType, HolidayMode
 } from '../types';
 
 // ── Topic operations ──
@@ -124,51 +125,145 @@ export async function removeSlotWithException(
   }
 }
 
-export async function applyHolidayToDate(date: string, isHoliday: boolean, reason?: string) {
+export async function applyHolidayToDate(date: string, mode: HolidayMode, reason?: string) {
+  const isHoliday = mode !== 'normal';
+  const isNoStudyDay = mode === 'holiday-no-study';
+
   await db.dailySettings.put({
     date,
     isHoliday,
+    holidayMode: mode,
+    isNoStudyDay,
     holidayReason: reason,
     answeredPrompt: true,
     updatedAt: new Date().toISOString(),
   });
 
-  // Find college slot for this date
-  const entries = await db.timetable.where('date').equals(date).toArray();
-  const collegeEntry = entries.find(e =>
-    e.slotId === 'slot-college' || e.category === 'college' || e.activity.toLowerCase().includes('college')
-  );
+  // Re-sync schedule for this date based on the chosen mode
+  const existingEntries = await db.timetable.where('date').equals(date).toArray();
 
-  if (collegeEntry) {
-    if (isHoliday) {
-      await db.timetable.update(collegeEntry.id, {
-        activity: 'Free Time (Holiday)',
-        category: 'personal',
-        isHoliday: true,
-        isBlocked: true,
-        isExempt: true,
-        status: 'exempt',
-        locked: false,
-        statusUpdatedAt: new Date().toISOString(),
-      });
-    } else {
-      const now = new Date();
-      const isToday = date === todayStr();
-      const currentHour = now.getHours() + now.getMinutes() / 60;
-      const hasEnded = isToday && currentHour >= collegeEntry.endHour;
+  if (mode === 'holiday-study') {
+    // 1. Divide 6 AM - 2 PM into study sessions
+    // Remove old college or holiday morning slots
+    const toDelete = existingEntries
+      .filter(e => e.slotId === 'slot-college' || e.slotId?.startsWith('hslot-'))
+      .map(e => e.id);
+    if (toDelete.length > 0) {
+      await db.timetable.bulkDelete(toDelete);
+    }
 
-      await db.timetable.update(collegeEntry.id, {
+    // Insert the 5 structured study sessions
+    const morningSlots: TimetableEntry[] = HOLIDAY_STUDY_MORNING_SLOTS.map(s => ({
+      ...s,
+      id: generateId(),
+      date,
+      status: 'pending' as const,
+    }));
+    await db.timetable.bulkAdd(morningSlots);
+
+    // Ensure 3 PM - 4 PM College Academics and other slots are restored to active study tasks
+    const remaining = await db.timetable.where('date').equals(date).toArray();
+    for (const e of remaining) {
+      if (e.slotId === 'slot-academics' || e.slotId === 'slot-python' || e.slotId === 'slot-cpp-dsa' || e.slotId === 'slot-webdev' || e.slotId === 'slot-planning') {
+        await db.timetable.update(e.id, {
+          isBlocked: false,
+          isExempt: false,
+        });
+      }
+    }
+  } else if (mode === 'holiday-no-study') {
+    // 2. Day off / No Study: Excused day with no checkboxes
+    const toDelete = existingEntries
+      .filter(e => e.slotId?.startsWith('hslot-'))
+      .map(e => e.id);
+    if (toDelete.length > 0) {
+      await db.timetable.bulkDelete(toDelete);
+    }
+
+    const currentEntries = await db.timetable.where('date').equals(date).toArray();
+    for (const e of currentEntries) {
+      if (e.slotId === 'slot-college') {
+        await db.timetable.update(e.id, {
+          activity: 'Free Time & Rest (Holiday)',
+          category: 'personal',
+          isBlocked: true,
+          isExempt: true,
+          status: 'exempt',
+          locked: false,
+        });
+      } else {
+        // Mark all tasks on a No Study Day as excused free time
+        await db.timetable.update(e.id, {
+          isBlocked: true,
+          isExempt: true,
+          status: 'exempt',
+          locked: false,
+        });
+      }
+    }
+  } else {
+    // 3. Normal Day: College 6 AM - 2 PM locked institutional block (no checkbox), 3 PM - 4 PM College Academics active with checkbox
+    const toDelete = existingEntries
+      .filter(e => e.slotId?.startsWith('hslot-'))
+      .map(e => e.id);
+    if (toDelete.length > 0) {
+      await db.timetable.bulkDelete(toDelete);
+    }
+
+    // Ensure college slot exists
+    const college = existingEntries.find(e => e.slotId === 'slot-college');
+    if (college) {
+      await db.timetable.update(college.id, {
         activity: 'College',
         category: 'college',
+        isBlocked: true, // Fixed college hours, locked institutional routine, no checkbox
         isHoliday: false,
-        isBlocked: false,
         isExempt: false,
-        status: hasEnded ? 'missed' : 'pending',
-        locked: hasEnded,
-        statusUpdatedAt: new Date().toISOString(),
+        status: 'pending',
+        locked: true,
+      });
+    } else {
+      await db.timetable.add({
+        id: generateId(),
+        slotId: 'slot-college',
+        time: '6:00 AM – 2:00 PM',
+        startHour: 6,
+        endHour: 14,
+        activity: 'College',
+        category: 'college',
+        isBlocked: true,
+        isHoliday: false,
+        isExempt: false,
+        status: 'pending',
+        locked: true,
+        date,
       });
     }
+
+    // Ensure 3-4 PM College Academics is active study task with checkbox
+    const academics = existingEntries.find(e => e.slotId === 'slot-academics');
+    if (academics) {
+      await db.timetable.update(academics.id, {
+        activity: 'College academics, revision & assignments',
+        category: 'academics',
+        isBlocked: false,
+        isExempt: false,
+      });
+    }
+
+    // Restore regular study slots
+    const current = await db.timetable.where('date').equals(date).toArray();
+    for (const e of current) {
+      if (['slot-python', 'slot-cpp-dsa', 'slot-webdev', 'slot-planning'].includes(e.slotId || '')) {
+        await db.timetable.update(e.id, {
+          isBlocked: false,
+          isExempt: false,
+        });
+      }
+    }
   }
+
+  await lockExpiredSlotsForDate(date);
 }
 
 export async function lockExpiredSlotsForDate(date: string) {
@@ -179,11 +274,15 @@ export async function lockExpiredSlotsForDate(date: string) {
 
   if (!isToday && !isPast) return;
 
+  const ds = await db.dailySettings.get(date);
+  if (ds?.isNoStudyDay) return; // Excused no-study day
+
   const currentHour = now.getHours() + now.getMinutes() / 60;
   const entries = await db.timetable.where('date').equals(date).toArray();
 
   for (const entry of entries) {
-    if (entry.isExempt || entry.isHoliday || entry.isBlocked || entry.category === 'personal') {
+    // College institutional hours and personal breaks have NO checkbox and are not marked missed
+    if (entry.isExempt || entry.isBlocked || entry.category === 'personal' || entry.category === 'college') {
       continue;
     }
     if (entry.status === 'completed') {
@@ -202,13 +301,33 @@ export async function lockExpiredSlotsForDate(date: string) {
   }
 }
 
-export function calculateTimetableStats(entries: TimetableEntry[]) {
-  const required = entries.filter(e => !e.isExempt && !e.isHoliday && !e.isBlocked && e.category !== 'personal');
+export function calculateTimetableStats(entries: TimetableEntry[], isNoStudyDay?: boolean) {
+  if (isNoStudyDay) {
+    return {
+      totalRequired: 0,
+      completed: 0,
+      missed: 0,
+      inProgress: 0,
+      upcoming: 0,
+      exempt: entries.length,
+      completionPct: 100,
+      isNoStudyDay: true,
+    };
+  }
+
+  // Required slots: Not exempt, not personal break, and not college institutional hours (3-4 PM Academics IS included)
+  const required = entries.filter(e =>
+    !e.isExempt &&
+    !e.isBlocked &&
+    e.category !== 'personal' &&
+    e.category !== 'college'
+  );
+
   const completed = required.filter(e => e.status === 'completed').length;
   const missed = required.filter(e => e.status === 'missed').length;
   const inProgress = required.filter(e => e.status === 'in-progress').length;
   const upcoming = required.filter(e => e.status === 'upcoming' || e.status === 'pending').length;
-  const exempt = entries.filter(e => e.isExempt || e.isHoliday || e.isBlocked || e.category === 'personal').length;
+  const exempt = entries.filter(e => e.isExempt || e.isBlocked || e.category === 'personal' || e.category === 'college').length;
   const totalRequired = required.length;
   const completionPct = totalRequired > 0 ? Math.round((completed / totalRequired) * 100) : 100;
 
@@ -220,6 +339,7 @@ export function calculateTimetableStats(entries: TimetableEntry[]) {
     upcoming,
     exempt,
     completionPct,
+    isNoStudyDay: false,
   };
 }
 
@@ -233,40 +353,59 @@ export async function initTimetableForDate(date: string, entries: Omit<Timetable
 
   // Retrieve holiday settings
   const ds = await db.dailySettings.get(date);
-  const isHoliday = ds?.isHoliday ?? false;
+  const holidayMode = ds?.holidayMode || (ds?.isHoliday ? 'holiday-study' : 'normal');
 
   if (existingCount === 0) {
-    const allowedEntries = entries.filter(e => !excludedSlotIds.has(e.slotId || ''));
+    if (holidayMode === 'holiday-study') {
+      // Initialize with morning divided study sessions
+      const morningSlots = HOLIDAY_STUDY_MORNING_SLOTS
+        .filter(e => !excludedSlotIds.has(e.slotId || ''))
+        .map(s => ({
+          ...s,
+          id: generateId(),
+          date,
+          status: 'pending' as const,
+        }));
 
-    const items: TimetableEntry[] = allowedEntries.map(e => {
-      const isCollege = e.slotId === 'slot-college' || e.category === 'college';
-      if (isHoliday && isCollege) {
-        return {
+      const afternoonSlots = entries
+        .filter(e => e.slotId !== 'slot-college' && !excludedSlotIds.has(e.slotId || ''))
+        .map(e => ({
           ...e,
           id: generateId(),
           date,
-          activity: 'Free Time (Holiday)',
-          category: 'personal',
-          isHoliday: true,
+          status: 'pending' as const,
+        }));
+
+      await db.timetable.bulkAdd([...morningSlots, ...afternoonSlots]);
+    } else if (holidayMode === 'holiday-no-study') {
+      const dayOffSlots = entries
+        .filter(e => !excludedSlotIds.has(e.slotId || ''))
+        .map(e => ({
+          ...e,
+          id: generateId(),
+          date,
+          activity: e.slotId === 'slot-college' ? 'Free Time & Rest (Holiday)' : e.activity,
           isBlocked: true,
           isExempt: true,
           status: 'exempt' as const,
-        };
-      }
-      return {
+        }));
+      await db.timetable.bulkAdd(dayOffSlots);
+    } else {
+      // Normal Day
+      const allowedEntries = entries.filter(e => !excludedSlotIds.has(e.slotId || ''));
+      const items: TimetableEntry[] = allowedEntries.map(e => ({
         ...e,
         id: generateId(),
         date,
+        // College (6 AM - 2 PM) is fixed locked routine, no checkbox
+        isBlocked: e.slotId === 'slot-college' ? true : e.isBlocked,
         status: 'pending' as const,
-      };
-    });
-
-    if (items.length > 0) {
+      }));
       await db.timetable.bulkAdd(items);
     }
   }
 
-  // Automatically lock any expired slots
+  // Automatically lock any expired study tasks
   await lockExpiredSlotsForDate(date);
 }
 

@@ -1,7 +1,7 @@
 // ============================================================================
 // DevPilot - Dashboard Page
 // ============================================================================
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Calendar,
@@ -15,6 +15,7 @@ import {
   TrendingUp,
   AlertCircle,
   ClipboardList,
+  Lock,
 } from 'lucide-react';
 import {
   Card,
@@ -34,6 +35,8 @@ import {
   useAllTopics,
   updateTimetableStatus,
   updateTask,
+  lockExpiredSlotsForDate,
+  calculateTimetableStats,
 } from '../hooks/useDatabase';
 import { todayStr, formatDate, formatDay, percentage, cn, statusBg } from '../utils/helpers';
 import { useProfile } from '../store/useStore';
@@ -86,16 +89,28 @@ export default function DashboardPage() {
   const subjects = useSubjects();
   const projects = useProjects();
   const { tracks, overallPercentage } = useTrackProgress();
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Periodically check and lock expired slots on dashboard
+  useEffect(() => {
+    lockExpiredSlotsForDate(today);
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+      lockExpiredSlotsForDate(today);
+    }, 15000);
+    return () => clearInterval(timer);
+  }, [today]);
+
+  // Calculate timetable stats excluding exempt/holiday slots
+  const timetableStats = useMemo(() => calculateTimetableStats(timetable), [timetable]);
 
   // ── 4. Daily completion percentage ──
   const dailyCompletion = useMemo(() => {
-    const ttDone = timetable.filter(
-      (e) => e.status === 'completed',
-    ).length;
     const taskDone = todayTasks.filter((t) => t.status === 'completed').length;
-    const total = timetable.length + todayTasks.length;
-    return percentage(ttDone + taskDone, total);
-  }, [timetable, todayTasks]);
+    const reqDone = timetableStats.completed + taskDone;
+    const reqTotal = timetableStats.totalRequired + todayTasks.length;
+    return reqTotal > 0 ? Math.round((reqDone / reqTotal) * 100) : 100;
+  }, [timetableStats, todayTasks]);
 
   // ── 5. Weekly study hours ──
   const weeklyData = useMemo(() => {
@@ -203,8 +218,16 @@ export default function DashboardPage() {
   );
 
   // ── handlers ──
-  const toggleTimetableStatus = (id: string, current: TaskStatus) => {
-    updateTimetableStatus(id, current === 'completed' ? 'pending' : 'completed');
+  const toggleTimetableStatus = (entry: import('../types').TimetableEntry) => {
+    const currentHour = currentTime.getHours() + currentTime.getMinutes() / 60;
+    const isRequired = !entry.isExempt && !entry.isHoliday && !entry.isBlocked && entry.category !== 'personal';
+    const isExpired = isRequired && (currentHour >= entry.endHour || entry.status === 'missed');
+
+    if (isExpired) {
+      alert('This time slot has expired and is locked. Missed activities cannot be marked completed.');
+      return;
+    }
+    updateTimetableStatus(entry.id, entry.status === 'completed' ? 'pending' : 'completed');
   };
 
   const toggleTaskStatus = (id: string, current: TaskStatus) => {
@@ -288,45 +311,79 @@ export default function DashboardPage() {
               <div className="space-y-2">
                 {timetable
                   .sort((a, b) => a.startHour - b.startHour)
-                  .map((entry) => (
-                    <div
-                      key={entry.id}
-                      className={cn(
-                        'flex items-center justify-between px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700',
-                        entry.status === 'completed' && 'opacity-60',
-                      )}
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <Checkbox
-                          checked={entry.status === 'completed'}
-                          onChange={() =>
-                            toggleTimetableStatus(entry.id, entry.status)
-                          }
-                        />
-                        <div className="min-w-0">
-                          <p
-                            className={cn(
-                              'text-sm font-medium truncate',
-                              entry.status === 'completed'
-                                ? 'text-slate-500 line-through'
-                                : 'text-slate-900 dark:text-white',
-                            )}
-                          >
-                            {entry.activity}
-                          </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
-                            {entry.time}
-                          </p>
-                        </div>
-                      </div>
-                      <Badge
-                        variant={badgeVariant(entry.status)}
-                        className="shrink-0 ml-2"
+                  .map((entry) => {
+                    const currentHour = currentTime.getHours() + currentTime.getMinutes() / 60;
+                    const isRequired = !entry.isExempt && !entry.isHoliday && !entry.isBlocked && entry.category !== 'personal';
+                    const isExpired = isRequired && (currentHour >= entry.endHour || entry.status === 'missed');
+                    const isCompleted = entry.status === 'completed';
+
+                    return (
+                      <div
+                        key={entry.id}
+                        className={cn(
+                          'flex items-center justify-between px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700',
+                          isCompleted && 'opacity-60 bg-emerald-500/[0.02] border-emerald-500/30',
+                          isExpired && 'border-red-500/30 bg-red-500/[0.02]',
+                        )}
                       >
-                        {entry.status}
-                      </Badge>
-                    </div>
-                  ))}
+                        <div className="flex items-center gap-3 min-w-0">
+                          {isExpired ? (
+                            <button
+                              type="button"
+                              disabled
+                              title="Time expired · Locked"
+                              className="w-4 h-4 rounded border border-red-500/40 bg-red-500/10 text-red-500 flex items-center justify-center cursor-not-allowed shrink-0"
+                            >
+                              <Lock size={10} />
+                            </button>
+                          ) : (
+                            <Checkbox
+                              checked={isCompleted}
+                              onChange={() => toggleTimetableStatus(entry)}
+                            />
+                          )}
+                          <div className="min-w-0">
+                            <p
+                              className={cn(
+                                'text-sm font-medium truncate',
+                                isCompleted
+                                  ? 'text-slate-500 line-through'
+                                  : isExpired
+                                  ? 'text-slate-600 dark:text-slate-400'
+                                  : 'text-slate-900 dark:text-white',
+                              )}
+                            >
+                              {entry.activity}
+                            </p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                              {entry.time}
+                            </p>
+                          </div>
+                        </div>
+
+                        {isExpired ? (
+                          <Badge variant="danger" className="shrink-0 ml-2 gap-1 text-[10px]">
+                            <Lock size={9} /> Missed
+                          </Badge>
+                        ) : entry.isHoliday ? (
+                          <Badge variant="success" className="shrink-0 ml-2 text-[10px]">
+                            Holiday Free Time
+                          </Badge>
+                        ) : entry.isBlocked ? (
+                          <Badge variant="purple" className="shrink-0 ml-2 text-[10px]">
+                            Free Time
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant={badgeVariant(entry.status)}
+                            className="shrink-0 ml-2"
+                          >
+                            {entry.status}
+                          </Badge>
+                        )}
+                      </div>
+                    );
+                  })}
               </div>
             )}
           </Card>

@@ -2,10 +2,14 @@
 // DevPilot - Database hooks for data access
 // ============================================================================
 import { useLiveQuery } from 'dexie-react-hooks';
+import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { db } from '../store/db';
 import { todayStr, weekRange, percentage, generateId } from '../utils/helpers';
 import { ALL_TRACKS } from '../data/roadmapData';
-import type { LearningTopic, TimetableEntry, Task, DSAProblem, Project, Subject, Goal, StudyLog, WeeklySlot } from '../types';
+import type {
+  LearningTopic, TimetableEntry, Task, DSAProblem, Project,
+  Subject, Goal, StudyLog, WeeklySlot, ScheduleException, DailySettings, ExceptionType
+} from '../types';
 
 // ── Topic operations ──
 export function useTopics(trackId?: string) {
@@ -49,21 +53,231 @@ export function useTimetableByDate(date: string) {
   return useLiveQuery(() => db.timetable.where('date').equals(date).toArray(), [date]) ?? [];
 }
 
-export async function initTimetableForDate(date: string, entries: Omit<TimetableEntry, 'id' | 'date' | 'status'>[]) {
-  const existing = await db.timetable.where('date').equals(date).count();
-  if (existing === 0) {
-    const items: TimetableEntry[] = entries.map(e => ({
-      ...e,
-      id: generateId(),
-      date,
-      status: 'pending' as const,
-    }));
-    await db.timetable.bulkAdd(items);
+export function useDailySettings(date: string) {
+  return useLiveQuery(() => db.dailySettings.get(date), [date]);
+}
+
+export async function setDailySettings(settings: DailySettings) {
+  await db.dailySettings.put(settings);
+}
+
+export function useScheduleExceptions() {
+  return useLiveQuery(() => db.scheduleExceptions.toArray()) ?? [];
+}
+
+export async function addScheduleException(exception: Omit<ScheduleException, 'id' | 'createdAt'>) {
+  const id = generateId();
+  const item: ScheduleException = {
+    ...exception,
+    id,
+    createdAt: new Date().toISOString(),
+  };
+  await db.scheduleExceptions.add(item);
+  return item;
+}
+
+export async function deleteScheduleException(id: string) {
+  await db.scheduleExceptions.delete(id);
+}
+
+export async function removeSlotWithException(
+  slotId: string,
+  type: ExceptionType,
+  selectedDate: string,
+  reason?: string
+) {
+  let startDate = selectedDate;
+  let endDate = selectedDate;
+
+  if (type === 'week') {
+    startDate = format(startOfWeek(parseISO(selectedDate), { weekStartsOn: 1 }), 'yyyy-MM-dd');
+    endDate = format(endOfWeek(parseISO(selectedDate), { weekStartsOn: 1 }), 'yyyy-MM-dd');
+  } else if (type === 'month') {
+    startDate = format(startOfMonth(parseISO(selectedDate)), 'yyyy-MM-dd');
+    endDate = format(endOfMonth(parseISO(selectedDate)), 'yyyy-MM-dd');
+  } else if (type === 'permanent') {
+    startDate = selectedDate;
+    endDate = '2099-12-31';
+  }
+
+  // Record schedule exception
+  await addScheduleException({
+    slotId,
+    type,
+    startDate,
+    endDate,
+    reason: reason || `Removed for ${type}`,
+  });
+
+  // Remove existing entries within the exception window
+  const entries = await db.timetable
+    .where('date')
+    .between(startDate, endDate, true, true)
+    .toArray();
+
+  const matchingIds = entries
+    .filter(e => (e.slotId || e.id) === slotId)
+    .map(e => e.id);
+
+  if (matchingIds.length > 0) {
+    await db.timetable.bulkDelete(matchingIds);
   }
 }
 
+export async function applyHolidayToDate(date: string, isHoliday: boolean, reason?: string) {
+  await db.dailySettings.put({
+    date,
+    isHoliday,
+    holidayReason: reason,
+    answeredPrompt: true,
+    updatedAt: new Date().toISOString(),
+  });
+
+  // Find college slot for this date
+  const entries = await db.timetable.where('date').equals(date).toArray();
+  const collegeEntry = entries.find(e =>
+    e.slotId === 'slot-college' || e.category === 'college' || e.activity.toLowerCase().includes('college')
+  );
+
+  if (collegeEntry) {
+    if (isHoliday) {
+      await db.timetable.update(collegeEntry.id, {
+        activity: 'Free Time (Holiday)',
+        category: 'personal',
+        isHoliday: true,
+        isBlocked: true,
+        isExempt: true,
+        status: 'exempt',
+        locked: false,
+        statusUpdatedAt: new Date().toISOString(),
+      });
+    } else {
+      const now = new Date();
+      const isToday = date === todayStr();
+      const currentHour = now.getHours() + now.getMinutes() / 60;
+      const hasEnded = isToday && currentHour >= collegeEntry.endHour;
+
+      await db.timetable.update(collegeEntry.id, {
+        activity: 'College',
+        category: 'college',
+        isHoliday: false,
+        isBlocked: false,
+        isExempt: false,
+        status: hasEnded ? 'missed' : 'pending',
+        locked: hasEnded,
+        statusUpdatedAt: new Date().toISOString(),
+      });
+    }
+  }
+}
+
+export async function lockExpiredSlotsForDate(date: string) {
+  const now = new Date();
+  const today = todayStr();
+  const isToday = date === today;
+  const isPast = date < today;
+
+  if (!isToday && !isPast) return;
+
+  const currentHour = now.getHours() + now.getMinutes() / 60;
+  const entries = await db.timetable.where('date').equals(date).toArray();
+
+  for (const entry of entries) {
+    if (entry.isExempt || entry.isHoliday || entry.isBlocked || entry.category === 'personal') {
+      continue;
+    }
+    if (entry.status === 'completed') {
+      continue;
+    }
+
+    const isExpired = isPast || (isToday && currentHour >= entry.endHour);
+
+    if (isExpired && entry.status !== 'missed') {
+      await db.timetable.update(entry.id, {
+        status: 'missed',
+        locked: true,
+        statusUpdatedAt: new Date().toISOString(),
+      });
+    }
+  }
+}
+
+export function calculateTimetableStats(entries: TimetableEntry[]) {
+  const required = entries.filter(e => !e.isExempt && !e.isHoliday && !e.isBlocked && e.category !== 'personal');
+  const completed = required.filter(e => e.status === 'completed').length;
+  const missed = required.filter(e => e.status === 'missed').length;
+  const inProgress = required.filter(e => e.status === 'in-progress').length;
+  const upcoming = required.filter(e => e.status === 'upcoming' || e.status === 'pending').length;
+  const exempt = entries.filter(e => e.isExempt || e.isHoliday || e.isBlocked || e.category === 'personal').length;
+  const totalRequired = required.length;
+  const completionPct = totalRequired > 0 ? Math.round((completed / totalRequired) * 100) : 100;
+
+  return {
+    totalRequired,
+    completed,
+    missed,
+    inProgress,
+    upcoming,
+    exempt,
+    completionPct,
+  };
+}
+
+export async function initTimetableForDate(date: string, entries: Omit<TimetableEntry, 'id' | 'date' | 'status'>[]) {
+  const existingCount = await db.timetable.where('date').equals(date).count();
+
+  // Retrieve active schedule exceptions
+  const exceptions = await db.scheduleExceptions.toArray();
+  const activeExceptions = exceptions.filter(ex => ex.startDate <= date && date <= ex.endDate);
+  const excludedSlotIds = new Set(activeExceptions.map(ex => ex.slotId));
+
+  // Retrieve holiday settings
+  const ds = await db.dailySettings.get(date);
+  const isHoliday = ds?.isHoliday ?? false;
+
+  if (existingCount === 0) {
+    const allowedEntries = entries.filter(e => !excludedSlotIds.has(e.slotId || ''));
+
+    const items: TimetableEntry[] = allowedEntries.map(e => {
+      const isCollege = e.slotId === 'slot-college' || e.category === 'college';
+      if (isHoliday && isCollege) {
+        return {
+          ...e,
+          id: generateId(),
+          date,
+          activity: 'Free Time (Holiday)',
+          category: 'personal',
+          isHoliday: true,
+          isBlocked: true,
+          isExempt: true,
+          status: 'exempt' as const,
+        };
+      }
+      return {
+        ...e,
+        id: generateId(),
+        date,
+        status: 'pending' as const,
+      };
+    });
+
+    if (items.length > 0) {
+      await db.timetable.bulkAdd(items);
+    }
+  }
+
+  // Automatically lock any expired slots
+  await lockExpiredSlotsForDate(date);
+}
+
 export async function updateTimetableStatus(id: string, status: TimetableEntry['status']) {
-  await db.timetable.update(id, { status });
+  // If attempting to complete, store timestamp
+  const completedAt = status === 'completed' ? new Date().toISOString() : undefined;
+  await db.timetable.update(id, {
+    status,
+    completedAt,
+    statusUpdatedAt: new Date().toISOString(),
+  });
 }
 
 export async function updateTimetableEntry(id: string, data: Partial<TimetableEntry>) {
@@ -80,13 +294,46 @@ export async function deleteTimetableEntry(id: string) {
 
 export async function resetTimetableForDate(date: string, entries: Omit<TimetableEntry, 'id' | 'date' | 'status'>[]) {
   await db.timetable.where('date').equals(date).delete();
-  const items: TimetableEntry[] = entries.map(e => ({
-    ...e,
-    id: generateId(),
-    date,
-    status: 'pending' as const,
-  }));
-  await db.timetable.bulkAdd(items);
+
+  // Retrieve active exceptions
+  const exceptions = await db.scheduleExceptions.toArray();
+  const activeExceptions = exceptions.filter(ex => ex.startDate <= date && date <= ex.endDate);
+  const excludedSlotIds = new Set(activeExceptions.map(ex => ex.slotId));
+
+  // Check holiday
+  const ds = await db.dailySettings.get(date);
+  const isHoliday = ds?.isHoliday ?? false;
+
+  const allowedEntries = entries.filter(e => !excludedSlotIds.has(e.slotId || ''));
+
+  const items: TimetableEntry[] = allowedEntries.map(e => {
+    const isCollege = e.slotId === 'slot-college' || e.category === 'college';
+    if (isHoliday && isCollege) {
+      return {
+        ...e,
+        id: generateId(),
+        date,
+        activity: 'Free Time (Holiday)',
+        category: 'personal',
+        isHoliday: true,
+        isBlocked: true,
+        isExempt: true,
+        status: 'exempt' as const,
+      };
+    }
+    return {
+      ...e,
+      id: generateId(),
+      date,
+      status: 'pending' as const,
+    };
+  });
+
+  if (items.length > 0) {
+    await db.timetable.bulkAdd(items);
+  }
+
+  await lockExpiredSlotsForDate(date);
 }
 
 // ── Task operations ──
@@ -225,7 +472,7 @@ export function useTrackProgress() {
 // ── Export/Import ──
 export async function exportAllData() {
   const data = {
-    version: 1,
+    version: 2,
     exportedAt: new Date().toISOString(),
     topics: await db.topics.toArray(),
     timetable: await db.timetable.toArray(),
@@ -237,6 +484,8 @@ export async function exportAllData() {
     studyLogs: await db.studyLogs.toArray(),
     weeklyReviews: await db.weeklyReviews.toArray(),
     weeklySlots: await db.weeklySlots.toArray(),
+    scheduleExceptions: await db.scheduleExceptions.toArray(),
+    dailySettings: await db.dailySettings.toArray(),
     settings: localStorage.getItem('devpilot_settings'),
     profile: localStorage.getItem('devpilot_profile'),
   };
@@ -245,7 +494,11 @@ export async function exportAllData() {
 
 export async function importAllData(data: any) {
   if (!data?.version) throw new Error('Invalid backup file');
-  await db.transaction('rw', [db.topics, db.timetable, db.tasks, db.dsaProblems, db.projects, db.subjects, db.goals, db.studyLogs, db.weeklyReviews, db.weeklySlots], async () => {
+  await db.transaction('rw', [
+    db.topics, db.timetable, db.tasks, db.dsaProblems, db.projects,
+    db.subjects, db.goals, db.studyLogs, db.weeklyReviews, db.weeklySlots,
+    db.scheduleExceptions, db.dailySettings
+  ], async () => {
     if (data.topics) { await db.topics.clear(); await db.topics.bulkAdd(data.topics); }
     if (data.timetable) { await db.timetable.clear(); await db.timetable.bulkAdd(data.timetable); }
     if (data.tasks) { await db.tasks.clear(); await db.tasks.bulkAdd(data.tasks); }
@@ -256,6 +509,8 @@ export async function importAllData(data: any) {
     if (data.studyLogs) { await db.studyLogs.clear(); await db.studyLogs.bulkAdd(data.studyLogs); }
     if (data.weeklyReviews) { await db.weeklyReviews.clear(); await db.weeklyReviews.bulkAdd(data.weeklyReviews); }
     if (data.weeklySlots) { await db.weeklySlots.clear(); await db.weeklySlots.bulkAdd(data.weeklySlots); }
+    if (data.scheduleExceptions) { await db.scheduleExceptions.clear(); await db.scheduleExceptions.bulkAdd(data.scheduleExceptions); }
+    if (data.dailySettings) { await db.dailySettings.clear(); await db.dailySettings.bulkAdd(data.dailySettings); }
   });
   if (data.settings) localStorage.setItem('devpilot_settings', data.settings);
   if (data.profile) localStorage.setItem('devpilot_profile', data.profile);
@@ -272,6 +527,8 @@ export async function clearAllData() {
   await db.studyLogs.clear();
   await db.weeklyReviews.clear();
   await db.weeklySlots.clear();
+  await db.scheduleExceptions.clear();
+  await db.dailySettings.clear();
   localStorage.removeItem('devpilot_settings');
   localStorage.removeItem('devpilot_profile');
 }

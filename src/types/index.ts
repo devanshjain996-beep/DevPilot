@@ -4,21 +4,47 @@
 
 export type LearningStatus = 'not-started' | 'learning' | 'practising' | 'completed';
 export type ProjectStatus = 'idea' | 'planning' | 'in-progress' | 'completed';
-export type TaskStatus = 'pending' | 'completed' | 'skipped' | 'rescheduled';
+export type TaskStatus = 'pending' | 'completed' | 'skipped' | 'rescheduled' | 'missed' | 'exempt' | 'in-progress' | 'upcoming';
+export type SlotVisualStatus = 'upcoming' | 'in-progress' | 'completed' | 'missed' | 'exempt';
 export type Priority = 'low' | 'medium' | 'high' | 'urgent';
 export type Difficulty = 'easy' | 'medium' | 'hard';
 export type GoalPeriod = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+export type ExceptionType = 'day' | 'week' | 'month' | 'permanent';
 
 export interface TimetableEntry {
   id: string;
+  slotId?: string; // Stable ID across recurring occurrences (e.g. 'slot-college')
   time: string;
   startHour: number;
   endHour: number;
   activity: string;
   category: string;
-  isBlocked?: boolean;
+  isBlocked?: boolean; // Personal break / free time
+  isHoliday?: boolean; // Converted for holiday
+  isExempt?: boolean;  // Excused/exempt from required calculations
   status: TaskStatus;
   date: string; // YYYY-MM-DD
+  completedAt?: string;
+  statusUpdatedAt?: string;
+  locked?: boolean;
+}
+
+export interface ScheduleException {
+  id: string;
+  slotId: string;
+  type: ExceptionType;
+  startDate: string; // YYYY-MM-DD
+  endDate: string;   // YYYY-MM-DD
+  reason?: string;
+  createdAt: string;
+}
+
+export interface DailySettings {
+  date: string; // YYYY-MM-DD
+  isHoliday: boolean;
+  holidayReason?: string;
+  answeredPrompt: boolean;
+  updatedAt: string;
 }
 
 export interface WeeklySlot {

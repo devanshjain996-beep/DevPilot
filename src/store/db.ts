@@ -4,7 +4,8 @@
 import Dexie, { type Table } from 'dexie';
 import type {
   TimetableEntry, Task, LearningTopic, DSAProblem, Project,
-  Subject, Goal, WeeklyReview, StudyLog, WeeklySlot
+  Subject, Goal, WeeklyReview, StudyLog, WeeklySlot,
+  ScheduleException, DailySettings
 } from '../types';
 
 export class DevPilotDB extends Dexie {
@@ -18,6 +19,8 @@ export class DevPilotDB extends Dexie {
   weeklyReviews!: Table<WeeklyReview, string>;
   studyLogs!: Table<StudyLog, string>;
   weeklySlots!: Table<WeeklySlot, string>;
+  scheduleExceptions!: Table<ScheduleException, string>;
+  dailySettings!: Table<DailySettings, string>;
 
   constructor() {
     super('DevPilotDB');
@@ -32,6 +35,20 @@ export class DevPilotDB extends Dexie {
       weeklyReviews: 'id, weekStart',
       studyLogs: 'id, date, category',
       weeklySlots: 'id, day',
+    });
+    this.version(2).stores({
+      timetable: 'id, date, category, status, slotId',
+      tasks: 'id, date, category, status, priority',
+      topics: 'id, trackId, section, status, order',
+      dsaProblems: 'id, topic, difficulty, platform, solved',
+      projects: 'id, status',
+      subjects: 'id',
+      goals: 'id, period, completed',
+      weeklyReviews: 'id, weekStart',
+      studyLogs: 'id, date, category',
+      weeklySlots: 'id, day',
+      scheduleExceptions: 'id, slotId, type, startDate, endDate',
+      dailySettings: 'date, isHoliday',
     });
   }
 }

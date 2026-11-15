@@ -178,7 +178,7 @@ export default function AuthModal({
               <span>Cloud Configuration Notice</span>
             </div>
             <p className="text-[11px] leading-relaxed">
-              Supabase environment variables (<code className="bg-amber-500/20 px-1 rounded">NEXT_PUBLIC_SUPABASE_URL</code> & <code className="bg-amber-500/20 px-1 rounded">NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code>) are not yet configured in production.
+              Supabase environment variables (<code className="bg-amber-500/20 px-1 rounded">VITE_SUPABASE_URL</code> & <code className="bg-amber-500/20 px-1 rounded">VITE_SUPABASE_PUBLISHABLE_KEY</code>) are not yet configured in production.
             </p>
             <div className="pt-1">
               <button

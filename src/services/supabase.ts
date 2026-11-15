@@ -3,17 +3,17 @@
 // ============================================================================
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-// Reads credentials from NEXT_PUBLIC_* (Next.js / requested standard) or VITE_* (Vite default)
+// Reads credentials primarily from VITE_* (Vite standard) or NEXT_PUBLIC_*
 const supabaseUrl =
-  (import.meta.env.NEXT_PUBLIC_SUPABASE_URL as string | undefined)?.trim() ||
   (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim() ||
+  (import.meta.env.NEXT_PUBLIC_SUPABASE_URL as string | undefined)?.trim() ||
   '';
 
 const supabaseAnonKey =
-  (import.meta.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY as string | undefined)?.trim() ||
-  (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim() ||
-  (import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string | undefined)?.trim() ||
   (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined)?.trim() ||
+  (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim() ||
+  (import.meta.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY as string | undefined)?.trim() ||
+  (import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string | undefined)?.trim() ||
   '';
 
 export const isSupabaseConfigured = (): boolean => {

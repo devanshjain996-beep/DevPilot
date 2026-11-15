@@ -27,7 +27,7 @@ export async function signInWithGoogle(): Promise<{ error: Error | null }> {
   if (!isSupabaseConfigured()) {
     return {
       error: new Error(
-        'Supabase is not configured yet. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in your .env.local file.'
+        'Supabase is not configured yet. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in your .env.local file (and in your Vercel Project Settings for production).'
       ),
     };
   }

@@ -145,6 +145,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [checkPendingLocalData]);
 
   useEffect(() => {
+    // Clean OAuth hash or detect OAuth error from redirect
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const oauthError = urlParams.get('error_description') || urlParams.get('error');
+      if (oauthError) {
+        console.warn('OAuth redirect notice:', oauthError);
+      }
+      if (window.location.hash && (window.location.hash.includes('access_token') || window.location.hash.includes('refresh_token'))) {
+        setTimeout(() => {
+          window.history.replaceState(null, '', window.location.pathname);
+        }, 500);
+      }
+    }
+
     loadSession();
 
     if (!isSupabaseConfigured()) return;

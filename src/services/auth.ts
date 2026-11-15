@@ -27,7 +27,7 @@ export async function signInWithGoogle(): Promise<{ error: Error | null }> {
   if (!isSupabaseConfigured()) {
     return {
       error: new Error(
-        'Supabase is not configured yet. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment.'
+        'Supabase is not configured yet. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in your .env.local file.'
       ),
     };
   }
@@ -43,7 +43,23 @@ export async function signInWithGoogle(): Promise<{ error: Error | null }> {
         },
       },
     });
-    return { error };
+
+    if (error) {
+      if (
+        error.message.toLowerCase().includes('provider') ||
+        error.message.toLowerCase().includes('disabled') ||
+        error.message.toLowerCase().includes('unsupported')
+      ) {
+        return {
+          error: new Error(
+            'Google provider is not enabled in your Supabase dashboard yet. In Supabase Dashboard -> Authentication -> Providers -> Google: enable it and enter your Google Client ID & Client Secret from Google Cloud Console.'
+          ),
+        };
+      }
+      return { error };
+    }
+
+    return { error: null };
   } catch (err) {
     return { error: err as Error };
   }

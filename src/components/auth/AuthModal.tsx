@@ -33,6 +33,8 @@ export default function AuthModal({
     user,
     linkPhone,
     verifyPhoneLink,
+    authError,
+    clearAuthError,
   } = useAuth();
 
   const [authMode, setAuthMode] = useState<'options' | 'phone-input' | 'phone-otp'>('options');
@@ -157,10 +159,22 @@ export default function AuthModal({
     >
       <div className="space-y-4">
         {/* Status Banners */}
-        {errorMsg && (
+        {(errorMsg || authError) && (
           <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-xs flex items-start gap-2">
             <AlertCircle size={16} className="shrink-0 mt-0.5" />
-            <span>{errorMsg}</span>
+            <div className="flex-1">
+              <span className="font-semibold block mb-0.5">Authentication Notice</span>
+              <span>{errorMsg || authError}</span>
+            </div>
+            {authError && (
+              <button
+                type="button"
+                onClick={clearAuthError}
+                className="text-red-400 hover:text-red-300 text-[10px] underline ml-1 cursor-pointer"
+              >
+                Dismiss
+              </button>
+            )}
           </div>
         )}
 

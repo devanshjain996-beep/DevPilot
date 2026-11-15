@@ -33,18 +33,23 @@ export async function signInWithGoogle(): Promise<{ error: Error | null }> {
   }
 
   try {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const redirectUrl = `${window.location.origin}/`;
+    console.log('[DevPilot Auth Diagnostic] Initiating Google OAuth signInWithOAuth redirecting to:', redirectUrl);
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin,
+        redirectTo: redirectUrl,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
         },
+        scopes: 'openid email profile',
       },
     });
 
     if (error) {
+      console.error('[DevPilot Auth Diagnostic] signInWithOAuth failed:', error.message);
       if (
         error.message.toLowerCase().includes('provider') ||
         error.message.toLowerCase().includes('disabled') ||
@@ -59,8 +64,10 @@ export async function signInWithGoogle(): Promise<{ error: Error | null }> {
       return { error };
     }
 
+    console.log('[DevPilot Auth Diagnostic] OAuth authorization URL ready:', data?.url ? 'Yes' : 'Direct redirect');
     return { error: null };
   } catch (err) {
+    console.error('[DevPilot Auth Diagnostic] Exception during signInWithGoogle:', err);
     return { error: err as Error };
   }
 }
@@ -240,6 +247,31 @@ export function formatSupabaseUser(user: any): AuthUser {
     role,
     createdAt: user.created_at || new Date().toISOString(),
     lastLoginAt: user.last_sign_in_at || new Date().toISOString(),
+  };
+}
+
+/**
+ * Create a baseline profile object from authenticated user data
+ */
+export function createDefaultProfileFromUser(user: AuthUser): UserProfile {
+  return {
+    id: user.id,
+    userId: user.id,
+    name: user.displayName,
+    email: user.email || '',
+    phone: user.phone,
+    role: user.role,
+    avatarUrl: user.avatarUrl,
+    emailVerified: user.isGoogleVerified,
+    phoneVerified: user.isPhoneVerified,
+    bio: 'Passionate developer building modern applications with DevPilot.',
+    careerGoal: 'Become a high-impact senior engineer',
+    portfolioVisible: true,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    achievements: [],
+    certifications: [],
+    createdAt: user.createdAt || new Date().toISOString(),
+    lastLoginAt: new Date().toISOString(),
   };
 }
 

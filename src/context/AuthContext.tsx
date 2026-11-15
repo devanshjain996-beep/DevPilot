@@ -13,6 +13,7 @@ import {
   formatSupabaseUser,
   fetchProfile,
   syncUserProfile,
+  createDefaultProfileFromUser,
 } from '../services/auth';
 import { startPresenceTracking, stopPresenceTracking } from '../services/presence';
 import { syncEngine } from '../services/syncEngine';
@@ -38,6 +39,8 @@ interface AuthContextType {
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   retrySync: () => Promise<void>;
+  authError: string | null;
+  clearAuthError: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -50,6 +53,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [migrationModalOpen, setMigrationModalOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState<CloudSyncStatus>(syncEngine.getStatus());
   const [syncError, setSyncError] = useState<string | null>(syncEngine.getLastError());
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  const clearAuthError = useCallback(() => setAuthError(null), []);
 
   // Listen to sync engine status
   useEffect(() => {
@@ -114,11 +120,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
+      console.log('[DevPilot Auth Diagnostic] Checking active session via getSession()...');
       const {
         data: { session },
+        error: sessionError,
       } = await supabase.auth.getSession();
 
+      if (sessionError) {
+        console.warn('[DevPilot Auth Diagnostic] getSession warning:', sessionError.message);
+      }
+
       if (session?.user) {
+        console.log('[DevPilot Auth Diagnostic] User session verified for UID:', session.user.id);
         const authUser = formatSupabaseUser(session.user);
         setUser(authUser);
         syncEngine.setUserId(authUser.id);
@@ -128,16 +141,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!userProfile) {
           userProfile = await syncUserProfile(authUser);
         }
+        if (!userProfile) {
+          userProfile = createDefaultProfileFromUser(authUser);
+        }
         setProfile(userProfile);
+        try {
+          localStorage.setItem('devpilot_profile', JSON.stringify(userProfile));
+        } catch {}
         checkPendingLocalData(authUser.id);
       } else {
+        console.log('[DevPilot Auth Diagnostic] No active user session found.');
         setUser(null);
         setProfile(null);
         syncEngine.setUserId(null);
         stopPresenceTracking();
       }
     } catch (err) {
-      console.error('Session load error:', err);
+      console.error('[DevPilot Auth Diagnostic] Session load exception:', err);
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -145,27 +165,81 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [checkPendingLocalData]);
 
   useEffect(() => {
-    // Clean OAuth hash or detect OAuth error from redirect
-    if (typeof window !== 'undefined') {
+    // 1. Process OAuth callback redirects (PKCE code or OAuth errors)
+    const processOAuthRedirect = async () => {
+      if (typeof window === 'undefined') return;
+
       const urlParams = new URLSearchParams(window.location.search);
-      const oauthError = urlParams.get('error_description') || urlParams.get('error');
-      if (oauthError) {
-        console.warn('OAuth redirect notice:', oauthError);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+
+      // Detect OAuth errors
+      const errCode = urlParams.get('error') || hashParams.get('error');
+      const errDesc = urlParams.get('error_description') || hashParams.get('error_description');
+
+      if (errCode || errDesc) {
+        const decoded = errDesc ? decodeURIComponent(errDesc.replace(/\+/g, ' ')) : errCode || 'Authentication failed';
+        console.error('[DevPilot Auth Diagnostic] OAuth callback returned error:', decoded);
+        setAuthError(decoded);
+        setAuthModalOpen(true);
+        window.history.replaceState(null, '', window.location.pathname);
+        return;
       }
-      if (window.location.hash && (window.location.hash.includes('access_token') || window.location.hash.includes('refresh_token'))) {
+
+      // Detect and exchange PKCE code
+      const code = urlParams.get('code');
+      if (code && isSupabaseConfigured()) {
+        console.log('[DevPilot Auth Diagnostic] Found authorization code in URL. Exchanging code for session...');
+        setIsLoading(true);
+        try {
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) {
+            console.error('[DevPilot Auth Diagnostic] Code exchange failed:', error.message);
+            setAuthError(error.message);
+            setAuthModalOpen(true);
+          } else if (data?.session?.user) {
+            console.log('[DevPilot Auth Diagnostic] Code exchange succeeded! User ID:', data.session.user.id);
+            const authUser = formatSupabaseUser(data.session.user);
+            setUser(authUser);
+            syncEngine.setUserId(authUser.id);
+            startPresenceTracking(authUser);
+
+            let userProfile = await fetchProfile(authUser.id);
+            if (!userProfile) {
+              userProfile = await syncUserProfile(authUser);
+            }
+            if (!userProfile) {
+              userProfile = createDefaultProfileFromUser(authUser);
+            }
+            setProfile(userProfile);
+            try {
+              localStorage.setItem('devpilot_profile', JSON.stringify(userProfile));
+            } catch {}
+            checkPendingLocalData(authUser.id);
+          }
+        } catch (exchangeErr: any) {
+          console.error('[DevPilot Auth Diagnostic] Exception during code exchange:', exchangeErr);
+          setAuthError(exchangeErr?.message || 'Failed to exchange authorization code');
+        } finally {
+          setIsLoading(false);
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      } else if (window.location.hash && (window.location.hash.includes('access_token') || window.location.hash.includes('refresh_token'))) {
         setTimeout(() => {
           window.history.replaceState(null, '', window.location.pathname);
         }, 500);
       }
-    }
+    };
 
-    loadSession();
+    processOAuthRedirect().then(() => {
+      loadSession();
+    });
 
     if (!isSupabaseConfigured()) return;
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log(`[DevPilot Auth Diagnostic] onAuthStateChange event: ${event}`, session?.user ? `User: ${session.user.id}` : 'No session');
       if (session?.user) {
         const authUser = formatSupabaseUser(session.user);
         setUser(authUser);
@@ -176,7 +250,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!userProfile) {
           userProfile = await syncUserProfile(authUser);
         }
+        if (!userProfile) {
+          userProfile = createDefaultProfileFromUser(authUser);
+        }
         setProfile(userProfile);
+        try {
+          localStorage.setItem('devpilot_profile', JSON.stringify(userProfile));
+        } catch {}
         checkPendingLocalData(authUser.id);
       } else {
         setUser(null);
@@ -265,6 +345,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logout,
         refreshProfile,
         retrySync,
+        authError,
+        clearAuthError,
       }}
     >
       {children}

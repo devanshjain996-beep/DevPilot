@@ -13,6 +13,7 @@ export type ExceptionType = 'day' | 'week' | 'month' | 'permanent';
 
 export interface TimetableEntry {
   id: string;
+  userId?: string;
   slotId?: string; // Stable ID across recurring occurrences (e.g. 'slot-college')
   time: string;
   startHour: number;
@@ -31,6 +32,7 @@ export interface TimetableEntry {
 
 export interface ScheduleException {
   id: string;
+  userId?: string;
   slotId: string;
   type: ExceptionType;
   startDate: string; // YYYY-MM-DD
@@ -43,6 +45,7 @@ export type HolidayMode = 'normal' | 'holiday-study' | 'holiday-no-study';
 
 export interface DailySettings {
   date: string; // YYYY-MM-DD
+  userId?: string;
   isHoliday: boolean;
   holidayMode?: HolidayMode;
   holidayReason?: string;
@@ -53,6 +56,7 @@ export interface DailySettings {
 
 export interface WeeklySlot {
   id: string;
+  userId?: string;
   day: string;
   timeSlot: string;
   activity: string;
@@ -61,6 +65,7 @@ export interface WeeklySlot {
 
 export interface Task {
   id: string;
+  userId?: string;
   title: string;
   description?: string;
   category: string;
@@ -73,6 +78,7 @@ export interface Task {
 
 export interface LearningTopic {
   id: string;
+  userId?: string;
   trackId: string;
   section: string;
   order: number;
@@ -88,6 +94,7 @@ export interface LearningTopic {
 
 export interface DSAProblem {
   id: string;
+  userId?: string;
   name: string;
   topic: string;
   difficulty: Difficulty;
@@ -103,6 +110,7 @@ export interface DSAProblem {
 
 export interface Project {
   id: string;
+  userId?: string;
   title: string;
   description: string;
   technologies: string[];
@@ -119,6 +127,7 @@ export interface Project {
 
 export interface Subject {
   id: string;
+  userId?: string;
   name: string;
   chapters: Chapter[];
   assignments: Assignment[];
@@ -129,6 +138,7 @@ export interface Subject {
 
 export interface Chapter {
   id: string;
+  userId?: string;
   subjectId: string;
   name: string;
   topics: string[];
@@ -138,6 +148,7 @@ export interface Chapter {
 
 export interface Assignment {
   id: string;
+  userId?: string;
   subjectId: string;
   title: string;
   dueDate: string;
@@ -149,6 +160,7 @@ export interface Assignment {
 
 export interface Exam {
   id: string;
+  userId?: string;
   subjectId: string;
   title: string;
   date: string;
@@ -159,6 +171,7 @@ export interface Exam {
 
 export interface Practical {
   id: string;
+  userId?: string;
   subjectId: string;
   title: string;
   completed: boolean;
@@ -168,6 +181,7 @@ export interface Practical {
 
 export interface Goal {
   id: string;
+  userId?: string;
   title: string;
   description?: string;
   period: GoalPeriod;
@@ -180,6 +194,7 @@ export interface Goal {
 
 export interface WeeklyReview {
   id: string;
+  userId?: string;
   weekStart: string;
   weekEnd: string;
   studyHours: number;
@@ -200,6 +215,7 @@ export interface WeeklyReview {
 
 export interface StudyLog {
   id: string;
+  userId?: string;
   date: string;
   category: string;
   hours: number;
@@ -208,16 +224,115 @@ export interface StudyLog {
 }
 
 export interface UserProfile {
+  id?: string;
+  userId?: string;
   name: string;
   email?: string;
+  phone?: string;
+  phoneVerified?: boolean;
+  emailVerified?: boolean;
+  avatarUrl?: string;
+  role?: 'user' | 'admin';
   github?: string;
   linkedin?: string;
   bio: string;
   careerGoal: string;
   college?: string;
   portfolioVisible: boolean;
+  timezone?: string;
   achievements: string[];
   certifications: string[];
+  createdAt?: string;
+  lastLoginAt?: string;
+}
+
+export type UserRole = 'user' | 'admin';
+
+export interface AuthUser {
+  id: string;
+  email?: string;
+  phone?: string;
+  displayName: string;
+  avatarUrl?: string;
+  isGoogleVerified: boolean;
+  isPhoneVerified: boolean;
+  role: UserRole;
+  createdAt: string;
+  lastLoginAt?: string;
+}
+
+export type OnlineStatus = 'online' | 'away' | 'offline';
+
+export interface UserPresence {
+  userId: string;
+  displayName: string;
+  email?: string;
+  phone?: string;
+  role: UserRole;
+  status: OnlineStatus;
+  lastSeen: string;
+  currentPage?: string;
+}
+
+export interface NotificationPreference {
+  enabled: boolean;
+  browserPermission: 'default' | 'granted' | 'denied';
+  categories: {
+    college: boolean;
+    python: boolean;
+    cppDsa: boolean;
+    webdev: boolean;
+    systemDesign: boolean;
+    academics: boolean;
+    assignments: boolean;
+    exams: boolean;
+    projects: boolean;
+    dailyGoals: boolean;
+    weeklyReview: boolean;
+  };
+  reminderMinutesBefore: number;
+  quietHoursEnabled: boolean;
+  quietHoursStart: string; // e.g. "22:00"
+  quietHoursEnd: string;   // e.g. "07:00"
+  activeDays: number[];    // 0 = Sunday, 1 = Monday, etc.
+  timezone: string;
+}
+
+export interface NotificationHistoryItem {
+  id: string;
+  userId?: string;
+  title: string;
+  body: string;
+  category: string;
+  scheduledFor: string;
+  sentAt?: string;
+  status: 'sent' | 'pending' | 'failed';
+  error?: string;
+  read?: boolean;
+}
+
+export type CloudSyncStatus = 'idle' | 'saving' | 'saved' | 'error' | 'offline';
+
+export interface AdminPlatformStats {
+  totalUsers: number;
+  verifiedGoogleUsers: number;
+  verifiedPhoneUsers: number;
+  onlineUsersCount: number;
+  recentActiveUsersCount: number;
+  totalTasksCompleted: number;
+  totalStudyHoursLogged: number;
+  totalDsaSolved: number;
+  totalProjectsCreated: number;
+}
+
+export interface AuditLogItem {
+  id: string;
+  action: string;
+  actorId: string;
+  actorEmail?: string;
+  targetUserId?: string;
+  timestamp: string;
+  details?: Record<string, unknown>;
 }
 
 export interface AppSettings {
@@ -227,6 +342,7 @@ export interface AppSettings {
     dailyStudyGoalHours: number;
     preferredLanguage: string;
   };
+  notifications?: NotificationPreference;
 }
 
 export interface ProgressReport {

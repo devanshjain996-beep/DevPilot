@@ -5,7 +5,7 @@ import Dexie, { type Table } from 'dexie';
 import type {
   TimetableEntry, Task, LearningTopic, DSAProblem, Project,
   Subject, Goal, WeeklyReview, StudyLog, WeeklySlot,
-  ScheduleException, DailySettings
+  ScheduleException, DailySettings, NotificationHistoryItem
 } from '../types';
 
 export class DevPilotDB extends Dexie {
@@ -21,6 +21,7 @@ export class DevPilotDB extends Dexie {
   weeklySlots!: Table<WeeklySlot, string>;
   scheduleExceptions!: Table<ScheduleException, string>;
   dailySettings!: Table<DailySettings, string>;
+  notificationHistory!: Table<NotificationHistoryItem, string>;
 
   constructor() {
     super('DevPilotDB');
@@ -49,6 +50,21 @@ export class DevPilotDB extends Dexie {
       weeklySlots: 'id, day',
       scheduleExceptions: 'id, slotId, type, startDate, endDate',
       dailySettings: 'date, isHoliday',
+    });
+    this.version(3).stores({
+      timetable: 'id, date, category, status, slotId, userId',
+      tasks: 'id, date, category, status, priority, userId',
+      topics: 'id, trackId, section, status, order, userId',
+      dsaProblems: 'id, topic, difficulty, platform, solved, userId',
+      projects: 'id, status, userId',
+      subjects: 'id, userId',
+      goals: 'id, period, completed, userId',
+      weeklyReviews: 'id, weekStart, userId',
+      studyLogs: 'id, date, category, userId',
+      weeklySlots: 'id, day, userId',
+      scheduleExceptions: 'id, slotId, type, startDate, endDate, userId',
+      dailySettings: 'date, isHoliday, userId',
+      notificationHistory: 'id, scheduledFor, status, category, userId',
     });
   }
 }

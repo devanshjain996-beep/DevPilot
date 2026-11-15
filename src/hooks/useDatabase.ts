@@ -6,10 +6,11 @@ import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth } fr
 import { db } from '../store/db';
 import { todayStr, weekRange, percentage, generateId } from '../utils/helpers';
 import { ALL_TRACKS, DEFAULT_TIMETABLE, HOLIDAY_MORNING_SLOTS } from '../data/roadmapData';
+import { syncEngine } from '../services/syncEngine';
 import type {
   LearningTopic, TimetableEntry, Task, DSAProblem, Project,
   Subject, Goal, StudyLog, WeeklySlot, ScheduleException, DailySettings,
-  ExceptionType, HolidayMode
+  ExceptionType, HolidayMode, WeeklyReview
 } from '../types';
 
 export function isTaskSlotWithCheckbox(entry: TimetableEntry): boolean {
@@ -44,14 +45,17 @@ export async function initTopicsIfEmpty() {
 }
 
 export async function updateTopicStatus(id: string, status: LearningTopic['status']) {
+  const completedAt = status === 'completed' ? new Date().toISOString() : undefined;
   await db.topics.update(id, {
     status,
-    completedAt: status === 'completed' ? new Date().toISOString() : undefined
+    completedAt,
   });
+  await syncEngine.queueChange('learning_progress', { id, status, completed_at: completedAt });
 }
 
 export async function updateTopicNotes(id: string, notes: string) {
   await db.topics.update(id, { notes });
+  await syncEngine.queueChange('learning_progress', { id, notes });
 }
 
 // ── Timetable operations ──
@@ -70,6 +74,7 @@ export function useDailySettings(date: string) {
 
 export async function setDailySettings(settings: DailySettings) {
   await db.dailySettings.put(settings);
+  await syncEngine.queueChange('daily_settings', settings);
 }
 
 export function useScheduleExceptions() {
@@ -84,11 +89,13 @@ export async function addScheduleException(exception: Omit<ScheduleException, 'i
     createdAt: new Date().toISOString(),
   };
   await db.scheduleExceptions.add(item);
+  await syncEngine.queueChange('schedule_exceptions', item);
   return item;
 }
 
 export async function deleteScheduleException(id: string) {
   await db.scheduleExceptions.delete(id);
+  await syncEngine.queueChange('schedule_exceptions', { id }, 'delete');
 }
 
 export async function removeSlotWithException(
@@ -504,23 +511,30 @@ export async function initTimetableForDate(date: string, _entries?: Omit<Timetab
 export async function updateTimetableStatus(id: string, status: TimetableEntry['status']) {
   // If attempting to complete, store timestamp
   const completedAt = status === 'completed' ? new Date().toISOString() : undefined;
+  const statusUpdatedAt = new Date().toISOString();
   await db.timetable.update(id, {
     status,
     completedAt,
-    statusUpdatedAt: new Date().toISOString(),
+    statusUpdatedAt,
   });
+  await syncEngine.queueChange('timetable', { id, status, completed_at: completedAt, status_updated_at: statusUpdatedAt });
 }
 
 export async function updateTimetableEntry(id: string, data: Partial<TimetableEntry>) {
   await db.timetable.update(id, data);
+  await syncEngine.queueChange('timetable', { id, ...data });
 }
 
 export async function addTimetableEntry(entry: Omit<TimetableEntry, 'id'>) {
-  await db.timetable.add({ ...entry, id: generateId() });
+  const id = generateId();
+  const item = { ...entry, id };
+  await db.timetable.add(item);
+  await syncEngine.queueChange('timetable', item);
 }
 
 export async function deleteTimetableEntry(id: string) {
   await db.timetable.delete(id);
+  await syncEngine.queueChange('timetable', { id }, 'delete');
 }
 
 export async function resetTimetableForDate(date: string, _entries?: Omit<TimetableEntry, 'id' | 'date' | 'status'>[]) {
@@ -538,15 +552,21 @@ export function useTasks(date?: string) {
 }
 
 export async function addTask(task: Omit<Task, 'id' | 'createdAt'>) {
-  await db.tasks.add({ ...task, id: generateId(), createdAt: new Date().toISOString() });
+  const id = generateId();
+  const createdAt = new Date().toISOString();
+  const item = { ...task, id, createdAt };
+  await db.tasks.add(item);
+  await syncEngine.queueChange('tasks', item);
 }
 
 export async function updateTask(id: string, data: Partial<Task>) {
   await db.tasks.update(id, data);
+  await syncEngine.queueChange('tasks', { id, ...data });
 }
 
 export async function deleteTask(id: string) {
   await db.tasks.delete(id);
+  await syncEngine.queueChange('tasks', { id }, 'delete');
 }
 
 // ── DSA Problems ──
@@ -555,15 +575,20 @@ export function useDSAProblems() {
 }
 
 export async function addDSAProblem(problem: Omit<DSAProblem, 'id'>) {
-  await db.dsaProblems.add({ ...problem, id: generateId() });
+  const id = generateId();
+  const item = { ...problem, id };
+  await db.dsaProblems.add(item);
+  await syncEngine.queueChange('dsa_problems', item);
 }
 
 export async function updateDSAProblem(id: string, data: Partial<DSAProblem>) {
   await db.dsaProblems.update(id, data);
+  await syncEngine.queueChange('dsa_problems', { id, ...data });
 }
 
 export async function deleteDSAProblem(id: string) {
   await db.dsaProblems.delete(id);
+  await syncEngine.queueChange('dsa_problems', { id }, 'delete');
 }
 
 // ── Projects ──
@@ -572,15 +597,20 @@ export function useProjects() {
 }
 
 export async function addProject(project: Omit<Project, 'id'>) {
-  await db.projects.add({ ...project, id: generateId() });
+  const id = generateId();
+  const item = { ...project, id };
+  await db.projects.add(item);
+  await syncEngine.queueChange('projects', item);
 }
 
 export async function updateProject(id: string, data: Partial<Project>) {
   await db.projects.update(id, data);
+  await syncEngine.queueChange('projects', { id, ...data });
 }
 
 export async function deleteProject(id: string) {
   await db.projects.delete(id);
+  await syncEngine.queueChange('projects', { id }, 'delete');
 }
 
 // ── Subjects ──
@@ -589,15 +619,20 @@ export function useSubjects() {
 }
 
 export async function addSubject(subject: Omit<Subject, 'id'>) {
-  await db.subjects.add({ ...subject, id: generateId() });
+  const id = generateId();
+  const item = { ...subject, id };
+  await db.subjects.add(item);
+  await syncEngine.queueChange('subjects', item);
 }
 
 export async function updateSubject(id: string, data: Partial<Subject>) {
   await db.subjects.update(id, data);
+  await syncEngine.queueChange('subjects', { id, ...data });
 }
 
 export async function deleteSubject(id: string) {
   await db.subjects.delete(id);
+  await syncEngine.queueChange('subjects', { id }, 'delete');
 }
 
 // ── Goals ──
@@ -606,15 +641,21 @@ export function useGoals() {
 }
 
 export async function addGoal(goal: Omit<Goal, 'id' | 'createdAt'>) {
-  await db.goals.add({ ...goal, id: generateId(), createdAt: new Date().toISOString() });
+  const id = generateId();
+  const createdAt = new Date().toISOString();
+  const item = { ...goal, id, createdAt };
+  await db.goals.add(item);
+  await syncEngine.queueChange('goals', item);
 }
 
 export async function updateGoal(id: string, data: Partial<Goal>) {
   await db.goals.update(id, data);
+  await syncEngine.queueChange('goals', { id, ...data });
 }
 
 export async function deleteGoal(id: string) {
   await db.goals.delete(id);
+  await syncEngine.queueChange('goals', { id }, 'delete');
 }
 
 // ── Study Logs ──
@@ -623,7 +664,10 @@ export function useStudyLogs() {
 }
 
 export async function addStudyLog(log: Omit<StudyLog, 'id'>) {
-  await db.studyLogs.add({ ...log, id: generateId() });
+  const id = generateId();
+  const item = { ...log, id };
+  await db.studyLogs.add(item);
+  await syncEngine.queueChange('study_logs', item);
 }
 
 // ── Weekly Reviews ──
@@ -631,9 +675,22 @@ export function useWeeklyReviews() {
   return useLiveQuery(() => db.weeklyReviews.toArray()) ?? [];
 }
 
+export async function addWeeklyReview(review: Omit<WeeklyReview, 'id' | 'createdAt'>) {
+  const id = generateId();
+  const createdAt = new Date().toISOString();
+  const item = { ...review, id, createdAt };
+  await db.weeklyReviews.add(item);
+  await syncEngine.queueChange('weekly_reviews', item);
+}
+
 // ── Weekly Slots ──
 export function useWeeklySlots() {
   return useLiveQuery(() => db.weeklySlots.toArray()) ?? [];
+}
+
+export async function updateWeeklySlot(id: string, data: Partial<WeeklySlot>) {
+  await db.weeklySlots.update(id, data);
+  await syncEngine.queueChange('weekly_slots', { id, ...data });
 }
 
 // ── Progress Calculation ──

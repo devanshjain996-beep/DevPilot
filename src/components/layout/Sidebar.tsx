@@ -1,16 +1,17 @@
 // ============================================================================
-// DevPilot - Sidebar Navigation
+// DevPilot — Sidebar Navigation with Multi-User & Admin Access
 // ============================================================================
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, Calendar, CalendarDays, Map, Code2, Binary, Globe, Server,
   Brain, GraduationCap, FolderKanban, Briefcase, Target, CalendarCheck,
-  Settings, X, Sun, Moon, Rocket
+  Settings, X, Sun, Moon, Rocket, Bell, ShieldCheck, LogIn, LogOut
 } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { useTheme } from '../../store/useStore';
+import { useAuth } from '../../context/AuthContext';
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/timetable', label: 'My Timetable', icon: Calendar },
   { path: '/weekly-planner', label: 'Weekly Planner', icon: CalendarDays },
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { path: '/portfolio', label: 'My Portfolio', icon: Briefcase },
   { path: '/goals', label: 'Goals and Analytics', icon: Target },
   { path: '/weekly-review', label: 'Weekly Review', icon: CalendarCheck },
+  { path: '/notifications', label: 'Reminders & Alerts', icon: Bell },
   { path: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -35,6 +37,9 @@ interface SidebarProps {
 
 export default function Sidebar({ open, onClose }: SidebarProps) {
   const { theme, toggleTheme } = useTheme();
+  const { user, profile, setAuthModalOpen, logout } = useAuth();
+
+  const isAdmin = user?.role === 'admin' || profile?.role === 'admin';
 
   return (
     <>
@@ -66,32 +71,86 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
-          {NAV_ITEMS.map(item => (
+          {/* Admin Dashboard Pill (Only for authorized owner / admin) */}
+          {isAdmin && (
+            <div className="mb-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+              <NavLink
+                to="/admin"
+                onClick={onClose}
+                className={({ isActive }) => cn(
+                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-bold transition-all border',
+                  isActive
+                    ? 'bg-purple-500/10 text-purple-400 border-purple-500/30 shadow-xs'
+                    : 'text-purple-600 dark:text-purple-400 border-purple-500/20 hover:bg-purple-500/10'
+                )}
+              >
+                <ShieldCheck size={18} className="text-purple-500" />
+                <span>Admin Dashboard</span>
+              </NavLink>
+            </div>
+          )}
+
+          {BASE_NAV_ITEMS.map(item => (
             <NavLink
               key={item.path}
               to={item.path}
               onClick={onClose}
               className={({ isActive }) => cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                  ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
               )}
             >
-              <item.icon size={18} />
+              <item.icon size={17} />
               <span>{item.label}</span>
             </NavLink>
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="p-3 border-t border-slate-200 dark:border-slate-800 shrink-0">
+        {/* User Card & Footer */}
+        <div className="p-3 border-t border-slate-200 dark:border-slate-800 shrink-0 space-y-2">
+          {user ? (
+            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                  {user.displayName.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
+                    {user.displayName}
+                  </p>
+                  <p className="text-[10px] text-slate-400 truncate">
+                    {user.email || user.phone}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={logout}
+                title="Log out"
+                className="p-1 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+              >
+                <LogOut size={14} />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setAuthModalOpen(true)}
+              className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer transition-all shadow-xs"
+            >
+              <LogIn size={14} />
+              <span>Sign In / Register</span>
+            </button>
+          )}
+
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+            className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-            <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+            {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+            <span>{theme === 'dark' ? 'Light Theme' : 'Dark Theme'}</span>
           </button>
         </div>
       </aside>

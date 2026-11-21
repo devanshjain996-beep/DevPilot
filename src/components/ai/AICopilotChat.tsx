@@ -8,10 +8,16 @@ import {
   Sparkles, Send, Bot, User, Key, RefreshCw, Copy, Check,
   Trash2, Plus, MessageSquare, Paperclip, Mic, ChevronLeft,
   ChevronRight, Settings, Bookmark, BookmarkCheck, ArrowUpRight,
-  Code2, CheckCircle2, AlertCircle, CornerDownLeft, X, Layers
+  Code2, CheckCircle2, AlertCircle, CornerDownLeft, X, Layers,
+  Cpu, Zap, ExternalLink
 } from 'lucide-react';
 import AnimatedNeuralNetwork from './AnimatedNeuralNetwork';
 import { CS_SUBJECTS, queryCSKnowledgeBase, type CSSubject } from '../../data/csKnowledgeBase';
+import {
+  queryGeminiFlash,
+  getActiveGeminiKey,
+  saveActiveGeminiKey
+} from '../../services/geminiService';
 import { useAuth } from '../../context/AuthContext';
 import { useProfile } from '../../store/useStore';
 import { cn } from '../../utils/helpers';
@@ -78,7 +84,9 @@ export default function AICopilotChat({
   const [streamingText, setStreamingText] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(isFullScreen);
   const [activeTab, setActiveTab] = useState<'chats' | 'subjects' | 'saved' | 'settings'>('chats');
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem(STORAGE_KEY_API) || '');
+  const [apiKey, setApiKey] = useState(() => getActiveGeminiKey());
+  const [tempKeyInput, setTempKeyInput] = useState('');
+  const [showKeyModal, setShowKeyModal] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<CSSubject | null>(null);
@@ -217,53 +225,24 @@ export default function AICopilotChat({
     setInput('');
     setIsTyping(true);
 
-    // ── Generate AI Response ──
+    // ── Generate AI Response via Gemini Flash or Knowledge Base ──
     try {
-      // 1. Live Google Gemini API (if key is configured)
-      if (apiKey) {
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [
-                {
-                  role: 'user',
-                  parts: [
-                    {
-                      text: `You are DevPilot AI, a Computer Science Learning Companion and programming coach for students.
-Your knowledge base is grounded in GeeksforGeeks and W3Schools Computer Science curriculum (Programming, DSA, DBMS, OS, Computer Networks, Web Development, AI/ML, and Cybersecurity).
-
-STRICT RULE:
-If the user's question is NOT about Computer Science, programming, software engineering, databases, networks, mathematics for CS, or technical career topics, you must politely respond:
-"I apologize, but this topic is currently outside my technical knowledge base. As your DevPilot Computer Science Learning Companion, my knowledge base is focused specifically on Computer Science and programming subjects (such as GeeksforGeeks and W3Schools topics). Please feel free to ask me any programming concept, code debugging, or CS interview question!"
-
-If it IS a Computer Science question:
-- Give a clear, structured explanation with code examples.
-- Include line-by-line breakdown where appropriate.
-- Mention time & space complexity for algorithmic solutions.
-- Be encouraging and beginner friendly.
-
-Student Profile:
-- Career Goal: ${profile.careerGoal}
-- Priorities: Python, C++ & DSA, Web Dev, System Design, AI/ML.
-
-User Question: ${textToSend}`,
-                    },
-                  ],
-                },
-              ],
-            }),
-          }
-        );
-
-        if (geminiRes.ok) {
-          const data = await geminiRes.json();
-          const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (reply) {
-            simulateStreamingReply(reply);
+      const activeKey = apiKey || getActiveGeminiKey();
+      if (activeKey) {
+        try {
+          const geminiResult = await queryGeminiFlash(
+            textToSend,
+            messages.map(m => ({ role: m.role, content: m.content })),
+            activeKey
+          );
+          if (geminiResult.text) {
+            simulateStreamingReply(geminiResult.text);
             return;
+          }
+        } catch (geminiErr: any) {
+          console.warn('[DevPilot AI] Gemini Flash query notice:', geminiErr);
+          if (geminiErr?.message?.includes('INVALID_API_KEY')) {
+            showToast('Invalid Gemini API Key. Please verify in settings.');
           }
         }
       }
@@ -281,8 +260,12 @@ User Question: ${textToSend}`,
           finalReply = `### Computer Science Analysis for: "${textToSend}"\n\n1. **Core Concept:** Break this down into foundational components.\n2. **Algorithmic Flow:** Identify the input types, state transitions, and edge conditions.\n3. **Practical Implementation:** Apply standard design patterns and ensure modularity.\n\n*Would you like a code snippet in Python, C++, or JavaScript, or a step-by-step walkthrough of this topic?*`;
         }
 
+        if (!activeKey) {
+          finalReply += `\n\n---\n*💡 **Pro Tip:** Connect **Google Gemini Flash** via the top toolbar or Settings to enable dynamic AI reasoning over all CS problems!*`;
+        }
+
         simulateStreamingReply(finalReply);
-      }, 350);
+      }, 250);
     } catch {
       simulateStreamingReply(
         'I encountered a temporary connection issue. Falling back to offline Computer Science knowledge base. Please ask your question again!'
@@ -583,7 +566,7 @@ User Question: ${textToSend}`,
                       onChange={e => {
                         const val = e.target.value.trim();
                         setApiKey(val);
-                        localStorage.setItem(STORAGE_KEY_API, val);
+                        saveActiveGeminiKey(val);
                       }}
                       className="w-full px-2.5 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
                     />
@@ -661,9 +644,28 @@ User Question: ${textToSend}`,
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-slate-400 hidden sm:inline-block">
+            <span className="text-[11px] text-slate-400 hidden md:inline-block">
               Grounded in GeeksforGeeks & W3Schools
             </span>
+
+            {/* 3D Gemini Flash Status Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                setTempKeyInput(apiKey);
+                setShowKeyModal(true);
+              }}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer shadow-xs',
+                apiKey
+                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+                  : 'bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border-indigo-500/30'
+              )}
+            >
+              <span className={cn('w-2 h-2 rounded-full', apiKey ? 'bg-emerald-500 animate-pulse' : 'bg-indigo-500')} />
+              <span>{apiKey ? 'Gemini Flash' : '⚡ Connect Gemini Flash'}</span>
+            </motion.button>
 
             {onExpand && (
               <button
@@ -722,39 +724,53 @@ User Question: ${textToSend}`,
                     <span className="text-[10px] text-indigo-500 font-semibold">9 Disciplines Available</span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5" style={{ perspective: 1200 }}>
                     {CS_SUBJECTS.map((subj, index) => {
                       const Icon = subj.icon;
                       return (
                         <motion.div
                           key={subj.id}
-                          initial={{ opacity: 0, y: 12 }}
+                          initial={{ opacity: 0, y: 15 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.04 }}
-                          whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                          transition={{ duration: 0.35, delay: index * 0.04 }}
+                          whileHover={{
+                            scale: 1.04,
+                            rotateX: -6,
+                            rotateY: 6,
+                            z: 24,
+                            transition: { duration: 0.18, ease: 'easeOut' },
+                          }}
+                          whileTap={{ scale: 0.98 }}
+                          style={{
+                            transformStyle: 'preserve-3d',
+                            perspective: 1000,
+                          }}
                           onClick={() => {
                             setSelectedSubject(subj);
                             handleSendMessage(subj.recommendedQuestions[0]);
                           }}
                           className={cn(
-                            'p-3.5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md transition-all cursor-pointer group relative overflow-hidden',
+                            'p-4 rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.4)] hover:shadow-xl transition-all cursor-pointer group relative overflow-hidden backdrop-blur-xs',
                             subj.borderHover
                           )}
                         >
-                          <div className="flex items-center gap-2.5 mb-2">
-                            <div className={cn('p-2 rounded-xl bg-gradient-to-br', subj.accentBg, subj.color)}>
-                              <Icon size={16} />
+                          <div className="flex items-center gap-2.5 mb-2" style={{ transform: 'translateZ(20px)' }}>
+                            <div className={cn('p-2.5 rounded-xl bg-gradient-to-br shadow-xs', subj.accentBg, subj.color)}>
+                              <Icon size={18} />
                             </div>
                             <h3 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                               {subj.shortName}
                             </h3>
                           </div>
-                          <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed" style={{ transform: 'translateZ(12px)' }}>
                             {subj.description}
                           </p>
-                          <div className="mt-3 flex items-center justify-between text-[10px] font-semibold text-slate-400 group-hover:text-indigo-500 transition-colors">
-                            <span>Explore prompts</span>
-                            <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                          <div className="mt-3.5 flex items-center justify-between text-[10px] font-semibold text-slate-400 group-hover:text-indigo-500 transition-colors" style={{ transform: 'translateZ(16px)' }}>
+                            <span className="flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500/50" />
+                              Explore 3D prompts
+                            </span>
+                            <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                           </div>
                         </motion.div>
                       );
@@ -1047,6 +1063,117 @@ User Question: ${textToSend}`,
           </div>
         </div>
       </main>
+
+      {/* ── 3D GEMINI FLASH CONFIGURATION MODAL ── */}
+      <AnimatePresence>
+        {showKeyModal && (
+          <div
+            className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-950/65 backdrop-blur-md"
+            style={{ perspective: 1200 }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.35, rotateX: 20, z: -120 }}
+              animate={{ opacity: 1, scale: 1, rotateX: 0, z: 0 }}
+              exit={{ opacity: 0, scale: 0.35, rotateX: -20, z: -120 }}
+              transition={{ type: 'spring', damping: 22, stiffness: 280 }}
+              style={{ transformStyle: 'preserve-3d' }}
+              className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-6 rounded-3xl max-w-md w-full space-y-4 text-xs shadow-2xl relative"
+            >
+              <div className="flex justify-between items-center" style={{ transform: 'translateZ(15px)' }}>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/30">
+                    <Zap size={16} />
+                  </div>
+                  <div>
+                    <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">
+                      Connect Google Gemini Flash
+                    </h4>
+                    <span className="text-[10px] text-emerald-500 font-bold uppercase tracking-wider">
+                      Ultra-Fast CS AI Model
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowKeyModal(false)}
+                  className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-[11px]" style={{ transform: 'translateZ(10px)' }}>
+                Gemini Flash delivers lightning-fast code explanations and answers any Computer Science question in milliseconds. Paste your free Google AI Studio key below:
+              </p>
+
+              <div className="space-y-1.5" style={{ transform: 'translateZ(12px)' }}>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Google AI Studio API Key
+                </label>
+                <div className="relative">
+                  <input
+                    type="password"
+                    placeholder="AIzaSy..."
+                    value={tempKeyInput}
+                    onChange={e => setTempKeyInput(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-slate-50 dark:bg-slate-800/80 border-2 border-slate-200 dark:border-slate-700 focus:border-indigo-500 dark:focus:border-indigo-400 rounded-xl text-slate-900 dark:text-white font-mono focus:outline-none transition-all shadow-2xs"
+                  />
+                  {tempKeyInput && (
+                    <button
+                      type="button"
+                      onClick={() => setTempKeyInput('')}
+                      className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/50 dark:border-slate-700/50 text-[10px] text-slate-500 dark:text-slate-400 space-y-1" style={{ transform: 'translateZ(8px)' }}>
+                <p>• Stored safely in your local browser storage only.</p>
+                <p>
+                  • Get a 100% free key with no credit card at{' '}
+                  <a
+                    href="https://aistudio.google.com/app/apikey"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-indigo-600 dark:text-indigo-400 underline font-semibold inline-flex items-center gap-0.5"
+                  >
+                    aistudio.google.com <ExternalLink size={9} />
+                  </a>
+                </p>
+                <p>• If no key is set, the offline W3Schools/GeeksforGeeks engine is used automatically.</p>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2" style={{ transform: 'translateZ(15px)' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowKeyModal(false)}
+                  className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  Cancel
+                </button>
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  type="button"
+                  onClick={() => {
+                    const cleanKey = tempKeyInput.trim();
+                    setApiKey(cleanKey);
+                    saveActiveGeminiKey(cleanKey);
+                    setShowKeyModal(false);
+                    showToast(cleanKey ? 'Gemini Flash model connected!' : 'Key cleared (using offline engine)');
+                  }}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+                >
+                  Save & Connect
+                </motion.button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

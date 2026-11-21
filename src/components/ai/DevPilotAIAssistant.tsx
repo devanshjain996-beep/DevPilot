@@ -1,399 +1,90 @@
 // ============================================================================
-// DevPilot — DevPilot AI Learning Assistant (Fixed Layout & Prominent Input Bar)
+// DevPilot — DevPilot AI Learning Assistant (Animated Floating Launcher & Drawer)
 // ============================================================================
-import { useState, useRef, useEffect } from 'react';
-import {
-  Sparkles, Send, X, Bot, User, Key,
-  RefreshCw, MessageSquare, CornerDownLeft
-} from 'lucide-react';
-import { Button, Input, Badge } from '../ui';
-import { useTrackProgress, useAllTopics } from '../../hooks/useDatabase';
-import { useProfile } from '../../store/useStore';
-import { cn } from '../../utils/helpers';
-
-interface Message {
-  id: string;
-  role: 'assistant' | 'user';
-  content: string;
-  timestamp: string;
-}
-
-const PRESET_PROMPTS = [
-  'Explain recursion line-by-line with a simple C++/Python example',
-  'What is the difference between SQL and NoSQL databases?',
-  'Give me 3 beginner LeetCode array problems with hints',
-  'How do embeddings and vector databases work in AI applications?',
-  'Recommend my next priority topic based on my current progress',
-];
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, X, Maximize2 } from 'lucide-react';
+import AICopilotChat from './AICopilotChat';
+import { Badge } from '../ui';
 
 export default function DevPilotAIAssistant() {
   const [open, setOpen] = useState(false);
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('devpilot_ai_key') || '');
-  const [showKeyModal, setShowKeyModal] = useState(false);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const { tracks } = useTrackProgress();
-  const { profile } = useProfile();
-  const allTopics = useAllTopics();
-
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 'welcome',
-      role: 'assistant',
-      content: `Hello! I am **DevPilot AI**, your personal programming tutor and engineering coach.\n\nI am here to help you master Python, tackle C++ & DSA, learn full-stack web development, understand system design, and build real-world AI applications.\n\nYou can **type any question in the input box below** (e.g. explain code, debug errors, ask for hints) or click any of the recommended topic prompts above.`,
-      timestamp: 'Just now'
-    }
-  ]);
-
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const textInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (open) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      // Automatically focus on the input box when opened
-      setTimeout(() => {
-        textInputRef.current?.focus();
-      }, 150);
-    }
-  }, [messages, open]);
-
-  // Press ESC to close assistant
+  // Close on ESC
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (showKeyModal) {
-          setShowKeyModal(false);
-        } else if (open) {
-          setOpen(false);
-        }
+      if (e.key === 'Escape' && open) {
+        setOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [open, showKeyModal]);
-
-  // Handle local intelligent mock responses or live API calls
-  const handleSendMessage = async (textToSend?: string) => {
-    const text = textToSend || input;
-    if (!text.trim() || loading) return;
-
-    const userMsg: Message = {
-      id: `u-${Date.now()}`,
-      role: 'user',
-      content: text,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
-
-    setMessages(prev => [...prev, userMsg]);
-    setInput('');
-    setLoading(true);
-
-    try {
-      // If user provided a Gemini API Key in localStorage, query Gemini
-      if (apiKey) {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              {
-                role: 'user',
-                parts: [{
-                  text: `You are DevPilot AI, a patient programming tutor and learning coach for a college student who is a beginner programmer aiming to become an AI-powered software developer.
-Student Profile:
-- Goal: ${profile.careerGoal}
-- Priorities: 1. Python, 2. C++ & DSA, 3. Web Dev, 4. System Design, 5. AI/ML Apps, 6. College C programming.
-Rules:
-- Be encouraging, step-by-step, beginner friendly.
-- When explaining code, explain line by line.
-- When helping with DSA, give hints before the complete answer.
-User request: ${text}`
-                }]
-              }
-            ]
-          })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (aiReply) {
-            setMessages(prev => [...prev, {
-              id: `a-${Date.now()}`,
-              role: 'assistant',
-              content: aiReply,
-              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            }]);
-            setLoading(false);
-            return;
-          }
-        }
-      }
-
-      // Offline / Intelligent Built-in Tutor Engine (No API key required)
-      setTimeout(() => {
-        let reply = '';
-        const q = text.toLowerCase();
-
-        if (q.includes('next') && (q.includes('topic') || q.includes('priority') || q.includes('recommend'))) {
-          const nextPy = allTopics.find(t => t.trackId === 'python' && t.status !== 'completed');
-          const nextDsa = allTopics.find(t => t.trackId === 'cpp-dsa' && t.status !== 'completed');
-          reply = `Based on your real DevPilot database curriculum:\n\n1. **Python Priority:** ${nextPy ? `**${nextPy.title}** (${nextPy.section})` : 'Python track complete!'}\n2. **C++ & DSA Priority:** ${nextDsa ? `**${nextDsa.title}**` : 'DSA track complete!'}\n\n**Tutor Tip:** Dedicate your 4:00–5:00 PM slot to Python and your 7:00–8:00 PM slot to C++ practice today!`;
-        } else if (q.includes('recursion')) {
-          reply = `### Understanding Recursion (Step-by-Step)\n\nRecursion happens when a function calls itself to solve a smaller piece of the same problem.\n\nEvery recursive function needs **two things**:\n1. **Base Case:** The condition that tells it when to STOP.\n2. **Recursive Step:** Where the function calls itself with a smaller input.\n\n\`\`\`python\ndef factorial(n):\n    # 1. Base case: If n is 1 or 0, return 1 immediately\n    if n <= 1:\n        return 1\n    \n    # 2. Recursive case: n multiplied by factorial of (n - 1)\n    return n * factorial(n - 1)\n\`\`\`\n\n**Line-by-line explanation:**\n- When \`factorial(3)\` runs, it asks for \`3 * factorial(2)\`.\n- \`factorial(2)\` pauses and calls \`2 * factorial(1)\`.\n- \`factorial(1)\` hits the base case and returns \`1\`.\n- Now the stack resolves: \`2 * 1 = 2\`, then \`3 * 2 = 6\`!\n\nWould you like a hint on how to write a recursive function for the Fibonacci sequence?`;
-        } else if (q.includes('sql') && q.includes('nosql')) {
-          reply = `### SQL vs NoSQL: Practical Developer Comparison\n\n- **SQL (Relational):** Data lives in structured tables with rows, columns, and strict relations (keys). Examples: **PostgreSQL, SQLite, MySQL**.\n  - *Best for:* User accounts, e-commerce orders, banking transactions (requires ACID guarantees).\n- **NoSQL (Non-Relational):** Data lives in flexible JSON documents or key-value stores. Examples: **MongoDB, Redis, Pinecone (Vector DB)**.\n  - *Best for:* Real-time chat messages, rapid prototyping, caching, vector embeddings for AI.\n\n**For your career:** Start with **PostgreSQL** in Web Development, and learn **Redis + Vector DBs** for your AI applications!`;
-        } else if (q.includes('embeddings') || q.includes('vector')) {
-          reply = `### How Embeddings & Vector Databases Power AI Apps\n\n1. **Embeddings:** When an AI reads text (like a paragraph from a PDF), it converts the meaning into a list of numbers called a vector (e.g. \`[0.24, -0.81, 0.55, ...]\`).\n2. **Similarity:** Similar sentences have vectors that point in nearly the same mathematical direction (cosine similarity).\n3. **Vector Database:** Instead of searching for exact words, a vector DB (like ChromaDB or Pinecone) finds the **most semantically relevant documents** to the user's question.\n4. **RAG (Retrieval-Augmented Generation):** Your app fetches those relevant document snippets and pastes them into your LLM prompt as context!\n\nThis is the core architecture for building the "PDF Q&A Assistant" project in your roadmap!`;
-        } else if (q.includes('hint') || q.includes('array')) {
-          reply = `### Two Sum: Progressive Hint System\n\n**Problem:** Given an array of integers \`nums\` and an integer \`target\`, return indices of the two numbers that add up to \`target\`.\n\n- **Hint 1:** Can you solve it with two nested loops? (Brute force: O(N²) time complexity).\n- **Hint 2:** If you are looking at number \`x\`, what number do you need? You need \`target - x\`.\n- **Hint 3 (Optimal):** Instead of looping again to find \`target - x\`, use a **Hash Map / Dictionary** to remember every number you have seen and its index in O(1) time!\n\nTry writing the code using Hint 3, and let me know if you want me to inspect your solution!`;
-        } else {
-          reply = `That is a great engineering question! Here is how to approach **${text}**:\n\n1. **Understand the Core Principle:** Break it down into fundamental components first.\n2. **Pseudocode the Flow:** Write the logic out in simple comments step by step.\n3. **Test with Edge Cases:** Consider empty inputs, nulls, negative numbers, or maximum limits.\n\nAsk me anytime to write a code example, debug your error message, or break down the logic line by line!`;
-        }
-
-        setMessages(prev => [...prev, {
-          id: `a-${Date.now()}`,
-          role: 'assistant',
-          content: reply,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        }]);
-        setLoading(false);
-      }, 500);
-
-    } catch (err) {
-      setMessages(prev => [...prev, {
-        id: `err-${Date.now()}`,
-        role: 'assistant',
-        content: `Error connecting to AI service: ${err}. Falling back to offline tutor mode.`,
-        timestamp: 'Now'
-      }]);
-      setLoading(false);
-    }
-  };
+  }, [open]);
 
   return (
     <>
-      {/* Floating Action Pill (Only shown when closed) */}
-      {!open && (
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-label="Open DevPilot AI Assistant"
-          className="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-blue-600 via-violet-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2.5 font-bold text-xs transition-all hover:scale-105 active:scale-95 border border-white/20 cursor-pointer"
-        >
-          <Sparkles size={16} className="text-amber-300 animate-pulse" />
-          <span>DevPilot AI Tutor</span>
-          <Badge variant="purple" className="text-[10px] bg-white/20 text-white">Ask Question</Badge>
-        </button>
-      )}
-
-      {/* Slide-out / Modal Drawer with Fixed Viewport Bounds */}
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center sm:justify-end p-2 sm:p-6 pointer-events-none">
-          {/* Backdrop (Click outside to close) */}
-          <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity cursor-pointer pointer-events-auto"
-            onClick={() => setOpen(false)}
-            aria-label="Close Assistant backdrop"
-          />
-
-          {/* Chat Window Container: Height bounded to 82vh / 620px so input is ALWAYS fully visible */}
-          <div
-            className="relative z-10 pointer-events-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full sm:w-[500px] h-[84vh] max-h-[640px] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
+      {/* ── FLOATING ACTION PILL (BOTTOM RIGHT) ── */}
+      <AnimatePresence>
+        {!open && (
+          <motion.button
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Open DevPilot AI Copilot"
+            className="fixed bottom-6 right-6 z-40 bg-slate-900 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2.5 font-bold text-xs transition-colors border border-white/20 dark:border-indigo-400/30 cursor-pointer group"
           >
-            {/* Header */}
-            <div className="p-3.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-white shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center shrink-0">
-                  <Bot size={18} className="text-white" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-sm leading-none flex items-center gap-1.5">
-                    DevPilot AI Tutor
-                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                  </h3>
-                  <p className="text-[10px] text-slate-400 mt-0.5">Ask questions, debug errors, learn concepts</p>
-                </div>
-              </div>
-
-              {/* Header Action Buttons (Key & Prominent Close Button) */}
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowKeyModal(true)}
-                  title="Configure Gemini API Key"
-                  className={cn(
-                    'p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer',
-                    apiKey && 'text-emerald-400'
-                  )}
-                >
-                  <Key size={16} />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpen(false);
-                  }}
-                  aria-label="Close Chatbot"
-                  title="Close DevPilot AI (Esc)"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 transition-all font-semibold text-xs cursor-pointer shadow-sm active:scale-95"
-                >
-                  <X size={15} className="shrink-0" />
-                  <span>Close</span>
-                </button>
-              </div>
+            <div className="relative">
+              <Sparkles size={16} className="text-amber-400 animate-pulse" />
             </div>
+            <span className="font-semibold tracking-tight">AI Copilot</span>
+            <span className="px-2 py-0.5 rounded-full text-[10px] bg-white/15 text-white/90 font-medium">
+              CS Tutor
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
-            {/* Quick Prompt Carousel */}
-            <div className="px-3 py-2 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center gap-1.5 overflow-x-auto text-[11px] shrink-0">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold shrink-0">Topics:</span>
-              {PRESET_PROMPTS.map((prompt, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => handleSendMessage(prompt)}
-                  className="px-2.5 py-1 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-blue-500 hover:text-blue-500 whitespace-nowrap transition-colors cursor-pointer"
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
-
-            {/* Messages Chat Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
-              {messages.map(msg => (
-                <div
-                  key={msg.id}
-                  className={cn(
-                    'flex gap-2.5 max-w-[90%]',
-                    msg.role === 'user' ? 'ml-auto flex-row-reverse' : 'mr-auto'
-                  )}
-                >
-                  <div className={cn(
-                    'w-6 h-6 rounded-md flex items-center justify-center shrink-0 text-white font-bold text-[10px]',
-                    msg.role === 'user' ? 'bg-blue-600' : 'bg-gradient-to-br from-violet-600 to-indigo-600'
-                  )}>
-                    {msg.role === 'user' ? <User size={13} /> : <Bot size={13} />}
-                  </div>
-
-                  <div className={cn(
-                    'p-3.5 rounded-2xl leading-relaxed whitespace-pre-wrap',
-                    msg.role === 'user'
-                      ? 'bg-blue-600 text-white rounded-tr-xs'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-tl-xs border border-slate-200 dark:border-slate-700/60'
-                  )}>
-                    {msg.content}
-                  </div>
-                </div>
-              ))}
-
-              {loading && (
-                <div className="flex items-center gap-2 text-slate-400 text-xs pl-8">
-                  <RefreshCw size={14} className="animate-spin text-blue-500" />
-                  DevPilot AI is generating explanation...
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Prominent Question Asking / Search Bar (Always Visible at Bottom) */}
-            <div className="p-3 bg-slate-100 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 shrink-0">
-              <form
-                onSubmit={e => { e.preventDefault(); handleSendMessage(); }}
-                className="flex items-center gap-2"
-              >
-                <div className="relative flex-1">
-                  <input
-                    ref={textInputRef}
-                    type="text"
-                    placeholder="Type your programming question, error, or concept here..."
-                    value={input}
-                    onChange={e => setInput(e.target.value)}
-                    className="w-full pl-3.5 pr-8 py-2.5 text-xs bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none transition-all shadow-xs"
-                  />
-                  {input && (
-                    <button
-                      type="button"
-                      onClick={() => setInput('')}
-                      className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
-
-                <Button
-                  type="submit"
-                  size="sm"
-                  disabled={!input.trim() || loading}
-                  className="rounded-xl px-4 py-2.5 font-bold flex items-center gap-1.5 shadow-sm cursor-pointer shrink-0"
-                >
-                  <Send size={14} />
-                  <span>Ask AI</span>
-                </Button>
-              </form>
-
-              <div className="flex items-center justify-between mt-1.5 px-1 text-[10px] text-slate-500 dark:text-slate-400">
-                <span>Press <kbd className="px-1 py-0.5 bg-slate-200 dark:bg-slate-800 rounded font-mono">Enter</kbd> to submit question</span>
-                <span>Press <kbd className="px-1 py-0.5 bg-slate-200 dark:bg-slate-800 rounded font-mono">Esc</kbd> to close</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* API Key Settings Modal */}
-      {showKeyModal && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl max-w-md w-full space-y-4 text-xs">
-            <div className="flex justify-between items-center">
-              <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-                <Key size={16} className="text-emerald-500" />
-                Configure AI API Provider (Optional)
-              </h4>
-              <button
-                type="button"
-                onClick={() => setShowKeyModal(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-md"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-              DevPilot includes an intelligent built-in tutor that works 100% offline without any API key. If you wish to connect live streaming LLM generations from Google Gemini, enter your free Gemini API key below:
-            </p>
-
-            <Input
-              label="Google Gemini API Key"
-              placeholder="AIzaSy..."
-              value={apiKey}
-              onChange={e => setApiKey(e.target.value)}
+      {/* ── ANIMATED SLIDE-OVER MODAL DRAWER ── */}
+      <AnimatePresence>
+        {open && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center sm:justify-end p-2 sm:p-6 pointer-events-none">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs cursor-pointer pointer-events-auto"
+              onClick={() => setOpen(false)}
             />
 
-            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-slate-500 space-y-1">
-              <p>• Your key is saved locally in your browser's localStorage only.</p>
-              <p>• Never committed or exposed to third parties.</p>
-              <p>• You can get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">aistudio.google.com</a>.</p>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="ghost" onClick={() => setShowKeyModal(false)}>Cancel</Button>
-              <Button onClick={() => {
-                localStorage.setItem('devpilot_ai_key', apiKey.trim());
-                setShowKeyModal(false);
-              }}>
-                Save Key
-              </Button>
-            </div>
+            {/* Chatbot Window Container */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="relative z-10 pointer-events-auto w-full sm:w-[620px] md:w-[720px] h-[88vh] max-h-[720px] rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+              onClick={e => e.stopPropagation()}
+            >
+              <AICopilotChat
+                isFullScreen={false}
+                onClose={() => setOpen(false)}
+                onExpand={() => {
+                  setOpen(false);
+                  navigate('/copilot');
+                }}
+              />
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </>
   );
 }

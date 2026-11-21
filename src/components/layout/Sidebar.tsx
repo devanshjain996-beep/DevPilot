@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, Calendar, CalendarDays, Map, Code2, Binary, Globe, Server,
   Brain, GraduationCap, FolderKanban, Briefcase, Target, CalendarCheck,
-  Settings, X, Sun, Moon, Rocket, Bell, ShieldCheck, LogIn, LogOut
+  Settings, X, Sun, Moon, Rocket, Bell, ShieldCheck, LogIn, LogOut, Sparkles
 } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { useTheme } from '../../store/useStore';
@@ -13,6 +13,7 @@ import { useAuth } from '../../context/AuthContext';
 
 const BASE_NAV_ITEMS = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/copilot', label: 'AI Copilot', icon: Sparkles },
   { path: '/timetable', label: 'My Timetable', icon: Calendar },
   { path: '/weekly-planner', label: 'Weekly Planner', icon: CalendarDays },
   { path: '/roadmap', label: 'Learning Roadmap', icon: Map },

@@ -24,6 +24,7 @@ import WeeklyReviewPage from './pages/WeeklyReviewPage';
 import SettingsPage from './pages/SettingsPage';
 import NotificationsPage from './pages/NotificationsPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import AiCopilotPage from './pages/AiCopilotPage';
 
 // Data Initialization & Services
 import { initTopicsIfEmpty, initTimetableForDate } from './hooks/useDatabase';
@@ -48,6 +49,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<DashboardPage />} />
+            <Route path="copilot" element={<AiCopilotPage />} />
             <Route path="timetable" element={<TimetablePage />} />
             <Route path="weekly-planner" element={<WeeklyPlannerPage />} />
             <Route path="roadmap" element={<LearningRoadmapPage />} />

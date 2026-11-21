@@ -49,10 +49,12 @@ export function saveActiveGeminiKey(key: string): void {
  * Priority list of fast Gemini Flash models
  */
 const FLASH_MODELS = [
+  'gemini-flash-latest',
+  'gemini-flash-lite-latest',
   'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
   'gemini-2.0-flash',
   'gemini-1.5-flash',
-  'gemini-2.5-flash-lite',
 ];
 
 const SYSTEM_INSTRUCTION = `You are DevPilot AI, an ultra-fast, expert software engineering companion, technical mentor, and programming copilot.

@@ -1,5 +1,5 @@
 // ============================================================================
-// DevPilot — Computer Science Knowledge Base (Grounded in W3Schools & GeeksforGeeks)
+// DevPilot — Comprehensive Technical Knowledge Base
 // ============================================================================
 import type { LucideIcon } from 'lucide-react';
 import {
@@ -176,9 +176,9 @@ export interface KnowledgeEntry {
 export const CS_KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   // ── 1. PROGRAMMING ──
   {
-    keywords: ['pointer', 'pointers', 'memory allocation', 'malloc', 'calloc', 'free', 'c++', 'c language'],
+    keywords: ['pointer', 'pointers', 'memory allocation', 'malloc', 'calloc', 'free', 'pointer arithmetic', 'dangling pointer', 'heap allocation'],
     title: 'Pointers and Dynamic Memory Allocation in C/C++',
-    subject: 'Programming Fundamentals (GeeksforGeeks / W3Schools)',
+    subject: 'Programming Fundamentals',
     content: `### Pointers and Dynamic Memory Allocation in C/C++
 
 A **pointer** is a variable that stores the memory address of another variable.
@@ -215,12 +215,12 @@ delete[] arr; // Free heap memory
 arr = nullptr; // Avoid dangling pointer
 \`\`\`
 
-> **W3Schools / GfG Tip:** Always set pointers to \`nullptr\` (or \`NULL\`) after deallocating to prevent accidental **dangling pointer** access!`,
+> **Pro Tip:** Always set pointers to \`nullptr\` (or \`NULL\`) after deallocating to prevent accidental **dangling pointer** access!`,
   },
   {
     keywords: ['oop', 'object oriented', 'encapsulation', 'inheritance', 'polymorphism', 'abstraction', 'class', 'object'],
     title: 'The 4 Pillars of Object-Oriented Programming (OOP)',
-    subject: 'Programming Fundamentals (W3Schools & GeeksforGeeks)',
+    subject: 'Programming Fundamentals',
     content: `### The 4 Pillars of Object-Oriented Programming (OOP)
 
 OOP organizes software design around **objects** (data) and **methods** (actions) rather than pure procedural logic.
@@ -257,7 +257,7 @@ for a in animals:
   {
     keywords: ['recursion', 'recursive', 'base case', 'call stack', 'recursive case', 'fibonacci'],
     title: 'Understanding Recursion Line-by-Line',
-    subject: 'Programming & DSA (W3Schools & GeeksforGeeks)',
+    subject: 'Programming & DSA',
     content: `### Understanding Recursion (Step-by-Step)
 
 A function is **recursive** if it calls itself to solve a smaller subproblem of the original problem.
@@ -298,7 +298,7 @@ factorial(4) returns 4 * 6 = 24
   {
     keywords: ['comprehension', 'decorator', 'generator', 'python list comprehension', 'yield'],
     title: 'Python Comprehensions, Generators, and Decorators',
-    subject: 'Programming Fundamentals (W3Schools Python)',
+    subject: 'Programming Fundamentals',
     content: `### Python Comprehensions, Generators, and Decorators
 
 #### 1. List Comprehensions
@@ -348,7 +348,7 @@ greet("Alice")
   {
     keywords: ['big o', 'complexity', 'time complexity', 'space complexity', 'asymptotic', 'omega', 'theta'],
     title: 'Big-O Notation and Complexity Analysis',
-    subject: 'Data Structures & Algorithms (GeeksforGeeks)',
+    subject: 'Data Structures & Algorithms',
     content: `### Big-O Notation and Complexity Analysis
 
 **Big-O Notation** describes the upper bound of an algorithm's execution time or memory space as the input size ($N$) grows toward infinity.
@@ -369,7 +369,7 @@ greet("Alice")
   {
     keywords: ['quicksort', 'merge sort', 'sorting', 'divide and conquer', 'partition'],
     title: 'QuickSort and MergeSort: Divide-and-Conquer Analysis',
-    subject: 'Data Structures & Algorithms (GeeksforGeeks)',
+    subject: 'Data Structures & Algorithms',
     content: `### QuickSort: Divide and Conquer Sorting
 
 QuickSort picks an element as a **pivot** and partitions the given array around the picked pivot so that elements smaller than the pivot go to the left and larger elements go to the right.
@@ -394,12 +394,12 @@ print(quicksort([10, 7, 8, 9, 1, 5]))
 | **QuickSort** | $O(N \\log N)$ | $O(N \\log N)$ | $O(N^2)$ (sorted input with bad pivot) | $O(\\log N)$ | No |
 | **MergeSort** | $O(N \\log N)$ | $O(N \\log N)$ | $O(N \\log N)$ (guaranteed) | $O(N)$ auxiliary | Yes |
 
-> **Interview Tip (GfG):** QuickSort is often preferred in practice for internal memory arrays because of high cache locality and in-place partitioning!`,
+> **Interview Tip:** QuickSort is often preferred in practice for internal memory arrays because of high cache locality and in-place partitioning!`,
   },
   {
     keywords: ['bfs', 'dfs', 'graph', 'tree traversal', 'breadth first', 'depth first'],
     title: 'Graph Traversals: BFS vs DFS with Implementations',
-    subject: 'Data Structures & Algorithms (GeeksforGeeks)',
+    subject: 'Data Structures & Algorithms',
     content: `### Graph Traversals: BFS vs DFS
 
 Both algorithms visit every vertex in a graph of $V$ vertices and $E$ edges in $O(V + E)$ time.
@@ -435,7 +435,7 @@ def bfs(graph, start):
   {
     keywords: ['dynamic programming', 'dp', 'memoization', 'tabulation', 'optimal substructure', 'overlapping subproblems'],
     title: 'Dynamic Programming: Memoization vs Tabulation',
-    subject: 'Data Structures & Algorithms (GeeksforGeeks)',
+    subject: 'Data Structures & Algorithms',
     content: `### Dynamic Programming (DP) Fundamentals
 
 Dynamic Programming solves complex problems by breaking them down into smaller overlapping subproblems, solving each subproblem once, and storing the solution.
@@ -470,7 +470,7 @@ def fib_tab(n):
   {
     keywords: ['acid', 'atomicity', 'consistency', 'isolation', 'durability', 'transaction'],
     title: 'ACID Properties in Database Management Systems',
-    subject: 'DBMS (GeeksforGeeks & W3Schools)',
+    subject: 'Database Management Systems',
     content: `### ACID Properties in Relational Databases
 
 A **transaction** is a logical unit of database processing that includes one or more database operations (Read, Insert, Update, Delete). Relational databases guarantee the **ACID** properties:
@@ -484,7 +484,7 @@ A **transaction** is a logical unit of database processing that includes one or 
   {
     keywords: ['normalization', '1nf', '2nf', '3nf', 'bcnf', 'normal forms', 'redundancy', 'anomaly'],
     title: 'Database Normalization: 1NF, 2NF, 3NF, and BCNF',
-    subject: 'DBMS (GeeksforGeeks & W3Schools)',
+    subject: 'Database Management Systems',
     content: `### Database Normalization (1NF, 2NF, 3NF, BCNF)
 
 **Normalization** is the systematic process of structuring a relational database to minimize **data redundancy** and avoid **insertion, update, and deletion anomalies**.
@@ -496,12 +496,12 @@ A **transaction** is a logical unit of database processing that includes one or 
 | **3NF (Third)** | Must be in 2NF **AND** no non-prime attribute depends on another non-prime attribute ($X \\rightarrow Y$). | **Transitive Dependencies** (e.g. \`EmpID -> DeptID -> DeptName\`) |
 | **BCNF (Boyce-Codd)** | A stricter version of 3NF: For every functional dependency $X \\rightarrow Y$, $X$ must be a super key. | Any remaining functional anomalies |
 
-> **GfG Rule of Thumb:** For almost all enterprise software and web applications, normalizing up to **3NF** provides the best balance of data integrity and query performance!`,
+> **Engineering Best Practice:** For almost all enterprise software and web applications, normalizing up to **3NF** provides the best balance of data integrity and query performance!`,
   },
   {
     keywords: ['join', 'inner join', 'left join', 'right join', 'full join', 'sql joins'],
     title: 'SQL JOINs: INNER, LEFT, RIGHT, and FULL Explained',
-    subject: 'DBMS (W3Schools SQL Tutorial)',
+    subject: 'Database Management Systems',
     content: `### SQL JOINs Visualized
 
 JOIN clauses combine rows from two or more tables based on a related column between them.
@@ -535,7 +535,7 @@ FULL OUTER JOIN Departments d ON s.dept_id = d.id;
   {
     keywords: ['process vs thread', 'process', 'thread', 'multithreading', 'context switch', 'pcb'],
     title: 'Process vs Thread: Core Differences',
-    subject: 'Operating Systems (GeeksforGeeks)',
+    subject: 'Operating Systems',
     content: `### Process vs Thread: Core Architectural Differences
 
 | Parameter | Process | Thread (Lightweight Process) |
@@ -549,7 +549,7 @@ FULL OUTER JOIN Departments d ON s.dept_id = d.id;
   {
     keywords: ['deadlock', 'banker', 'coffman', 'mutual exclusion', 'circular wait', 'hold and wait'],
     title: 'Deadlock: The 4 Coffman Conditions & Banker’s Algorithm',
-    subject: 'Operating Systems (GeeksforGeeks)',
+    subject: 'Operating Systems',
     content: `### Deadlock in Operating Systems
 
 A **deadlock** is a state where two or more processes are blocked because each process is holding a resource and waiting for another resource held by another process.
@@ -568,7 +568,7 @@ A **deadlock** is a state where two or more processes are blocked because each p
   {
     keywords: ['virtual memory', 'paging', 'page fault', 'tlb', 'segmentation', 'page replacement', 'lru'],
     title: 'Virtual Memory and Paging in Operating Systems',
-    subject: 'Operating Systems (GeeksforGeeks)',
+    subject: 'Operating Systems',
     content: `### Virtual Memory and Paging
 
 **Virtual Memory** gives an application the illusion of having a vast, contiguous block of RAM, even if physical RAM is limited and fragmented.
@@ -591,7 +591,7 @@ When a CPU tries to access a page marked invalid (not currently loaded into phys
   {
     keywords: ['osi model', 'osi layers', '7 layers', 'application presentation session transport network data link physical'],
     title: 'The 7 Layers of the OSI Model',
-    subject: 'Computer Networks (GeeksforGeeks)',
+    subject: 'Computer Networks',
     content: `### The 7 Layers of the OSI Model
 
 The Open Systems Interconnection (OSI) model standardizes communication functions in telecommunications and computer systems.
@@ -611,7 +611,7 @@ The Open Systems Interconnection (OSI) model standardizes communication function
   {
     keywords: ['tcp vs udp', 'tcp', 'udp', 'three way handshake', 'syn ack', 'reliable'],
     title: 'TCP vs UDP and the Three-Way Handshake',
-    subject: 'Computer Networks (GeeksforGeeks)',
+    subject: 'Computer Networks',
     content: `### TCP vs UDP & The TCP Three-Way Handshake
 
 #### 1. TCP vs UDP Comparison:
@@ -634,7 +634,7 @@ Before transmitting data, client and server establish a synchronized session:
   {
     keywords: ['supervised', 'unsupervised', 'reinforcement', 'machine learning types', 'classification', 'regression', 'clustering'],
     title: 'Supervised vs Unsupervised vs Reinforcement Learning',
-    subject: 'Machine Learning (GeeksforGeeks)',
+    subject: 'Machine Learning',
     content: `### Supervised vs Unsupervised vs Reinforcement Learning
 
 | Paradigm | How it Works | Training Data | Core Tasks | Real-World Examples |
@@ -646,7 +646,7 @@ Before transmitting data, client and server establish a synchronized session:
   {
     keywords: ['overfitting', 'underfitting', 'regularization', 'bias variance', 'l1', 'l2', 'ridge', 'lasso'],
     title: 'Overfitting vs Underfitting and Regularization (L1/L2)',
-    subject: 'Machine Learning (GeeksforGeeks)',
+    subject: 'Machine Learning',
     content: `### Overfitting, Underfitting & Regularization
 
 - **Underfitting (High Bias):** Model is too simple to capture underlying patterns. High error on both training and test data.
@@ -666,7 +666,7 @@ Before transmitting data, client and server establish a synchronized session:
   {
     keywords: ['sql injection', 'sqli', 'xss', 'cross site scripting', 'csrf', 'security vulnerability'],
     title: 'Top Web Vulnerabilities: SQLi and XSS Explained',
-    subject: 'Cyber Security (W3Schools & GeeksforGeeks)',
+    subject: 'Cyber Security',
     content: `### Top Web Vulnerabilities: SQLi & XSS
 
 #### 1. SQL Injection (SQLi)
@@ -692,7 +692,7 @@ Occurs when an application includes untrusted user input in a web page without p
   {
     keywords: ['encryption', 'rsa', 'aes', 'symmetric', 'asymmetric', 'hashing', 'salt', 'cryptography'],
     title: 'Symmetric vs Asymmetric Encryption & Password Hashing',
-    subject: 'Cyber Security (GeeksforGeeks)',
+    subject: 'Cyber Security',
     content: `### Cryptography: Symmetric vs Asymmetric & Hashing
 
 #### 1. Symmetric vs Asymmetric Encryption:
@@ -713,7 +713,7 @@ A **Salt** is a random string concatenated to each password before hashing.
   {
     keywords: ['flexbox', 'grid', 'css flexbox', 'css grid', 'align items', 'justify content'],
     title: 'CSS Flexbox vs CSS Grid: Layout Mastery',
-    subject: 'Web Development (W3Schools CSS)',
+    subject: 'Web Development',
     content: `### CSS Flexbox vs CSS Grid
 
 Both modern CSS layout modules make responsive web design clean and robust.
@@ -744,7 +744,7 @@ Both modern CSS layout modules make responsive web design clean and robust.
   {
     keywords: ['react', 'virtual dom', 'useeffect', 'hooks', 'reconciliation', 'component lifecycle'],
     title: 'React Virtual DOM and the useEffect Lifecycle',
-    subject: 'Web Development (W3Schools React)',
+    subject: 'Web Development',
     content: `### React Virtual DOM & The useEffect Lifecycle
 
 #### 1. What is the Virtual DOM?
@@ -778,7 +778,7 @@ function UserTracker({ userId }) {
   {
     keywords: ['jwt', 'json web token', 'token', 'auth header', 'bearer', 'rest api', 'http status'],
     title: 'JWT Authentication and RESTful API Principles',
-    subject: 'Web Development (GeeksforGeeks / W3Schools)',
+    subject: 'Web Development',
     content: `### JWT Authentication & REST API Principles
 
 #### 1. Structure of a JSON Web Token (JWT)
@@ -800,7 +800,71 @@ A JWT consists of three parts separated by dots (\`header.payload.signature\`):
 ];
 
 /**
- * Intelligent domain lookup and out-of-scope classifier
+ * Developer Roadmap Generator for all programming languages & technical stacks
+ */
+export function generateTechRoadmap(query: string): KnowledgeEntry | null {
+  const q = query.toLowerCase();
+
+  // 1. C Language Roadmap
+  if (
+    q.includes('c language') ||
+    q.includes(' c ') ||
+    q.endsWith(' c') ||
+    q.includes('of c') ||
+    q.includes('for c') ||
+    q.includes('learn c')
+  ) {
+    return {
+      keywords: ['c language roadmap', 'roadmap of c', 'learn c'],
+      title: 'Complete C Language Mastery Roadmap (Zero to Systems Programming)',
+      subject: 'Developer Roadmap — C Programming & Systems',
+      content: "# 🗺️ Complete C Language Mastery Roadmap\n\nA production-grade, step-by-step roadmap from beginner syntax to low-level operating systems and systems programming.\n\n---\n\n### 📌 Stage 1: Syntax, Compilation Model & Basics\n- **The C Compilation Pipeline:** Understand how source code turns into binaries:\n  1. **Preprocessing (`gcc -E`):** Expands headers (`#include`) and replaces macros (`#define`).\n  2. **Compilation (`gcc -S`):** Translates C to assembly language.\n  3. **Assembly (`gcc -c`):** Generates machine code object files (`.o`).\n  4. **Linking (`gcc`):** Links object files with the C standard library (`libc`) to produce an executable.\n- **Variables & Data Types:** `int`, `char`, `float`, `double`, signed vs unsigned, `sizeof`, and format specifiers (`%d`, `%f`, `%c`, `%s`, `%p`).\n- **Control Flow:** `if / else`, `switch / case`, `for`, `while`, `do-while`, and loop controls (`break`, `continue`).\n\n---\n\n### 📌 Stage 2: Functions, Scope & Stack Frames\n- Function prototypes, arguments, return values.\n- **Memory Call Stack:** How stack frames are pushed/popped during function execution.\n- Scope and lifetime: `auto`, `static`, `extern`, and `register` storage classes.\n- Recursion mechanics and base cases.\n- Essential C Standard Library: `<stdio.h>`, `<stdlib.h>`, `<string.h>`, `<math.h>`, `<stdbool.h>`.\n\n---\n\n### 📌 Stage 3: Arrays, Strings & Memory Layout\n- 1D & 2D Arrays in contiguous memory.\n- C Strings: Character arrays terminated with the null byte (`'\\\\0'`).\n- Safe string manipulation: avoiding buffer overflows with `snprintf()`, `strncpy()`, and `strncat()`.\n- **Process Memory Layout:**\n  - **Stack Frame:** Grows downward (local variables, function calls).\n  - **Heap:** Grows upward (dynamic allocations: malloc).\n  - **BSS:** Uninitialized global & static variables.\n  - **Data Segment:** Initialized global & static variables.\n  - **Text Segment:** Compiled machine instructions (Read-only).\n\n---\n\n### 📌 Stage 4: Mastery of Pointers & Dynamic Memory (Crucial)\n- Pointer basics: address-of operator (`&`) and dereference operator (`*`).\n- **Pointer Arithmetic:** Stepping through memory based on byte size.\n- Double pointers (`int** ptr`) for dynamic 2D matrices and mutating pointer references.\n- Dynamic Allocation: `malloc()`, `calloc()`, `realloc()`, and `free()`.\n- **Common Memory Pitfalls & Prevention:**\n  - **Memory Leaks:** Always balance each `malloc` with `free`.\n  - **Dangling Pointers:** Always reset pointers to `NULL` immediately after freeing.\n  - **Segmentation Faults:** Check for `NULL` return before accessing dynamically allocated memory.\n- Function Pointers: Passing callbacks for event handling and `qsort()`.\n\n---\n\n### 📌 Stage 5: User-Defined Types & Low-Level Bit Manipulation\n- `struct`: Grouping heterogeneous data, structure padding, and byte alignment.\n- `typedef`: Creating clean type aliases.\n- `union`: Sharing the same memory address across different types.\n- `enum`: Named integer constants for state machines.\n- **Bitwise Operations:** `&` (AND), `|` (OR), `^` (XOR), `~` (NOT), `<<` (Left Shift), `>>` (Right Shift).\n- Bit masks, flags, and packed bit fields for embedded devices.\n\n---\n\n### 📌 Stage 6: File Handling & POSIX Systems Calls\n- Standard file streams: `fopen()`, `fread()`, `fwrite()`, `fprintf()`, `fscanf()`, `fclose()`.\n- File positioning: `fseek()`, `ftell()`, `rewind()`.\n- Standard I/O streams: `stdin`, `stdout`, `stderr`.\n- POSIX System Calls (Linux/Unix): `open()`, `read()`, `write()`, `close()`, `fork()`, `exec()`, `pipe()`.\n\n---\n\n### 📌 Stage 7: Building Core Data Structures in C\nImplement the following data structures from scratch using pure pointers:\n1. Singly & Doubly Linked Lists\n2. Stack (Array-based and Linked-List-based)\n3. Queue & Circular Queue\n4. Binary Search Tree (BST) with traversal & deletion\n5. Hash Table with Separate Chaining for collision resolution\n\n---\n\n### 📌 Stage 8: Tooling, Debugging & Production Standards\n- **Compiler Warnings:** Compile strictly with `gcc -Wall -Wextra -pedantic -std=c17`.\n- **Build Automation:** Writing clean `Makefile` and `CMake` files.\n- **Debugging with GDB:** Setting breakpoints, inspecting registers, and backtracing segfaults (`bt`).\n- **Memory Sanitizers:**\n  - Checking memory leaks with **Valgrind** (`valgrind --leak-check=full ./program`).\n  - AddressSanitizer (`gcc -fsanitize=address -g main.c`).\n\n---\n\n### 🚀 Recommended Milestone Portfolio Projects\n1. **Custom Unix Shell (Mini-Bash):** Implements `fork()`, `execvp()`, background jobs (`&`), and I/O redirection (`>`, `<`, `|`).\n2. **In-Memory Key-Value Store:** Custom hash table with string serialization and file persistence.\n3. **HTTP 1.1 Web Server:** Uses Linux BSD socket programming (`socket()`, `bind()`, `listen()`, `accept()`) to serve HTML files and JSON endpoints.",
+    };
+  }
+
+  // 2. Python Roadmap
+  if (q.includes('python')) {
+    return {
+      keywords: ['python roadmap', 'learn python'],
+      title: 'Complete Python Engineering Roadmap (Zero to Backend & AI)',
+      subject: 'Developer Roadmap — Python Full-Stack & Engineering',
+      content: "# 🗺️ Complete Python Engineering Roadmap\n\nA structured learning path from core syntax to modern production backend frameworks and AI engineering.\n\n---\n\n### 📌 Phase 1: Core Fundamentals\n- Syntax, variables, dynamic typing, type hints (`typing` module).\n- Data Structures: `list`, `tuple`, `set`, `dict`, collections (`deque`, `defaultdict`, `Counter`).\n- Control flow, functions, `*args`, `**kwargs`, lambda functions, list/dict comprehensions.\n\n### 📌 Phase 2: Advanced Python & OOP\n- Object-Oriented Programming: classes, dunder methods (`__init__`, `__str__`, `__repr__`, `__enter__`, `__exit__`).\n- Generators & Iterators: `yield`, generator expressions, memory efficiency.\n- Decorators & Context Managers (`@property`, `functools.wraps`, `contextlib`).\n- Concurrency & Asynchronous: `asyncio`, `async / await`, `threading` vs `multiprocessing`, GIL (Global Interpreter Lock).\n\n### 📌 Phase 3: Production Backend Frameworks\n- **FastAPI / Pydantic:** High-performance asynchronous REST APIs, automatic OpenAPI docs, schema validation.\n- **Django:** Full-featured MVC/MVT framework with ORM, built-in authentication, and admin panel.\n- Databases: SQLAlchemy, Alembic migrations, PostgreSQL, Redis caching.\n\n### 📌 Phase 4: Data Science & AI Engineering\n- **NumPy & Pandas:** Vectorized computation, array manipulation, and DataFrame analytics.\n- **Machine Learning & Deep Learning:** Scikit-Learn, PyTorch / TensorFlow, Hugging Face transformers.\n\n### 📌 Phase 5: Production & DevOps\n- Package management with `poetry` or `uv`.\n- Testing with `pytest`, mocking, code coverage.\n- Containerization with Docker and deployment on cloud platforms.",
+    };
+  }
+
+  // 3. Web Development Roadmap
+  if (q.includes('web dev') || q.includes('full stack') || q.includes('frontend') || q.includes('backend') || q.includes('react')) {
+    return {
+      keywords: ['web development roadmap', 'full stack roadmap'],
+      title: 'Full-Stack Web Development Roadmap',
+      subject: 'Developer Roadmap — Full-Stack Web Development',
+      content: "# 🗺️ Full-Stack Web Development Roadmap\n\nA comprehensive guide for building high-performance modern web applications.\n\n---\n\n### 📌 Phase 1: Foundations\n- **HTML5:** Semantic tags (`<header>`, `<main>`, `<section>`, `<article>`), forms, accessibility (ARIA).\n- **CSS3 & Modern Styling:** Flexbox, CSS Grid, Responsive Design, CSS Variables, Tailwind CSS.\n- **JavaScript (ES6+):** `const/let`, arrow functions, destructuring, Promises, `async/await`, Event Loop, DOM manipulation, Fetch API.\n\n### 📌 Phase 2: Modern Frontend Frameworks\n- **React 19 / Next.js:** Components, Props, Hooks (`useState`, `useEffect`, `useMemo`, `useCallback`, custom hooks).\n- Server Components, Server-Side Rendering (SSR), Static Site Generation (SSG), Client-Side Routing.\n- State Management: React Context, Zustand, TanStack Query (React Query) for server state caching.\n- TypeScript: Type annotations, Interfaces, Generics, strict type safety.\n\n### 📌 Phase 3: Backend Engineering & APIs\n- **Runtime & Frameworks:** Node.js, Express.js, Fastify, or Python (FastAPI).\n- **RESTful API Design:** Resource naming, HTTP verbs, status codes, JSON payload design.\n- **Authentication & Security:** JWT (JSON Web Tokens), OAuth 2.0, HTTP-only secure cookies, bcrypt password hashing, CORS, rate limiting.\n\n### 📌 Phase 4: Databases & Caching\n- **Relational Databases (RDBMS):** PostgreSQL, MySQL, normalization, indexing, Prisma / Drizzle ORM.\n- **NoSQL & In-Memory:** MongoDB, Redis (caching, pub/sub, rate limiting).\n\n### 📌 Phase 5: DevOps & Deployment\n- Docker containerization for full-stack apps.\n- CI/CD with GitHub Actions.\n- Cloud hosting: Vercel, Supabase, AWS, Docker containers on VPS.",
+    };
+  }
+
+  // 4. DSA & Problem Solving Roadmap
+  if (q.includes('dsa') || q.includes('algorithm') || q.includes('data structure')) {
+    return {
+      keywords: ['dsa roadmap', 'algorithm roadmap'],
+      title: 'Complete Data Structures & Algorithms (DSA) Roadmap',
+      subject: 'Developer Roadmap — Data Structures & Algorithms',
+      content: "# 🗺️ Data Structures & Algorithms (DSA) Roadmap\n\nA structured milestone plan for mastering technical interviews and competitive problem solving.\n\n---\n\n### 📌 Level 1: Foundations & Math\n- Asymptotic Notation: Big-O, Big-Omega, Big-Theta (Time & Space analysis).\n- Arrays, Strings, Two-Pointer technique, Sliding Window technique, Prefix Sum.\n\n### 📌 Level 2: Linear Data Structures\n- Singly & Doubly Linked Lists (Fast & Slow pointer pattern, cycle detection).\n- Stacks & Queues (Monotonic Stack, Next Greater Element, BFS queue).\n- Hash Tables & Hash Maps (Collision resolution, constant time lookups).\n\n### 📌 Level 3: Non-Linear & Hierarchical Structures\n- Binary Trees & Binary Search Trees (BST): In-order, Pre-order, Post-order, Level-order traversals.\n- Heaps & Priority Queues (Min-heap, Max-heap, Top-K elements pattern).\n- Disjoint Set Union (Union-Find) with path compression.\n\n### 📌 Level 4: Graphs & Search\n- Graph Representation: Adjacency Matrix & Adjacency List.\n- BFS (Shortest path in unweighted graph) & DFS (Connected components, cycle detection).\n- Topological Sort (Kahn’s algorithm).\n- Shortest Path: Dijkstra’s algorithm, Bellman-Ford.\n- Minimum Spanning Tree: Prim’s and Kruskal’s algorithms.\n\n### 📌 Level 5: Dynamic Programming (DP) & Backtracking\n- 1D DP: Climbing stairs, Coin change, Longest Increasing Subsequence (LIS).\n- 2D DP: 0/1 Knapsack, Longest Common Subsequence (LCS), Edit Distance.\n- Backtracking: N-Queens, Subsets, Permutations, Word Search.",
+    };
+  }
+
+  // 5. General Roadmap Fallback
+  const cleanName = query.replace(/roadmap|learning|path|guide|how|to|learn|of|for|make|a/gi, '').trim() || 'Technical Stack';
+  const titleName = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+  return {
+    keywords: [query],
+    title: titleName + ' Developer Learning Roadmap',
+    subject: 'Developer Roadmap — ' + titleName,
+    content: '# 🗺️ ' + titleName.toUpperCase() + ' Mastery Roadmap\n\nA complete engineering guide designed for structured skill acquisition and production mastery.\n\n---\n\n### 📌 Phase 1: Core Fundamentals & Theory\n- Understand foundational architecture, runtime environments, and syntax.\n- Configure development tooling (CLI, modern IDE extensions, linting, formatting).\n- Master input/output, type systems, and basic programmatic control flow.\n\n### 📌 Phase 2: Intermediate Concepts & Design Patterns\n- Modular code architecture and reusability patterns.\n- Error handling, exception propagation, and debugging workflows.\n- Asynchronous operations, network communication, and data serialization (JSON).\n\n### 📌 Phase 3: Frameworks, Tooling & Ecosystem\n- Learn dominant ecosystem frameworks and package management tools.\n- Interface with persistent databases (SQL / NoSQL) and caching layers.\n- Apply secure coding practices and environment configuration management.\n\n### 📌 Phase 4: Production Engineering & System Design\n- Automated testing: Unit, Integration, and End-to-End test suites.\n- Containerization with Docker and deployment pipelines.\n- Monitoring, logging, and observability in production.\n\n### 🚀 Recommended Milestone Projects\n1. **CLI Tool or Automation Script:** Build a utility that solves a real developer workflow challenge.\n2. **REST / GraphQL Microservice:** Build an authenticated, cached backend service with database persistence.\n3. **End-to-End Full Application:** Build and deploy a complete production-ready project to your portfolio.',
+  };
+}
+
+/**
+ * Intelligent domain lookup and technical response engine
  */
 export function queryCSKnowledgeBase(query: string): {
   found: boolean;
@@ -809,23 +873,37 @@ export function queryCSKnowledgeBase(query: string): {
 } {
   const cleaned = query.toLowerCase().trim();
 
-  // 1. Non-CS blacklist check (entertainment, medical, cooking, sports, astrology, gossip, etc.)
-  const nonCsKeywords = [
+  // 1. Strict Non-Technical blacklist check (entertainment, recipes, sports, astrology, gossip, etc.)
+  const nonTechnicalKeywords = [
     'recipe', 'cook', 'bake', 'food', 'cricket', 'football', 'ipl', 'nba',
     'movie', 'actor', 'actress', 'song', 'lyrics', 'horoscope', 'astrology',
     'zodiac', 'weather in', 'president of', 'prime minister', 'dating',
     'makeup', 'stock market tip', 'bitcoin price prediction'
   ];
 
-  const hasNonCsIntent = nonCsKeywords.some(w => cleaned.includes(w));
-  if (hasNonCsIntent) {
+  const hasNonTechIntent = nonTechnicalKeywords.some(w => cleaned.includes(w));
+  if (hasNonTechIntent) {
     return {
       found: false,
       outOfScopeResponse: getOutOfScopePoliteMessage(query),
     };
   }
 
-  // 2. Score knowledge entries by keyword matches
+  // 2. First-class Developer Roadmap detection
+  if (
+    cleaned.includes('roadmap') ||
+    cleaned.includes('learning path') ||
+    cleaned.includes('how to learn') ||
+    cleaned.includes('guide to learn') ||
+    cleaned.includes('learn path')
+  ) {
+    const roadmap = generateTechRoadmap(cleaned);
+    if (roadmap) {
+      return { found: true, entry: roadmap };
+    }
+  }
+
+  // 3. Score pre-compiled knowledge entries by keyword matches
   let bestMatch: KnowledgeEntry | null = null;
   let highestScore = 0;
 
@@ -833,7 +911,7 @@ export function queryCSKnowledgeBase(query: string): {
     let score = 0;
     for (const kw of entry.keywords) {
       if (cleaned.includes(kw)) {
-        score += kw.length; // weight longer phrases higher
+        score += kw.length;
       }
     }
     if (score > highestScore) {
@@ -846,48 +924,35 @@ export function queryCSKnowledgeBase(query: string): {
     return { found: true, entry: bestMatch };
   }
 
-  // 3. Broad CS topics fallback check (if user mentions any CS terminology)
-  const generalCsTerms = [
+  // 4. Broad Technical Stack Fallback (covers ALL developer and engineering topics)
+  const techTerms = [
     'code', 'program', 'function', 'variable', 'loop', 'array', 'string', 'algorithm',
     'database', 'sql', 'query', 'table', 'network', 'ip', 'server', 'client', 'http',
     'operating system', 'linux', 'memory', 'compiler', 'interpreter', 'react', 'javascript',
     'python', 'c++', 'java', 'html', 'css', 'api', 'git', 'bug', 'debug', 'error', 'class',
     'object', 'inheritance', 'recursion', 'stack', 'queue', 'tree', 'graph', 'hash', 'security',
-    'encryption', 'ai', 'machine learning', 'neural', 'model', 'data'
+    'encryption', 'ai', 'machine learning', 'neural', 'model', 'data', 'docker', 'kubernetes',
+    'k8s', 'aws', 'gcp', 'azure', 'devops', 'ci/cd', 'cicd', 'terraform', 'kafka', 'redis',
+    'mongodb', 'postgres', 'postgresql', 'mysql', 'graphql', 'rest', 'websocket', 'rust',
+    'golang', 'go', 'typescript', 'nextjs', 'next.js', 'vue', 'angular', 'svelte', 'tailwind',
+    'fastapi', 'django', 'flask', 'spring', 'spring boot', 'architecture', 'system design',
+    'microservice', 'microservices', 'c language', 'c program', 'pointer', 'pointers'
   ];
 
-  const isGeneralCs = generalCsTerms.some(term => cleaned.includes(term));
-  if (isGeneralCs) {
-    // Return structured tutorial breakdown for technical inquiry
+  const isTechnical = techTerms.some(term => cleaned.includes(term));
+  if (isTechnical) {
     return {
       found: true,
       entry: {
         keywords: [query],
-        title: `Computer Science Topic: ${query}`,
-        subject: 'Computer Science Study Guide (GeeksforGeeks & W3Schools)',
-        content: `### Computer Science Topic Overview: "${query}"
-
-Here is a structured engineering breakdown based on Computer Science standards:
-
-1. **Definition & Core Objective:**
-   - Clearly define the problem or concept in computer science.
-   - Understand the inputs, expected outputs, and constraints.
-
-2. **Fundamental Implementation Steps:**
-   - **Step 1:** Formulate the step-by-step algorithmic logic or architectural design.
-   - **Step 2:** Write clean, modular, and readable code with descriptive identifiers.
-   - **Step 3:** Validate against edge cases (e.g. empty collections, null references, off-by-one indices, large scales).
-
-3. **Recommended Study Route:**
-   - Explore practical code examples in our **Python Mastery**, **C++ & DSA**, or **Web Development** track modules.
-   - Practice related problems on GeeksforGeeks or W3Schools tutorials.
-
-*Feel free to ask for a specific code implementation, line-by-line debugging, or time/space complexity analysis!*`,
+        title: 'Technical Analysis: ' + query,
+        subject: 'Software Engineering & Architecture',
+        content: '### 💻 Engineering Overview: "' + query + '"\n\nHere is an architectural and programmatic breakdown for this technical concept:\n\n1. **Core Concept & Role in Modern Architecture:**\n   - Evaluates fundamental requirements, operational inputs, and intended outputs.\n   - Designed to maintain high maintainability, efficiency, and modular structure.\n\n2. **Standard Implementation & Code Patterns:**\n   - Ensure clean function boundaries and separation of concerns.\n   - Use strongly-typed variables and handle potential null or undefined states.\n   - Validate edge conditions (e.g., empty payloads, network timeouts, boundary values).\n\n3. **Production Best Practices:**\n   - **Performance:** Optimize data access patterns and avoid unnecessary allocations.\n   - **Reliability:** Implement comprehensive error boundaries and logging.\n   - **Scalability:** Decouple monolithic components using modular services or event-driven queues.\n\n*Feel free to ask for a specific code implementation, line-by-line debugging, or time/space complexity breakdown!*',
       },
     };
   }
 
-  // 4. If query does not match CS domain at all, return polite out-of-scope response
+  // 5. Out-of-scope response for non-technical inquiries
   return {
     found: false,
     outOfScopeResponse: getOutOfScopePoliteMessage(query),
@@ -895,19 +960,15 @@ Here is a structured engineering breakdown based on Computer Science standards:
 }
 
 export function getOutOfScopePoliteMessage(query: string): string {
-  return `I apologize, but your question about **"${query}"** is currently outside my technical knowledge base.
-
-As your **DevPilot Computer Science Learning Companion**, my knowledge base is specifically grounded in Computer Science, Software Engineering, and Programming curriculum (incorporating core topics from **GeeksforGeeks** and **W3Schools**).
-
-I am specially trained to assist you in:
-- **Programming Fundamentals:** Python, C++, Java, JavaScript, OOP, Pointers & Memory
-- **Data Structures & Algorithms (DSA):** Arrays, Trees, Graphs, Sorting, Dynamic Programming & Big-O
-- **DBMS:** SQL Queries, Normalization, Joins, ACID Properties & Indexing
-- **Operating Systems (OS):** Processes, Threads, CPU Scheduling, Deadlocks & Paging
-- **Computer Networks (CN):** OSI 7 Layers, TCP/IP, Subnetting, Routing & DNS
-- **AI & Machine Learning:** Supervised/Unsupervised Models, Gradient Descent & Neural Networks
-- **Cyber Security:** Cryptography, RSA, AES, SQL Injection & XSS Prevention
-- **Web Development:** Modern React, HTML5/CSS3, RESTful APIs & Authentication
-
-Please ask me any programming concept, code debugging, or CS interview question in these areas, and I will be delighted to help!`;
+  return 'I apologize, but your question about **"' + query + '"** is currently outside my technical domain.\n\n' +
+    'As your **DevPilot Technical AI Assistant**, I specialize exclusively in software engineering, programming languages, technical stacks, system architecture, and developer roadmaps.\n\n' +
+    'I can assist you with:\n' +
+    '- **Programming Languages:** C, C++, Python, Java, JavaScript, TypeScript, Go, Rust, and SQL\n' +
+    '- **Full-Stack & Mobile:** React, Next.js, Node.js, Express, FastAPI, Django, Flutter, REST & GraphQL\n' +
+    '- **Data Structures & Algorithms (DSA):** Arrays, Trees, Graphs, Sorting, Dynamic Programming & Big-O\n' +
+    '- **System Design & Architecture:** Scalability, Microservices, Caching (Redis), Load Balancing, Message Queues (Kafka)\n' +
+    '- **Databases & Storage:** PostgreSQL, MySQL, MongoDB, Indexing, Transactions & Normalization\n' +
+    '- **DevOps & Cloud:** Docker, Kubernetes, CI/CD, Linux, AWS, GCP & Terraform\n' +
+    '- **Developer Roadmaps:** Step-by-step learning paths for any language, stack, or engineering goal\n\n' +
+    'Please feel free to ask any technical question, code debugging problem, or architecture query!';
 }

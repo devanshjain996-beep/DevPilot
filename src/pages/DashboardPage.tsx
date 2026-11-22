@@ -19,6 +19,8 @@ import {
   GraduationCap,
   Palmtree,
   Coffee,
+  Plus,
+  Sparkles,
 } from 'lucide-react';
 import {
   Card,
@@ -42,10 +44,12 @@ import {
   lockExpiredSlotsForDate,
   repairAndSyncTimetable,
   calculateTimetableStats,
+  loadReadyMadeTimetable,
 } from '../hooks/useDatabase';
 import { todayStr, formatDate, formatDay, percentage, cn, statusBg } from '../utils/helpers';
 import { useProfile } from '../store/useStore';
 import WeeklyChart from '../components/charts/WeeklyChart';
+import FiveDoorDashboard from '../components/dashboard/FiveDoorDashboard';
 import type { TaskStatus } from '../types';
 import { startOfWeek, endOfWeek, format, parseISO, subDays } from 'date-fns';
 
@@ -96,6 +100,15 @@ export default function DashboardPage() {
   const projects = useProjects();
   const { tracks, overallPercentage } = useTrackProgress();
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  const [dashboardView, setDashboardView] = useState<'3d-doors' | 'classic'>(() => {
+    return localStorage.getItem('devpilot_dashboard_view') === 'classic' ? 'classic' : '3d-doors';
+  });
+
+  const handleToggleDashboardView = (mode: '3d-doors' | 'classic') => {
+    setDashboardView(mode);
+    localStorage.setItem('devpilot_dashboard_view', mode);
+  };
 
   // Automatically repair, sync schedule, and periodically check and lock expired slots on dashboard
   useEffect(() => {
@@ -245,8 +258,42 @@ export default function DashboardPage() {
 
   // ── render ─────────────────────────────────────────────────────────────────
 
+  if (dashboardView === '3d-doors') {
+    return (
+      <FiveDoorDashboard
+        timetable={timetable}
+        allTopics={allTopics}
+        overallPercentage={overallPercentage}
+        projects={projects}
+        goals={goals}
+        onSwitchToClassicView={() => handleToggleDashboardView('classic')}
+      />
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      {/* ── Switch to 3D Universe Banner ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-cyan-950/40 via-indigo-950/30 to-violet-950/40 border border-cyan-500/30 shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <Sparkles size={18} className="animate-pulse" />
+          </div>
+          <div>
+            <span className="text-sm font-bold text-white">Five-Door 3D Navigation Hub Active</span>
+            <p className="text-xs text-slate-400">Experience DevPilot's immersive 3D portals for Timetable, Roadmaps, Projects, Portfolio & Goals.</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => handleToggleDashboardView('3d-doors')}
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-colors cursor-pointer shrink-0"
+        >
+          <span>Enter 3D Universe</span>
+          <ArrowRight size={14} />
+        </button>
+      </div>
+
       {/* ── 1. Welcome ── */}
       <div>
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
@@ -313,9 +360,26 @@ export default function DashboardPage() {
               </h2>
             </div>
             {timetable.length === 0 ? (
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                No timetable entries for today. Add your schedule to get started.
-              </p>
+              <div className="text-center py-6 px-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-800 space-y-3">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  No timetable entries for today. Build your custom schedule or load our ready-made routine.
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <Link
+                    to="/timetable"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+                  >
+                    <Plus size={13} /> Build Custom Timetable
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => loadReadyMadeTimetable(today)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+                  >
+                    <Sparkles size={13} className="text-cyan-500" /> Load Ready-made Schedule
+                  </button>
+                </div>
+              </div>
             ) : (
               <div className="space-y-2">
                 {timetable

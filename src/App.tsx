@@ -27,9 +27,7 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import AiCopilotPage from './pages/AiCopilotPage';
 
 // Data Initialization & Services
-import { initTopicsIfEmpty, initTimetableForDate } from './hooks/useDatabase';
-import { DEFAULT_TIMETABLE } from './data/roadmapData';
-import { todayStr } from './utils/helpers';
+import { initTopicsIfEmpty } from './hooks/useDatabase';
 import { useTheme } from './store/useStore';
 import { registerServiceWorker } from './services/notifications';
 
@@ -37,9 +35,8 @@ export default function App() {
   useTheme(); // Synchronize dark/light theme class on documentElement
 
   useEffect(() => {
-    // Seed initial roadmaps and today's schedule into IndexedDB if first run
+    // Seed initial roadmaps into IndexedDB if first run
     initTopicsIfEmpty();
-    initTimetableForDate(todayStr(), DEFAULT_TIMETABLE);
     registerServiceWorker();
   }, []);
 

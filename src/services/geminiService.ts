@@ -160,3 +160,132 @@ export async function queryGeminiFlash(
 
   throw new Error(`Gemini Flash query failed: ${lastError}`);
 }
+
+export type StreamChunkCallback = (textChunk: string, fullAccumulatedText: string) => void;
+
+/**
+ * Call Gemini Flash with real-time progressive SSE streaming
+ * Automatically falls back to standard query if SSE streaming is unsupported or fails
+ */
+export async function streamGeminiFlash(
+  prompt: string,
+  history: { role: 'user' | 'assistant'; content: string }[] = [],
+  onChunk: StreamChunkCallback,
+  options?: {
+    customApiKey?: string;
+    signal?: AbortSignal;
+  }
+): Promise<{ text: string; modelUsed: string }> {
+  const apiKey = (options?.customApiKey || getActiveGeminiKey()).trim();
+
+  if (!apiKey) {
+    throw new Error('NO_API_KEY');
+  }
+
+  // Format past history into Gemini contents format
+  const recentHistory = history.slice(-6);
+  const contents: GeminiMessage[] = recentHistory.map(h => ({
+    role: h.role === 'user' ? 'user' : 'model',
+    parts: [{ text: h.content }],
+  }));
+
+  // Append latest user prompt
+  contents.push({
+    role: 'user',
+    parts: [{ text: prompt }],
+  });
+
+  const requestBody = JSON.stringify({
+    systemInstruction: {
+      parts: [{ text: SYSTEM_INSTRUCTION }],
+    },
+    contents,
+    generationConfig: {
+      temperature: 0.4,
+      topP: 0.95,
+      topK: 40,
+      maxOutputTokens: 3000,
+    },
+  });
+
+  let lastError = '';
+
+  // Attempt real SSE streaming with each Flash model in priority order
+  for (const model of FLASH_MODELS) {
+    if (options?.signal?.aborted) {
+      throw new Error('ABORTED');
+    }
+
+    try {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: requestBody,
+        signal: options?.signal,
+      });
+
+      if (response.ok && response.body) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let accumulatedText = '';
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || !trimmed.startsWith('data:')) continue;
+
+            const jsonStr = trimmed.slice(5).trim();
+            if (!jsonStr || jsonStr === '[DONE]') continue;
+
+            try {
+              const data = JSON.parse(jsonStr);
+              const partText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (partText) {
+                accumulatedText += partText;
+                onChunk(partText, accumulatedText);
+              }
+            } catch {
+              // Ignore malformed partial chunks in SSE stream
+            }
+          }
+        }
+
+        if (accumulatedText.trim().length > 0) {
+          return { text: accumulatedText, modelUsed: model };
+        }
+      } else {
+        const errData = await response.json().catch(() => null);
+        const errMsg = errData?.error?.message || response.statusText;
+        lastError = `[${model}] ${errMsg}`;
+
+        if (response.status === 400 && errMsg.toLowerCase().includes('api_key')) {
+          throw new Error('INVALID_API_KEY: Please check your Gemini API key.');
+        }
+        if (response.status === 429) {
+          throw new Error('QUOTA_EXCEEDED: Gemini API rate limit reached. Please wait a moment.');
+        }
+      }
+    } catch (err: any) {
+      if (err.name === 'AbortError' || err.message === 'ABORTED') {
+        throw new Error('ABORTED');
+      }
+      if (err.message?.includes('INVALID_API_KEY') || err.message?.includes('QUOTA_EXCEEDED')) {
+        throw err;
+      }
+      lastError = err?.message || String(err);
+    }
+  }
+
+  // Graceful fallback to standard queryGeminiFlash if streaming was rejected
+  return queryGeminiFlash(prompt, history, apiKey);
+}

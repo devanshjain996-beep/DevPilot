@@ -24,7 +24,8 @@ import {
   updateTimetableStatus, updateTimetableEntry, addTimetableEntry,
   deleteTimetableEntry, initTimetableForDate, resetTimetableForDate,
   lockExpiredSlotsForDate, applyHolidayToDate, removeSlotWithException,
-  repairAndSyncTimetable, calculateTimetableStats
+  repairAndSyncTimetable, calculateTimetableStats, loadReadyMadeTimetable,
+  clearTimetableForDate
 } from '../hooks/useDatabase';
 import { todayStr, formatDate, formatDay, cn, priorityColor } from '../utils/helpers';
 import { DEFAULT_TIMETABLE } from '../data/roadmapData';
@@ -184,9 +185,24 @@ export default function TimetablePage() {
     setSlotModalOpen(true);
   };
 
-  const handleResetTimetable = async () => {
-    if (confirm(`Reset timetable for ${formatDate(selectedDate)} to default schedule?`)) {
-      await resetTimetableForDate(selectedDate, DEFAULT_TIMETABLE);
+  const handleLoadReadyMade = async () => {
+    const modeLabel = currentHolidayMode === 'holiday-study'
+      ? 'Holiday Study Schedule'
+      : currentHolidayMode === 'holiday-no-study'
+      ? 'Holiday Rest Day Routine'
+      : 'Normal College & Study Schedule';
+
+    if (entries.length > 0) {
+      if (!confirm(`Load ready-made ${modeLabel} for ${formatDate(selectedDate)}? This will replace current slots with the recommended template.`)) {
+        return;
+      }
+    }
+    await loadReadyMadeTimetable(selectedDate);
+  };
+
+  const handleClearDay = async () => {
+    if (confirm(`Clear all timetable slots for ${formatDate(selectedDate)}? You can add your own custom slots from scratch.`)) {
+      await clearTimetableForDate(selectedDate);
     }
   };
 
@@ -249,8 +265,13 @@ export default function TimetablePage() {
             <Button variant="secondary" onClick={() => setCustomHolidayModalOpen(true)} size="sm" className="text-xs">
               <Sun size={14} /> Advance Holiday
             </Button>
-            <Button variant="secondary" onClick={handleResetTimetable} size="sm" className="text-xs">
-              <RefreshCw size={14} /> Reset Schedule
+            {entries.length > 0 && (
+              <Button variant="secondary" onClick={handleClearDay} size="sm" className="text-xs text-rose-500 hover:text-rose-600 border-rose-500/20 hover:bg-rose-500/10">
+                <Trash2 size={14} /> Clear Slots
+              </Button>
+            )}
+            <Button variant="secondary" onClick={handleLoadReadyMade} size="sm" className="text-xs text-blue-600 dark:text-cyan-400 border-blue-500/30 hover:bg-blue-500/10">
+              <Sparkles size={14} /> Ready-made Template
             </Button>
             <Button variant="secondary" onClick={handleOpenAddSlot} size="sm" className="text-xs">
               <Plus size={14} /> Add Slot
@@ -528,11 +549,39 @@ export default function TimetablePage() {
           </div>
 
           {/* Timetable Entries List */}
-          {filteredEntries.length === 0 ? (
+          {entries.length === 0 ? (
+            <Card className="p-8 sm:p-12 text-center border-dashed border-2 border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30">
+              <div className="max-w-md mx-auto space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500/10 via-indigo-500/10 to-cyan-500/10 text-blue-500 dark:text-cyan-400 border border-blue-500/20 mx-auto flex items-center justify-center shadow-xs">
+                  <CalendarDays size={28} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                    No timetable slots for {formatDay(selectedDate)}, {formatDate(selectedDate)}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
+                    {currentHolidayMode === 'holiday-study'
+                      ? 'Marked as a Holiday Study Day. Create your own custom holiday schedule from scratch, or load our ready-made morning study routine.'
+                      : currentHolidayMode === 'holiday-no-study'
+                      ? 'Marked as a Rest Day / Day Off. Create your own personal tasks or load our relaxed holiday routine.'
+                      : 'Create your own personalized daily schedule from scratch, or load our ready-made college & study routine.'}
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-2">
+                  <Button onClick={handleOpenAddSlot} size="sm" className="w-full sm:w-auto">
+                    <Plus size={15} /> Build Custom Timetable
+                  </Button>
+                  <Button onClick={handleLoadReadyMade} size="sm" variant="secondary" className="w-full sm:w-auto text-blue-600 dark:text-cyan-400 border-blue-500/30 hover:bg-blue-500/10">
+                    <Sparkles size={15} /> Load Ready-made Schedule
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ) : filteredEntries.length === 0 ? (
             <EmptyState
               icon={<Clock size={48} />}
-              title="No slots found for this filter"
-              description="Adjust your filter or click 'Reset Schedule' to restore the standard routine."
+              title="No slots match this filter"
+              description={`No timetable slots found under the '${statusFilter}' filter.`}
               action={
                 <div className="flex gap-2">
                   <Button onClick={() => setStatusFilter('all')} size="sm" variant="secondary">Clear Filter</Button>

@@ -145,7 +145,7 @@ export default function DevPilotAIAssistant() {
               style={{
                 transformStyle: 'preserve-3d',
               }}
-              className="relative z-10 pointer-events-auto w-full max-w-4xl h-[90vh] max-h-[760px] rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col border border-slate-300/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl"
+              className="relative z-10 pointer-events-auto w-full max-w-5xl h-[92vh] max-h-[820px] rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col border border-slate-300/60 dark:border-slate-800 bg-white dark:bg-slate-950 backdrop-blur-2xl"
               onClick={e => e.stopPropagation()}
             >
               <AICopilotChat

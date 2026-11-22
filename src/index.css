@@ -2,10 +2,23 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --color-electric-blue: #38bdf8;
+  --color-cyan-pulse: #00d8ff;
+  --color-violet-pulse: #8a4cfc;
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 @layer base {
   body {
     @apply bg-slate-50 text-slate-900 antialiased selection:bg-blue-500 selection:text-white dark:bg-slate-950 dark:text-slate-100;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--font-sans);
+  }
+
+  code, pre, kbd {
+    font-family: var(--font-mono);
   }
 }
 
@@ -19,8 +32,78 @@
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(148, 163, 184, 0.3);
-  border-radius: 3px;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(148, 163, 184, 0.5);
 }
+
+/* Dedicated smooth chat scrollbar */
+.chat-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.chat-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+.chat-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.45);
+}
+
+/* ChatGPT-Style Typography for AI markdown answers */
+.prose-chat {
+  font-family: var(--font-sans);
+  font-size: 15.5px;
+  line-height: 1.72;
+  color: inherit;
+}
+.prose-chat p {
+  margin-bottom: 0.95rem;
+}
+.prose-chat p:last-child {
+  margin-bottom: 0;
+}
+.prose-chat strong {
+  font-weight: 600;
+  color: inherit;
+}
+.prose-chat ul {
+  list-style-type: disc;
+  padding-left: 1.4rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.95rem;
+}
+.prose-chat ol {
+  list-style-type: decimal;
+  padding-left: 1.4rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.95rem;
+}
+.prose-chat li {
+  margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
+  line-height: 1.68;
+}
+.prose-chat h1, .prose-chat h2, .prose-chat h3, .prose-chat h4 {
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+.prose-chat blockquote {
+  border-left-width: 3.5px;
+  border-left-color: rgba(99, 102, 241, 0.7);
+  padding-left: 1rem;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.95rem;
+  font-style: italic;
+  opacity: 0.92;
+}
+.dark .prose-chat blockquote {
+  border-left-color: rgba(56, 189, 248, 0.7);
+}
+

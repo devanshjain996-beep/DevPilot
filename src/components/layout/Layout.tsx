@@ -2,7 +2,7 @@
 // DevPilot — Main Layout with Header, Save Status & Modals
 // ============================================================================
 import { useState, useEffect } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { Menu, User, ShieldCheck, Bell, LogIn, LogOut } from 'lucide-react';
 import DevPilotAIAssistant from '../ai/DevPilotAIAssistant';
@@ -16,6 +16,8 @@ import { hasAnsweredNotificationPrompt } from '../../services/notifications';
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificationPromptOpen, setNotificationPromptOpen] = useState(false);
+  const location = useLocation();
+  const isDashboard = location.pathname === '/';
 
   const {
     user,
@@ -98,9 +100,13 @@ export default function Layout() {
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {isDashboard ? (
             <Outlet />
-          </div>
+          ) : (
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+              <Outlet />
+            </div>
+          )}
         </main>
       </div>
 

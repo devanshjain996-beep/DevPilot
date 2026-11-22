@@ -34,15 +34,73 @@ import type {
   ExceptionType, SlotVisualStatus, HolidayMode
 } from '../types';
 
-// ── Category → color map ──
+// ── Category → color & style map (High-readability cyber portal theme) ──
+export const CAT_STYLE: Record<string, {
+  border: string;
+  bg: string;
+  badgeBg: string;
+  badgeText: string;
+  badgeBorder: string;
+}> = {
+  python: {
+    border: 'border-l-emerald-400',
+    bg: 'bg-gradient-to-r from-emerald-950/30 via-[#0d1424] to-[#070b16]',
+    badgeBg: 'bg-emerald-950/70',
+    badgeText: 'text-emerald-300',
+    badgeBorder: 'border-emerald-500/50',
+  },
+  'cpp-dsa': {
+    border: 'border-l-violet-400',
+    bg: 'bg-gradient-to-r from-violet-950/30 via-[#0d1424] to-[#070b16]',
+    badgeBg: 'bg-violet-950/70',
+    badgeText: 'text-violet-300',
+    badgeBorder: 'border-violet-500/50',
+  },
+  webdev: {
+    border: 'border-l-cyan-400',
+    bg: 'bg-gradient-to-r from-cyan-950/30 via-[#0d1424] to-[#070b16]',
+    badgeBg: 'bg-cyan-950/70',
+    badgeText: 'text-cyan-300',
+    badgeBorder: 'border-cyan-500/50',
+  },
+  academics: {
+    border: 'border-l-amber-400',
+    bg: 'bg-gradient-to-r from-amber-950/30 via-[#0d1424] to-[#070b16]',
+    badgeBg: 'bg-amber-950/70',
+    badgeText: 'text-amber-300',
+    badgeBorder: 'border-amber-500/50',
+  },
+  personal: {
+    border: 'border-l-indigo-400',
+    bg: 'bg-gradient-to-r from-indigo-950/30 via-[#0d1424] to-[#070b16]',
+    badgeBg: 'bg-indigo-950/70',
+    badgeText: 'text-indigo-300',
+    badgeBorder: 'border-indigo-500/50',
+  },
+  college: {
+    border: 'border-l-blue-400',
+    bg: 'bg-gradient-to-r from-blue-950/35 via-[#0d1424] to-[#070b16]',
+    badgeBg: 'bg-blue-950/70',
+    badgeText: 'text-blue-300',
+    badgeBorder: 'border-blue-500/50',
+  },
+  planning: {
+    border: 'border-l-teal-400',
+    bg: 'bg-gradient-to-r from-teal-950/30 via-[#0d1424] to-[#070b16]',
+    badgeBg: 'bg-teal-950/70',
+    badgeText: 'text-teal-300',
+    badgeBorder: 'border-teal-500/50',
+  },
+};
+
 const CAT_COLOR: Record<string, string> = {
-  python: 'border-l-emerald-400 bg-emerald-950/20 shadow-emerald-500/5 hover:border-l-emerald-300',
-  'cpp-dsa': 'border-l-violet-400 bg-violet-950/20 shadow-violet-500/5 hover:border-l-violet-300',
-  webdev: 'border-l-cyan-400 bg-cyan-950/20 shadow-cyan-500/5 hover:border-l-cyan-300',
-  academics: 'border-l-amber-400 bg-amber-950/20 shadow-amber-500/5 hover:border-l-amber-300',
-  personal: 'border-l-indigo-400 bg-indigo-950/20 shadow-indigo-500/5 hover:border-l-indigo-300',
-  college: 'border-l-blue-500 bg-blue-950/20 shadow-blue-500/5 hover:border-l-blue-400',
-  planning: 'border-l-slate-400 bg-slate-900/40 shadow-slate-500/5 hover:border-l-slate-300',
+  python: 'border-l-emerald-400 bg-emerald-950/30 shadow-emerald-500/10 hover:border-l-emerald-300',
+  'cpp-dsa': 'border-l-violet-400 bg-violet-950/30 shadow-violet-500/10 hover:border-l-violet-300',
+  webdev: 'border-l-cyan-400 bg-cyan-950/30 shadow-cyan-500/10 hover:border-l-cyan-300',
+  academics: 'border-l-amber-400 bg-amber-950/30 shadow-amber-500/10 hover:border-l-amber-300',
+  personal: 'border-l-indigo-400 bg-indigo-950/30 shadow-indigo-500/10 hover:border-l-indigo-300',
+  college: 'border-l-blue-400 bg-blue-950/35 shadow-blue-500/10 hover:border-l-blue-300',
+  planning: 'border-l-teal-400 bg-teal-950/30 shadow-teal-500/10 hover:border-l-teal-300',
 };
 
 const CAT_BADGE: Record<string, string> = {
@@ -247,65 +305,83 @@ export default function TimetablePage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="My Daily Timetable"
-        subtitle="Command your day with automatic missed-slot locking, intelligent holiday study dividing, and cut-off rest days."
-        action={
-          <div className="flex flex-wrap items-center gap-2">
+      {/* ── 3D TIME COMMAND PORTAL HERO BANNER ── */}
+      <div className="relative rounded-3xl p-5 sm:p-7 border border-cyan-500/30 bg-gradient-to-r from-[#0b1429] via-[#0d1c3a] to-[#080e1e] shadow-2xl shadow-cyan-950/40 overflow-hidden">
+        {/* Futuristic glowing cyber accents */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-blue-600/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
+
+        <div className="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-cyan-950/80 text-cyan-300 border border-cyan-400/50 shadow-sm shadow-cyan-500/20">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                DOOR 01 // TIME COMMAND PORTAL
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+                <Clock size={11} className="text-cyan-400" /> CHRONO SYNC ACTIVE
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight flex items-center gap-3">
+              Daily Timetable & Planner
+            </h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-300 max-w-2xl leading-relaxed">
+              Automated missed-slot locking, intelligent holiday routine divisions, and cut-off rest days engineered for peak productivity.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5">
             {activeExceptionsCount > 0 && (
-              <Button
-                variant="secondary"
-                size="sm"
+              <button
+                type="button"
                 onClick={() => setExceptionsModalOpen(true)}
-                className="text-xs text-amber-300 hover:text-white font-bold border-amber-500/40 bg-amber-950/40 hover:bg-amber-900/50"
+                className="px-3.5 py-2 rounded-xl text-xs font-bold text-amber-200 hover:text-white border border-amber-500/50 bg-amber-950/50 hover:bg-amber-900/60 shadow-sm flex items-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer"
               >
                 <Layers size={14} className="text-amber-400" /> Exceptions ({activeExceptionsCount})
-              </Button>
+              </button>
             )}
-            <Button
-              variant="secondary"
+            <button
+              type="button"
               onClick={() => setCustomHolidayModalOpen(true)}
-              size="sm"
-              className="text-xs text-white font-bold bg-slate-800 hover:bg-slate-700 border-slate-600 hover:border-amber-400"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-slate-800/90 hover:bg-slate-700 border border-slate-600 hover:border-amber-400 shadow-sm flex items-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer"
             >
               <Sun size={14} className="text-amber-400" /> Advance Holiday
-            </Button>
+            </button>
             {entries.length > 0 && (
-              <Button
-                variant="secondary"
+              <button
+                type="button"
                 onClick={handleClearDay}
-                size="sm"
-                className="text-xs text-rose-300 hover:text-white font-bold border-rose-500/40 bg-rose-950/40 hover:bg-rose-900/50"
+                className="px-3.5 py-2 rounded-xl text-xs font-bold text-rose-200 hover:text-white border border-rose-500/50 bg-rose-950/50 hover:bg-rose-900/60 shadow-sm flex items-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer"
               >
                 <Trash2 size={14} className="text-rose-400" /> Clear Slots
-              </Button>
+              </button>
             )}
-            <Button
-              variant="secondary"
+            <button
+              type="button"
               onClick={handleLoadReadyMade}
-              size="sm"
-              className="text-xs text-cyan-300 hover:text-white font-bold border-cyan-500/40 bg-cyan-950/40 hover:bg-cyan-900/50"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold text-cyan-200 hover:text-white border border-cyan-500/50 bg-cyan-950/50 hover:bg-cyan-900/60 shadow-sm flex items-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer"
             >
               <Sparkles size={14} className="text-cyan-400" /> Ready-made Template
-            </Button>
-            <Button
-              variant="secondary"
+            </button>
+            <button
+              type="button"
               onClick={handleOpenAddSlot}
-              size="sm"
-              className="text-xs text-white font-bold bg-slate-800 hover:bg-slate-700 border-slate-600 hover:border-cyan-400"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-slate-800/90 hover:bg-slate-700 border border-slate-600 hover:border-cyan-400 shadow-sm flex items-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer"
             >
               <Plus size={14} className="text-cyan-400" /> Add Slot
-            </Button>
-            <Button
+            </button>
+            <button
+              type="button"
               onClick={() => setTaskModalOpen(true)}
-              size="sm"
-              className="text-xs text-white font-bold bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-md shadow-blue-500/20"
+              className="px-4 py-2 rounded-xl text-xs font-extrabold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 shadow-lg shadow-cyan-500/25 flex items-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer"
             >
               <Plus size={14} /> Add Task
-            </Button>
+            </button>
           </div>
-        }
-      />
+        </div>
+      </div>
 
       {/* Tabs */}
       <Tabs
@@ -320,43 +396,49 @@ export default function TimetablePage() {
       {activeTab === 'daily' ? (
         <>
           {/* ── Schedule Mode Selector & Status Card ── */}
-          <Card className="p-3.5 border-slate-200 dark:border-slate-800">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-[#0c1426] via-[#09101f] to-[#070c18] border border-slate-800/90 shadow-xl">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
                 {currentHolidayMode === 'normal' && (
-                  <div className="p-2 bg-blue-500/10 text-blue-500 rounded-lg">
-                    <GraduationCap size={20} />
+                  <div className="p-2.5 bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded-xl shadow-inner">
+                    <GraduationCap size={22} />
                   </div>
                 )}
                 {currentHolidayMode === 'holiday-study' && (
-                  <div className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg">
-                    <Laptop size={20} />
+                  <div className="p-2.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 rounded-xl shadow-inner">
+                    <Laptop size={22} />
                   </div>
                 )}
                 {currentHolidayMode === 'holiday-no-study' && (
-                  <div className="p-2 bg-indigo-500/10 text-indigo-500 rounded-lg">
-                    <Palmtree size={20} />
+                  <div className="p-2.5 bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 rounded-xl shadow-inner">
+                    <Palmtree size={22} />
                   </div>
                 )}
 
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-bold text-sm text-slate-900 dark:text-white">
+                    <span className="font-extrabold text-base text-white tracking-tight">
                       {currentHolidayMode === 'normal' && '📚 Normal College Routine'}
                       {currentHolidayMode === 'holiday-study' && '💻 Holiday Study Plan Active'}
                       {currentHolidayMode === 'holiday-no-study' && '🌴 Rest Day (No Study) Active'}
                     </span>
                     {currentHolidayMode === 'normal' && (
-                      <Badge variant="info">College 6 AM – 2 PM (No Task Checkbox)</Badge>
+                      <span className="px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-blue-950/80 text-blue-300 border border-blue-500/40">
+                        College 6 AM – 2 PM (No Task Checkbox)
+                      </span>
                     )}
                     {currentHolidayMode === 'holiday-study' && (
-                      <Badge variant="success">6 AM – 2 PM Divided into Study Sessions</Badge>
+                      <span className="px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40">
+                        6 AM – 2 PM Divided into Study Sessions
+                      </span>
                     )}
                     {currentHolidayMode === 'holiday-no-study' && (
-                      <Badge variant="purple">Cut off from Weekly Progress · Excused</Badge>
+                      <span className="px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-indigo-950/80 text-indigo-300 border border-indigo-500/40">
+                        Cut off from Weekly Progress · Excused
+                      </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-300 font-medium mt-1">
                     {currentHolidayMode === 'normal' && 'College attendance is fixed routine. 3–4 PM College Academics has task checkbox (locks if missed).'}
                     {currentHolidayMode === 'holiday-study' && 'Morning college hours divided into Python, Web Dev, System Design, and College Academics practice.'}
                     {currentHolidayMode === 'holiday-no-study' && 'Full rest day. Automatically cut off from this week\'s study progress so your score is not penalized.'}
@@ -365,69 +447,79 @@ export default function TimetablePage() {
               </div>
 
               {/* Mode switch pills */}
-              <div className="flex items-center gap-1.5 shrink-0 self-end lg:self-center bg-slate-950 p-1.5 rounded-xl border border-slate-800 text-xs">
+              <div className="flex items-center gap-1.5 shrink-0 self-end lg:self-center bg-slate-950/90 p-1.5 rounded-xl border border-slate-800 shadow-inner">
                 <button
                   type="button"
                   onClick={() => handleRequestModeChange('normal')}
                   className={cn(
-                    'px-3 py-1.5 rounded-lg font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95',
+                    'px-3.5 py-2 rounded-lg font-extrabold text-xs transition-all duration-200 cursor-pointer flex items-center gap-2 active:scale-95',
                     currentHolidayMode === 'normal'
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20 border border-blue-400/40'
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 border border-blue-400/50'
                       : 'text-slate-200 hover:text-white hover:bg-slate-800/80'
                   )}
                 >
-                  <GraduationCap size={14} className={currentHolidayMode === 'normal' ? 'text-white' : 'text-blue-400'} />
+                  <GraduationCap size={15} className={currentHolidayMode === 'normal' ? 'text-white' : 'text-blue-400'} />
                   <span>Normal Day</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleRequestModeChange('holiday-study')}
                   className={cn(
-                    'px-3 py-1.5 rounded-lg font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95',
+                    'px-3.5 py-2 rounded-lg font-extrabold text-xs transition-all duration-200 cursor-pointer flex items-center gap-2 active:scale-95',
                     currentHolidayMode === 'holiday-study'
-                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 border border-emerald-400/40'
+                      ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/30 border border-emerald-400/50'
                       : 'text-slate-200 hover:text-white hover:bg-slate-800/80'
                   )}
                 >
-                  <Laptop size={14} className={currentHolidayMode === 'holiday-study' ? 'text-white' : 'text-emerald-400'} />
+                  <Laptop size={15} className={currentHolidayMode === 'holiday-study' ? 'text-white' : 'text-emerald-400'} />
                   <span>Holiday Study</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleRequestModeChange('holiday-no-study')}
                   className={cn(
-                    'px-3 py-1.5 rounded-lg font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95',
+                    'px-3.5 py-2 rounded-lg font-extrabold text-xs transition-all duration-200 cursor-pointer flex items-center gap-2 active:scale-95',
                     currentHolidayMode === 'holiday-no-study'
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20 border border-indigo-400/40'
+                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 border border-indigo-400/50'
                       : 'text-slate-200 hover:text-white hover:bg-slate-800/80'
                   )}
                 >
-                  <Palmtree size={14} className={currentHolidayMode === 'holiday-no-study' ? 'text-white' : 'text-indigo-400'} />
+                  <Palmtree size={15} className={currentHolidayMode === 'holiday-no-study' ? 'text-white' : 'text-indigo-400'} />
                   <span>Rest Day</span>
                 </button>
               </div>
             </div>
-          </Card>
+          </div>
 
           {/* Date navigation & Statistics Header */}
-          <Card className="p-4 space-y-4">
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-[#0c1426] to-[#070c18] border border-slate-800/90 shadow-xl space-y-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <Button variant="secondary" size="sm" onClick={prevDay} className="text-white hover:text-cyan-300 bg-slate-800 hover:bg-slate-700 border-slate-600">
                   <ChevronLeft size={18} />
                 </Button>
                 <div className="text-center">
-                  <p className="text-lg font-extrabold text-white">
+                  <p className="text-xl sm:text-2xl font-black text-white tracking-wide">
                     {formatDay(selectedDate)}, {formatDate(selectedDate)}
                   </p>
-                  <div className="flex items-center justify-center gap-1.5 mt-0.5">
-                    {isToday && <Badge variant="info">Today</Badge>}
+                  <div className="flex items-center justify-center gap-2 mt-1">
+                    {isToday && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-cyan-950 text-cyan-300 border border-cyan-400/50">
+                        Today
+                      </span>
+                    )}
                     {dailySettings?.isNoStudyDay ? (
-                      <Badge variant="purple">Rest Day (Excused)</Badge>
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-indigo-950 text-indigo-300 border border-indigo-400/50">
+                        Rest Day (Excused)
+                      </span>
                     ) : dailySettings?.isHoliday ? (
-                      <Badge variant="success">Holiday Study</Badge>
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-950 text-emerald-300 border border-emerald-400/50">
+                        Holiday Study
+                      </span>
                     ) : (
-                      <Badge variant="default">Normal Day</Badge>
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-blue-950 text-blue-300 border border-blue-400/50">
+                        Normal Day
+                      </span>
                     )}
                   </div>
                 </div>
@@ -438,18 +530,18 @@ export default function TimetablePage() {
 
               <div className="flex items-center gap-4">
                 {!isToday && (
-                  <Button variant="secondary" size="sm" onClick={goToday} className="text-white font-bold bg-slate-800 hover:bg-slate-700 border-cyan-500/40 hover:border-cyan-400">
+                  <Button variant="secondary" size="sm" onClick={goToday} className="text-white font-bold bg-slate-800 hover:bg-slate-700 border-cyan-500/40 hover:border-cyan-400 shadow-sm">
                     <Calendar size={14} className="text-cyan-400" /> Jump to Today
                   </Button>
                 )}
-                <div className="flex items-center gap-2 px-3.5 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-                  <Percent size={16} className="text-blue-400" />
-                  <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                <div className="flex items-center gap-2.5 px-4 py-2 bg-gradient-to-r from-blue-950/60 to-cyan-950/60 border border-cyan-500/40 rounded-2xl shadow-inner">
+                  <Percent size={18} className="text-cyan-400" />
+                  <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
                     Completion:
                   </span>
                   <span className={cn(
-                    'text-base font-bold',
-                    stats.completionPct >= 80 ? 'text-emerald-500' : stats.completionPct >= 50 ? 'text-amber-500' : 'text-blue-400',
+                    'text-lg font-black',
+                    stats.completionPct >= 80 ? 'text-emerald-400' : stats.completionPct >= 50 ? 'text-amber-400' : 'text-cyan-300',
                   )}>
                     {dailySettings?.isNoStudyDay ? 'Excused (100%)' : `${stats.completionPct}%`}
                   </span>
@@ -458,32 +550,32 @@ export default function TimetablePage() {
             </div>
 
             {/* Quick Holographic Metrics Strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-3 border-t border-slate-800/80 text-xs">
-              <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 shadow-inner">
-                <p className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Required Slots</p>
-                <p className="text-base font-extrabold text-white mt-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-3 border-t border-slate-800/80 text-xs">
+              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 shadow-inner">
+                <p className="text-[11px] text-slate-400 font-extrabold uppercase tracking-wider">Required Slots</p>
+                <p className="text-xl font-black text-white mt-1">
                   {dailySettings?.isNoStudyDay ? '0 (Day Off)' : stats.totalRequired}
                 </p>
               </div>
-              <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 shadow-sm shadow-emerald-500/10">
-                <p className="text-[11px] text-emerald-300 font-semibold uppercase tracking-wider">Completed</p>
-                <p className="text-base font-extrabold text-emerald-400 mt-1">{stats.completed}</p>
+              <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-400 shadow-sm shadow-emerald-500/10">
+                <p className="text-[11px] text-emerald-300 font-extrabold uppercase tracking-wider">Completed</p>
+                <p className="text-xl font-black text-emerald-300 mt-1">{stats.completed}</p>
               </div>
-              <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/30 text-red-400 shadow-sm shadow-red-500/10">
-                <p className="text-[11px] text-red-300 font-semibold uppercase tracking-wider">Missed / Locked</p>
-                <p className="text-base font-extrabold text-red-400 mt-1">{stats.missed}</p>
+              <div className="p-3.5 rounded-xl bg-red-950/40 border border-red-500/40 text-red-400 shadow-sm shadow-red-500/10">
+                <p className="text-[11px] text-red-300 font-extrabold uppercase tracking-wider">Missed / Locked</p>
+                <p className="text-xl font-black text-red-300 mt-1">{stats.missed}</p>
               </div>
-              <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/40 text-cyan-300 shadow-sm shadow-cyan-500/10">
-                <p className="text-[11px] text-cyan-300 font-semibold uppercase tracking-wider">In Progress</p>
-                <p className="text-base font-extrabold text-cyan-400 mt-1">{stats.inProgress}</p>
+              <div className="p-3.5 rounded-xl bg-cyan-950/40 border border-cyan-500/50 text-cyan-300 shadow-sm shadow-cyan-500/15">
+                <p className="text-[11px] text-cyan-300 font-extrabold uppercase tracking-wider">In Progress</p>
+                <p className="text-xl font-black text-cyan-300 mt-1">{stats.inProgress}</p>
               </div>
-              <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 shadow-inner">
-                <p className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Upcoming</p>
-                <p className="text-base font-extrabold text-slate-300 mt-1">{stats.upcoming}</p>
+              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 shadow-inner">
+                <p className="text-[11px] text-slate-400 font-extrabold uppercase tracking-wider">Upcoming</p>
+                <p className="text-xl font-black text-slate-200 mt-1">{stats.upcoming}</p>
               </div>
-              <div className="p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-indigo-300 shadow-sm shadow-indigo-500/10">
-                <p className="text-[11px] text-indigo-300 font-semibold uppercase tracking-wider">College & Breaks</p>
-                <p className="text-base font-extrabold text-indigo-400 mt-1">{stats.exempt}</p>
+              <div className="p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-500/40 text-indigo-300 shadow-sm shadow-indigo-500/10">
+                <p className="text-[11px] text-indigo-300 font-extrabold uppercase tracking-wider">College & Breaks</p>
+                <p className="text-xl font-black text-indigo-300 mt-1">{stats.exempt}</p>
               </div>
             </div>
 
@@ -493,20 +585,20 @@ export default function TimetablePage() {
               showPct={false}
               size="sm"
             />
-          </Card>
+          </div>
 
           {/* Filter Chips Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-2 bg-slate-950/60 rounded-2xl border border-slate-800/80">
-            <div className="flex flex-wrap items-center gap-1.5 text-xs">
-              <span className="text-slate-400 font-semibold mr-1 text-[11px] uppercase tracking-wider pl-1">Filter:</span>
+          <div className="flex flex-wrap items-center justify-between gap-3 p-2.5 bg-slate-950/80 rounded-2xl border border-slate-800 shadow-lg">
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="text-slate-400 font-extrabold mr-1 text-[11px] uppercase tracking-wider pl-1">Filter:</span>
               <button
                 type="button"
                 onClick={() => setStatusFilter('all')}
                 className={cn(
-                  'px-3 py-1.5 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
+                  'px-3.5 py-1.5 rounded-xl font-extrabold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
                   statusFilter === 'all'
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md shadow-blue-500/20 border border-cyan-400/40'
-                    : 'bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md shadow-blue-500/20 border border-cyan-400/50'
+                    : 'bg-slate-900/90 border border-slate-700/80 text-slate-200 hover:text-white hover:border-slate-500'
                 )}
               >
                 All ({entries.length})
@@ -515,10 +607,10 @@ export default function TimetablePage() {
                 type="button"
                 onClick={() => setStatusFilter('in-progress')}
                 className={cn(
-                  'px-3 py-1.5 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
+                  'px-3.5 py-1.5 rounded-xl font-extrabold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
                   statusFilter === 'in-progress'
-                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/40'
-                    : 'bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/50'
+                    : 'bg-slate-900/90 border border-slate-700/80 text-slate-200 hover:text-white hover:border-slate-500'
                 )}
               >
                 In Progress ({stats.inProgress})
@@ -527,10 +619,10 @@ export default function TimetablePage() {
                 type="button"
                 onClick={() => setStatusFilter('upcoming')}
                 className={cn(
-                  'px-3 py-1.5 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
+                  'px-3.5 py-1.5 rounded-xl font-extrabold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
                   statusFilter === 'upcoming'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 border border-blue-400/40'
-                    : 'bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 border border-blue-400/50'
+                    : 'bg-slate-900/90 border border-slate-700/80 text-slate-200 hover:text-white hover:border-slate-500'
                 )}
               >
                 Upcoming ({stats.upcoming})
@@ -539,10 +631,10 @@ export default function TimetablePage() {
                 type="button"
                 onClick={() => setStatusFilter('completed')}
                 className={cn(
-                  'px-3 py-1.5 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
+                  'px-3.5 py-1.5 rounded-xl font-extrabold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
                   statusFilter === 'completed'
-                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/20 border border-emerald-400/40'
-                    : 'bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/20 border border-emerald-400/50'
+                    : 'bg-slate-900/90 border border-slate-700/80 text-slate-200 hover:text-white hover:border-slate-500'
                 )}
               >
                 Completed ({stats.completed})
@@ -551,10 +643,10 @@ export default function TimetablePage() {
                 type="button"
                 onClick={() => setStatusFilter('missed')}
                 className={cn(
-                  'px-3 py-1.5 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
+                  'px-3.5 py-1.5 rounded-xl font-extrabold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
                   statusFilter === 'missed'
-                    ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-500/20 border border-red-400/40'
-                    : 'bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                    ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-500/20 border border-red-400/50'
+                    : 'bg-slate-900/90 border border-slate-700/80 text-slate-200 hover:text-white hover:border-slate-500'
                 )}
               >
                 Missed ({stats.missed})
@@ -563,34 +655,34 @@ export default function TimetablePage() {
                 type="button"
                 onClick={() => setStatusFilter('exempt')}
                 className={cn(
-                  'px-3 py-1.5 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
+                  'px-3.5 py-1.5 rounded-xl font-extrabold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
                   statusFilter === 'exempt'
-                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20 border border-indigo-400/40'
-                    : 'bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20 border border-indigo-400/50'
+                    : 'bg-slate-900/90 border border-slate-700/80 text-slate-200 hover:text-white hover:border-slate-500'
                 )}
               >
                 College & Breaks ({stats.exempt})
               </button>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-cyan-400/80 bg-cyan-950/40 px-3 py-1 rounded-xl border border-cyan-800/30">
-              <Clock size={13} className="text-cyan-400" />
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-200 bg-cyan-950/60 px-3.5 py-1.5 rounded-xl border border-cyan-500/40 shadow-inner">
+              <Clock size={14} className="text-cyan-400" />
               <span>Current Time: {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
           </div>
 
           {/* Timetable Entries List */}
           {entries.length === 0 ? (
-            <Card className="p-8 sm:p-12 text-center border-dashed border-2 border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30">
+            <Card className="p-8 sm:p-12 text-center border-dashed border-2 border-slate-700 bg-slate-900/50">
               <div className="max-w-md mx-auto space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500/10 via-indigo-500/10 to-cyan-500/10 text-blue-500 dark:text-cyan-400 border border-blue-500/20 mx-auto flex items-center justify-center shadow-xs">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500/20 via-indigo-500/20 to-cyan-500/20 text-cyan-400 border border-cyan-500/30 mx-auto flex items-center justify-center shadow-md">
                   <CalendarDays size={28} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-xl font-black text-white">
                     No timetable slots for {formatDay(selectedDate)}, {formatDate(selectedDate)}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed font-medium">
                     {currentHolidayMode === 'holiday-study'
                       ? 'Marked as a Holiday Study Day. Create your own custom holiday schedule from scratch, or load our ready-made morning study routine.'
                       : currentHolidayMode === 'holiday-no-study'
@@ -598,22 +690,21 @@ export default function TimetablePage() {
                       : 'Create your own personalized daily schedule from scratch, or load our ready-made college & study routine.'}
                   </p>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-2">
-                  <Button
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
+                  <button
+                    type="button"
                     onClick={handleOpenAddSlot}
-                    size="sm"
-                    className="w-full sm:w-auto text-white font-bold bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-md shadow-blue-500/20"
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-extrabold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
                   >
-                    <Plus size={15} /> Build Custom Timetable
-                  </Button>
-                  <Button
+                    <Plus size={16} /> Build Custom Timetable
+                  </button>
+                  <button
+                    type="button"
                     onClick={handleLoadReadyMade}
-                    size="sm"
-                    variant="secondary"
-                    className="w-full sm:w-auto text-cyan-300 hover:text-white font-bold bg-slate-800 hover:bg-slate-700 border-cyan-500/40 hover:border-cyan-400 shadow-sm"
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-extrabold text-cyan-200 hover:text-white bg-slate-800 hover:bg-slate-700 border border-cyan-500/50 hover:border-cyan-400 shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
                   >
-                    <Sparkles size={15} className="text-cyan-400" /> Load Ready-made Schedule
-                  </Button>
+                    <Sparkles size={16} className="text-cyan-400" /> Load Ready-made Schedule
+                  </button>
                 </div>
               </div>
             </Card>
@@ -624,8 +715,8 @@ export default function TimetablePage() {
               description={`No timetable slots found under the '${statusFilter}' filter.`}
               action={
                 <div className="flex gap-2">
-                  <Button onClick={() => setStatusFilter('all')} size="sm" variant="secondary">Clear Filter</Button>
-                  <Button onClick={handleOpenAddSlot} size="sm">Add Time Slot</Button>
+                  <Button onClick={() => setStatusFilter('all')} size="sm" variant="secondary" className="text-white font-bold bg-slate-800 border-slate-600">Clear Filter</Button>
+                  <Button onClick={handleOpenAddSlot} size="sm" className="text-white font-bold bg-blue-600">Add Time Slot</Button>
                 </div>
               }
             />
@@ -644,43 +735,57 @@ export default function TimetablePage() {
                 const isPersonalBreak = entry.isBlocked || entry.category === 'personal';
                 const hasTaskCheckbox = !isCollegeBlock && !isPersonalBreak && !dailySettings?.isNoStudyDay;
 
+                const catStyle = CAT_STYLE[entry.category] || {
+                  border: 'border-l-slate-400',
+                  bg: 'bg-gradient-to-r from-slate-900/90 via-[#0d1424] to-[#070b16]',
+                  badgeBg: 'bg-slate-800',
+                  badgeText: 'text-slate-300',
+                  badgeBorder: 'border-slate-700',
+                };
+
                 return (
-                  <Card
+                  <div
                     key={entry.id}
                     className={cn(
-                      'border-l-4 transition-all p-4',
-                      CAT_COLOR[entry.category] || 'border-l-slate-400',
-                      isInProgress && 'ring-2 ring-blue-500/50 shadow-md bg-blue-500/5',
-                      isMissed && 'border-l-red-500 bg-red-500/[0.02]',
-                      isCompleted && 'border-l-emerald-500 bg-emerald-500/[0.02]',
-                      isCollegeBlock && 'border-l-blue-600 bg-blue-500/[0.03]'
+                      'relative group rounded-2xl border transition-all duration-300 p-4 sm:p-5 border-l-[6px] shadow-lg',
+                      catStyle.border,
+                      catStyle.bg,
+                      isInProgress
+                        ? 'border-cyan-400/80 ring-2 ring-cyan-400/50 shadow-cyan-950/60 bg-gradient-to-r from-cyan-950/40 via-[#0e1930] to-[#070b16]'
+                        : isMissed
+                        ? 'border-rose-500/80 border-l-rose-500 bg-gradient-to-r from-rose-950/25 via-[#0e1322] to-[#070a14]'
+                        : isCompleted
+                        ? 'border-emerald-500/70 border-l-emerald-500 bg-gradient-to-r from-emerald-950/25 via-[#0e1422] to-[#070a14]'
+                        : isCollegeBlock
+                        ? 'border-blue-500/70 border-l-blue-500 bg-gradient-to-r from-blue-950/30 via-[#0d1424] to-[#070a14]'
+                        : 'border-slate-800/90 hover:border-slate-700'
                     )}
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      {/* Left: Checkbox / Icon + Time + Activity details */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+                      {/* Left: Checkbox / Icon + Digital Chronometer + Activity details */}
                       <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
                         {/* Status Checkbox or Institutional Routine Icon */}
                         <div className="pt-0.5 sm:pt-0 shrink-0">
                           {isCollegeBlock ? (
                             <div
                               title="College Hours (6:00 AM – 2:00 PM) · Fixed Institutional Routine"
-                              className="w-5 h-5 rounded-md border border-blue-400/40 bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0"
+                              className="w-7 h-7 rounded-xl border border-blue-400/50 bg-blue-950/70 text-blue-300 flex items-center justify-center shrink-0 shadow-inner"
                             >
-                              <GraduationCap size={13} />
+                              <GraduationCap size={15} />
                             </div>
                           ) : !hasTaskCheckbox ? (
                             <div
                               title={entry.activity}
-                              className="w-5 h-5 rounded-md border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center shrink-0"
+                              className="w-7 h-7 rounded-xl border border-slate-700 bg-slate-900/90 text-slate-300 flex items-center justify-center shrink-0 shadow-inner"
                             >
                               {entry.activity.toLowerCase().includes('lunch') ? (
-                                <Utensils size={12} />
+                                <Utensils size={14} className="text-amber-400" />
                               ) : entry.activity.toLowerCase().includes('sleep') ? (
-                                <BedDouble size={12} />
+                                <BedDouble size={14} className="text-indigo-400" />
                               ) : dailySettings?.isNoStudyDay ? (
-                                <Palmtree size={12} className="text-indigo-400" />
+                                <Palmtree size={14} className="text-emerald-400" />
                               ) : (
-                                <Coffee size={12} />
+                                <Coffee size={14} className="text-cyan-400" />
                               )}
                             </div>
                           ) : isMissed ? (
@@ -688,9 +793,9 @@ export default function TimetablePage() {
                               type="button"
                               disabled
                               title="Time has expired for this study task. It is permanently locked."
-                              className="w-5 h-5 rounded-md border-2 border-red-500/40 bg-red-500/10 text-red-500 flex items-center justify-center cursor-not-allowed opacity-80"
+                              className="w-7 h-7 rounded-xl border-2 border-rose-500/50 bg-rose-950/60 text-rose-300 flex items-center justify-center cursor-not-allowed opacity-90 shadow-inner"
                             >
-                              <Lock size={12} />
+                              <Lock size={13} />
                             </button>
                           ) : (
                             <button
@@ -698,91 +803,109 @@ export default function TimetablePage() {
                               onClick={() => handleToggleSlotCheck(entry)}
                               title={isCompleted ? 'Mark as pending' : 'Mark as completed'}
                               className={cn(
-                                'w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all cursor-pointer',
+                                'w-7 h-7 rounded-xl border-2 flex items-center justify-center transition-all cursor-pointer shadow-sm',
                                 isCompleted
-                                  ? 'border-emerald-500 bg-emerald-500 text-white'
+                                  ? 'border-emerald-400 bg-gradient-to-tr from-emerald-600 to-teal-500 text-white shadow-emerald-500/30'
                                   : isInProgress
-                                  ? 'border-blue-500 hover:bg-blue-500/20 text-blue-500 ring-2 ring-blue-500/30'
-                                  : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
+                                  ? 'border-cyan-400 bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 ring-2 ring-cyan-400/40 shadow-cyan-500/20'
+                                  : 'border-slate-600 hover:border-cyan-400 bg-slate-900/90 text-transparent hover:text-slate-400'
                               )}
                             >
-                              {isCompleted && <Check size={13} strokeWidth={3} />}
+                              {isCompleted ? (
+                                <Check size={15} strokeWidth={3} />
+                              ) : isInProgress ? (
+                                <Circle size={10} className="fill-cyan-400 text-cyan-400" />
+                              ) : (
+                                <Check size={13} className="opacity-0 group-hover:opacity-40" />
+                              )}
                             </button>
                           )}
                         </div>
 
-                        {/* Time range */}
-                        <div className="flex items-center gap-1.5 shrink-0 w-36">
+                        {/* High-visibility Digital Chronometer Box */}
+                        <div className={cn(
+                          'flex items-center gap-2 shrink-0 px-3.5 py-1.5 rounded-xl border shadow-inner min-w-[150px] sm:min-w-[170px]',
+                          isInProgress
+                            ? 'bg-cyan-950/80 border-cyan-400/60 text-cyan-200'
+                            : isMissed
+                            ? 'bg-rose-950/40 border-rose-800/60 text-rose-300'
+                            : isCompleted
+                            ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-300'
+                            : 'bg-slate-950/90 border-slate-700/80 text-slate-200'
+                        )}>
                           <Clock size={14} className={cn(
                             'shrink-0',
-                            isInProgress ? 'text-blue-500 animate-pulse' : 'text-slate-400'
+                            isInProgress ? 'text-cyan-400 animate-pulse' : 'text-slate-400'
                           )} />
-                          <span className={cn(
-                            'text-xs font-semibold',
-                            isInProgress ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300'
-                          )}>
+                          <span className="font-mono text-xs sm:text-sm font-bold tracking-wide">
                             {entry.time}
                           </span>
                         </div>
 
-                        {/* Title and Badges */}
+                        {/* Title and High-Contrast Badges */}
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-2.5 flex-wrap">
                             <p className={cn(
-                              'font-bold text-sm text-slate-900 dark:text-white',
-                              isCompleted && 'line-through text-slate-400 dark:text-slate-500',
-                              isMissed && 'text-slate-600 dark:text-slate-400'
+                              'font-extrabold text-base sm:text-lg tracking-tight',
+                              isCompleted && 'line-through text-slate-400 dark:text-slate-400 opacity-75',
+                              isMissed && 'text-slate-300 dark:text-slate-200',
+                              !isCompleted && !isMissed && 'text-white'
                             )}>
                               {entry.activity}
                             </p>
 
-                            <Badge variant={CAT_BADGE[entry.category] || 'default'}>
+                            <span className={cn(
+                              'px-2.5 py-0.5 rounded-lg text-[11px] font-bold uppercase tracking-wider border',
+                              catStyle.badgeBg,
+                              catStyle.badgeText,
+                              catStyle.badgeBorder
+                            )}>
                               {entry.category}
-                            </Badge>
+                            </span>
 
                             {/* College fixed routine indicator */}
                             {isCollegeBlock && (
-                              <Badge variant="info" className="gap-1 text-[10px]">
-                                <GraduationCap size={10} /> College Routine
-                              </Badge>
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-blue-950/80 text-blue-200 border border-blue-500/50">
+                                <GraduationCap size={12} className="text-blue-400" /> College Routine
+                              </span>
                             )}
 
                             {/* Dynamic visual status badge */}
                             {isInProgress && (
-                              <Badge variant="info" className="animate-pulse gap-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[11px] font-extrabold bg-cyan-950/90 text-cyan-200 border border-cyan-400/70 shadow-sm shadow-cyan-400/20 animate-pulse">
+                                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
                                 In Progress
-                              </Badge>
+                              </span>
                             )}
 
                             {isCompleted && (
-                              <Badge variant="success" className="gap-1">
-                                <Check size={11} strokeWidth={3} /> Completed
-                              </Badge>
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-emerald-950/80 text-emerald-200 border border-emerald-500/50">
+                                <Check size={12} strokeWidth={3} className="text-emerald-400" /> Completed
+                              </span>
                             )}
 
                             {isMissed && (
-                              <Badge variant="danger" className="gap-1">
-                                <Lock size={10} /> Missed · Locked
-                              </Badge>
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-rose-950/80 text-rose-200 border border-rose-500/50">
+                                <Lock size={11} className="text-rose-400" /> Missed · Locked
+                              </span>
                             )}
 
                             {entry.isHoliday && !dailySettings?.isNoStudyDay && (
-                              <Badge variant="success" className="gap-1 text-[10px]">
-                                <Laptop size={10} /> Holiday Study Session
-                              </Badge>
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-emerald-950/80 text-emerald-200 border border-emerald-500/50">
+                                <Laptop size={11} className="text-emerald-400" /> Holiday Study Session
+                              </span>
                             )}
 
                             {dailySettings?.isNoStudyDay && (
-                              <Badge variant="purple" className="gap-1 text-[10px]">
-                                <Palmtree size={10} /> Day Off Rest
-                              </Badge>
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-indigo-950/80 text-indigo-200 border border-indigo-500/50">
+                                <Palmtree size={11} className="text-indigo-400" /> Day Off Rest
+                              </span>
                             )}
 
                             {entry.isBlocked && !isCollegeBlock && !entry.isHoliday && (
-                              <Badge variant="purple" className="gap-1 text-[10px]">
-                                <Coffee size={10} /> Rest Break
-                              </Badge>
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-indigo-950/80 text-indigo-200 border border-indigo-500/50">
+                                <Coffee size={11} className="text-indigo-400" /> Rest Break
+                              </span>
                             )}
                           </div>
                         </div>
@@ -794,20 +917,20 @@ export default function TimetablePage() {
                         <button
                           type="button"
                           onClick={() => setManageEntry(entry)}
-                          className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-cyan-400 text-white font-bold text-xs shadow-sm flex items-center gap-1.5 cursor-pointer transition-all duration-200 active:scale-95 hover:-translate-y-0.5"
+                          className="px-3.5 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-slate-600 hover:border-cyan-400 text-white font-extrabold text-xs shadow-sm flex items-center gap-1.5 cursor-pointer transition-all duration-200 active:scale-95 hover:-translate-y-0.5"
                         >
                           <Sliders size={13} className="text-cyan-400 shrink-0" />
                           <span className="text-white tracking-wide">Manage Slot</span>
                         </button>
 
-                        <div className="h-4 w-px bg-slate-700 mx-0.5" />
+                        <div className="h-5 w-px bg-slate-700/80 mx-0.5" />
 
                         {/* Edit Button */}
                         <button
                           type="button"
                           title="Edit slot details"
                           onClick={() => handleOpenEditSlot(entry)}
-                          className="p-2 text-slate-200 hover:text-cyan-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-cyan-500/50 rounded-xl transition-all duration-200 cursor-pointer active:scale-95"
+                          className="p-2 text-slate-200 hover:text-cyan-300 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 hover:border-cyan-500/50 rounded-xl transition-all duration-200 cursor-pointer active:scale-95"
                         >
                           <Edit2 size={14} />
                         </button>
@@ -821,13 +944,13 @@ export default function TimetablePage() {
                               await deleteTimetableEntry(entry.id);
                             }
                           }}
-                          className="p-2 text-slate-200 hover:text-red-400 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500/50 rounded-xl transition-all duration-200 cursor-pointer active:scale-95"
+                          className="p-2 text-slate-200 hover:text-red-400 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 hover:border-red-500/50 rounded-xl transition-all duration-200 cursor-pointer active:scale-95"
                         >
                           <Trash2 size={14} />
                         </button>
                       </div>
                     </div>
-                  </Card>
+                  </div>
                 );
               })}
             </div>
@@ -836,13 +959,13 @@ export default function TimetablePage() {
           {/* Standalone Tasks Section */}
           {tasks.length > 0 && (
             <div className="mt-8 space-y-3">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <ListChecks size={18} className="text-blue-400" />
+              <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                <ListChecks size={18} className="text-cyan-400" />
                 Additional Scheduled Tasks
               </h3>
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 {tasks.map(task => (
-                  <Card key={task.id} className="p-3 border-l-4 border-l-blue-500">
+                  <div key={task.id} className="p-3.5 rounded-xl border border-slate-800 bg-gradient-to-r from-blue-950/20 via-[#0c1322] to-[#070b16] border-l-[5px] border-l-blue-500 shadow-md">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <Checkbox
@@ -855,20 +978,20 @@ export default function TimetablePage() {
                         />
                         <div className="min-w-0 flex-1">
                           <p className={cn(
-                            'text-sm font-semibold truncate',
-                            task.status === 'completed' ? 'line-through text-slate-400' : 'text-slate-900 dark:text-white'
+                            'text-sm font-bold truncate',
+                            task.status === 'completed' ? 'line-through text-slate-400' : 'text-white'
                           )}>
                             {task.title}
                           </p>
-                          <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-500">
-                            <span className="capitalize">{task.category}</span>
+                          <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-300">
+                            <span className="capitalize font-semibold text-cyan-300">{task.category}</span>
                             {task.description && <span>· {task.description}</span>}
                           </div>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <span className={cn('text-xs font-semibold', priorityColor(task.priority))}>
+                        <span className={cn('text-xs font-extrabold', priorityColor(task.priority))}>
                           {task.priority.toUpperCase()}
                         </span>
                         <Badge variant={task.status === 'completed' ? 'success' : task.status === 'skipped' ? 'danger' : 'warning'}>
@@ -880,13 +1003,13 @@ export default function TimetablePage() {
                               await deleteTask(task.id);
                             }
                           }}
-                          className="p-1 text-slate-400 hover:text-red-400 cursor-pointer"
+                          className="p-1.5 text-slate-300 hover:text-red-400 bg-slate-800 rounded-lg cursor-pointer transition-colors"
                         >
                           <Trash2 size={14} />
                         </button>
                       </div>
                     </div>
-                  </Card>
+                  </div>
                 ))}
               </div>
             </div>

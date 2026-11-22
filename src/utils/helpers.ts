@@ -48,29 +48,29 @@ export function cn(...classes: (string | false | undefined | null)[]): string {
 
 export function statusColor(status: string): string {
   switch (status) {
-    case 'completed': return 'text-emerald-400';
-    case 'learning': return 'text-blue-400';
-    case 'practising': return 'text-amber-400';
-    case 'not-started': return 'text-slate-400';
-    case 'in-progress': return 'text-blue-400';
-    case 'planning': return 'text-violet-400';
-    case 'idea': return 'text-slate-400';
-    default: return 'text-slate-400';
+    case 'completed': return 'text-emerald-300 font-bold';
+    case 'learning': return 'text-blue-300 font-bold';
+    case 'practising': return 'text-amber-300 font-bold';
+    case 'not-started': return 'text-slate-200 font-bold';
+    case 'in-progress': return 'text-cyan-300 font-bold';
+    case 'planning': return 'text-violet-300 font-bold';
+    case 'idea': return 'text-indigo-300 font-bold';
+    default: return 'text-slate-200 font-bold';
   }
 }
 
 export function statusBg(status: string): string {
   switch (status) {
-    case 'completed': return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
-    case 'learning': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-    case 'practising': return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
-    case 'not-started': return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
-    case 'in-progress': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-    case 'planning': return 'bg-violet-500/20 text-violet-400 border-violet-500/30';
-    case 'idea': return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
-    case 'pending': return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
-    case 'skipped': return 'bg-red-500/20 text-red-400 border-red-500/30';
-    default: return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
+    case 'completed': return 'bg-emerald-950/90 text-emerald-300 border border-emerald-500/50 font-bold shadow-sm shadow-emerald-500/20';
+    case 'learning': return 'bg-blue-950/90 text-blue-300 border border-blue-500/50 font-bold shadow-sm shadow-blue-500/20';
+    case 'practising': return 'bg-amber-950/90 text-amber-300 border border-amber-500/50 font-bold shadow-sm shadow-amber-500/20';
+    case 'not-started': return 'bg-slate-900/95 text-slate-200 border border-slate-700 font-bold';
+    case 'in-progress': return 'bg-cyan-950/90 text-cyan-300 border border-cyan-500/50 font-bold shadow-sm shadow-cyan-500/20';
+    case 'planning': return 'bg-violet-950/90 text-violet-300 border border-violet-500/50 font-bold shadow-sm shadow-violet-500/20';
+    case 'idea': return 'bg-indigo-950/90 text-indigo-300 border border-indigo-500/50 font-bold';
+    case 'pending': return 'bg-amber-950/90 text-amber-300 border border-amber-500/50 font-bold';
+    case 'skipped': return 'bg-rose-950/90 text-rose-300 border border-rose-500/50 font-bold';
+    default: return 'bg-slate-900/95 text-slate-200 border border-slate-700 font-bold';
   }
 }
 

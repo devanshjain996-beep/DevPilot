@@ -761,9 +761,9 @@ export default function TimetablePage() {
                         : 'border-slate-800/90 hover:border-slate-700'
                     )}
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+                    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
                       {/* Left: Checkbox / Icon + Digital Chronometer + Activity details */}
-                      <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-3.5 flex-1 min-w-0">
                         {/* Status Checkbox or Institutional Routine Icon */}
                         <div className="pt-0.5 sm:pt-0 shrink-0">
                           {isCollegeBlock ? (

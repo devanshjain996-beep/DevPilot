@@ -4,12 +4,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, X, ArrowUpRight, Cpu } from 'lucide-react';
+import { Sparkles, X, ArrowUpRight, Cpu, Minus } from 'lucide-react';
 import AICopilotChat from './AICopilotChat';
 
 export default function DevPilotAIAssistant() {
   const [open, setOpen] = useState(false);
+  const [minimized, setMinimized] = useState(() => {
+    return localStorage.getItem('devpilot_copilot_minimized') === 'true';
+  });
   const navigate = useNavigate();
+
+  const toggleMinimized = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const next = !minimized;
+    setMinimized(next);
+    localStorage.setItem('devpilot_copilot_minimized', String(next));
+  };
 
   // Close on ESC
   useEffect(() => {
@@ -28,67 +38,100 @@ export default function DevPilotAIAssistant() {
       <AnimatePresence>
         {!open && (
           <div
-            className="fixed bottom-6 right-6 z-40 select-none"
+            className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 select-none"
             style={{ perspective: 1000 }}
           >
-            <motion.button
-              initial={{ scale: 0, opacity: 0, y: 30 }}
-              animate={{
-                scale: 1,
-                opacity: 1,
-                y: [0, -5, 0],
-              }}
-              exit={{ scale: 0, opacity: 0, y: 20 }}
-              transition={{
-                y: { duration: 3.5, repeat: Infinity, ease: 'easeInOut' },
-                scale: { type: 'spring', damping: 18, stiffness: 300 },
-              }}
-              whileHover={{
-                scale: 1.1,
-                rotateX: -10,
-                rotateY: 12,
-                transition: { duration: 0.2 },
-              }}
-              whileTap={{ scale: 0.94 }}
-              type="button"
-              onClick={() => setOpen(true)}
-              aria-label="Open 3D DevPilot AI Copilot"
-              style={{ transformStyle: 'preserve-3d' }}
-              className="relative group bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 dark:from-indigo-700 dark:via-blue-600 dark:to-violet-700 text-white px-4 py-3 rounded-2xl shadow-[0_15px_30px_-5px_rgba(79,70,229,0.45)] dark:shadow-[0_15px_35px_-5px_rgba(99,102,241,0.6)] flex items-center gap-3 border border-indigo-400/30 cursor-pointer overflow-visible"
-            >
-              {/* 3D Rotating Glowing Outer Ring */}
+            {minimized ? (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1, y: [0, -4, 0] }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{
+                  y: { duration: 3, repeat: Infinity, ease: 'easeInOut' },
+                  scale: { type: 'spring', damping: 20 },
+                }}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.92 }}
+                type="button"
+                onClick={() => setOpen(true)}
+                title="Open DevPilot AI Copilot (Click to open, or expand)"
+                className="w-12 h-12 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 border border-cyan-400/60 shadow-[0_10px_25px_-5px_rgba(6,182,212,0.6)] flex items-center justify-center text-white cursor-pointer relative group"
+              >
+                <Sparkles size={20} className="animate-pulse" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-950 animate-ping" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-950" />
+                
+                {/* Expand Pill Button on hover */}
+                <button
+                  type="button"
+                  onClick={toggleMinimized}
+                  title="Expand to capsule"
+                  className="absolute -top-2 -left-2 w-5 h-5 rounded-full bg-slate-900 border border-slate-700 text-slate-300 hover:text-white opacity-0 group-hover:opacity-100 flex items-center justify-center text-[10px] transition-opacity"
+                >
+                  +
+                </button>
+              </motion.button>
+            ) : (
               <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-                className="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 flex items-center justify-center shadow-md shadow-blue-500/50 shrink-0"
-                style={{ transform: 'translateZ(12px)' }}
+                initial={{ scale: 0, opacity: 0, y: 30 }}
+                animate={{
+                  scale: 1,
+                  opacity: 1,
+                  y: [0, -4, 0],
+                }}
+                exit={{ scale: 0, opacity: 0, y: 20 }}
+                transition={{
+                  y: { duration: 3.5, repeat: Infinity, ease: 'easeInOut' },
+                  scale: { type: 'spring', damping: 18, stiffness: 300 },
+                }}
+                style={{ transformStyle: 'preserve-3d' }}
+                className="relative group bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 dark:from-indigo-700 dark:via-blue-600 dark:to-violet-700 text-white pl-3.5 pr-2.5 py-2.5 rounded-2xl shadow-[0_15px_30px_-5px_rgba(79,70,229,0.45)] dark:shadow-[0_15px_35px_-5px_rgba(99,102,241,0.6)] flex items-center gap-2.5 border border-indigo-400/40 cursor-pointer overflow-visible"
+                onClick={() => setOpen(true)}
               >
-                <Sparkles size={15} className="text-white animate-pulse" />
+                {/* 3D Rotating Glowing Outer Ring */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+                  className="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 flex items-center justify-center shadow-md shadow-blue-500/50 shrink-0"
+                  style={{ transform: 'translateZ(12px)' }}
+                >
+                  <Sparkles size={15} className="text-white animate-pulse" />
+                </motion.div>
+
+                {/* Title & Powered By Badge */}
+                <div className="text-left" style={{ transform: 'translateZ(8px)' }}>
+                  <div className="flex items-center gap-1.5 leading-none">
+                    <span className="font-extrabold text-xs tracking-tight text-white">
+                      AI Copilot
+                    </span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  </div>
+                  <div className="flex items-center gap-1 text-[9px] text-cyan-200 font-semibold mt-1 font-mono">
+                    <Cpu size={10} className="text-cyan-300" />
+                    <span>Gemini Flash 3D</span>
+                  </div>
+                </div>
+
+                {/* Floating 3D "Open" Prompt Badge */}
+                <div
+                  className="ml-1 px-2 py-0.5 rounded-lg bg-white/20 border border-white/30 text-[10px] font-bold text-white group-hover:bg-white group-hover:text-slate-900 transition-colors flex items-center gap-0.5"
+                  style={{ transform: 'translateZ(14px)' }}
+                >
+                  <span>Ask</span>
+                  <ArrowUpRight size={11} />
+                </div>
+
+                {/* Minimize Button */}
+                <button
+                  type="button"
+                  onClick={toggleMinimized}
+                  title="Minimize AI Copilot button"
+                  className="ml-0.5 p-1 rounded-md text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  <Minus size={12} />
+                </button>
               </motion.div>
-
-              {/* Title & Powered By Badge */}
-              <div className="text-left" style={{ transform: 'translateZ(8px)' }}>
-                <div className="flex items-center gap-1.5 leading-none">
-                  <span className="font-extrabold text-xs tracking-tight text-white">
-                    AI Copilot
-                  </span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                </div>
-                <div className="flex items-center gap-1 text-[9px] text-indigo-200 dark:text-blue-100 font-semibold mt-1">
-                  <Cpu size={10} className="text-cyan-300" />
-                  <span>Gemini Flash 3D</span>
-                </div>
-              </div>
-
-              {/* Floating 3D "Open" Prompt Badge */}
-              <div
-                className="ml-1 px-2 py-0.5 rounded-lg bg-white/15 border border-white/20 text-[10px] font-bold text-white group-hover:bg-white group-hover:text-slate-900 transition-colors flex items-center gap-0.5"
-                style={{ transform: 'translateZ(14px)' }}
-              >
-                <span>Ask</span>
-                <ArrowUpRight size={11} />
-              </div>
-            </motion.button>
+            )}
           </div>
         )}
       </AnimatePresence>

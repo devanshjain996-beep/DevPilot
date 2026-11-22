@@ -123,7 +123,7 @@ export default function PortalDoor3D({
               />
             </div>
 
-            <div className="flex items-center gap-1 text-[11px] font-mono font-semibold text-slate-400 group-hover:text-white transition-colors">
+            <div className="flex items-center gap-1 text-xs font-mono font-bold text-slate-200 group-hover:text-white transition-colors">
               <span>ENGAGE</span>
               <ArrowUpRight
                 size={14}
@@ -251,7 +251,7 @@ export default function PortalDoor3D({
               </div>
 
               {/* Destination preview revealed on hover */}
-              <p className="text-[12px] text-slate-400 leading-relaxed max-w-[210px] line-clamp-2 opacity-80 group-hover:opacity-100 transition-opacity">
+              <p className="text-xs text-slate-200 font-medium leading-relaxed max-w-[220px] line-clamp-2 opacity-90 group-hover:opacity-100 transition-opacity">
                 {description}
               </p>
             </div>
@@ -268,13 +268,13 @@ export default function PortalDoor3D({
                     boxShadow: `0 0 8px ${theme.primary}`,
                   }}
                 />
-                <span className="text-xs font-bold text-slate-200 truncate">
+                <span className="text-xs font-black text-white truncate">
                   {telemetryBadge}
                 </span>
               </div>
 
               {telemetrySub && (
-                <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 shrink-0">
+                <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-slate-900 border border-slate-700 text-cyan-300 font-bold shrink-0">
                   {telemetrySub}
                 </span>
               )}

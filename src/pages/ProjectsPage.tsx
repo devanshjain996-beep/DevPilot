@@ -181,8 +181,8 @@ export default function ProjectsPage() {
               className={cn(
                 'px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 whitespace-nowrap cursor-pointer active:scale-95 hover:-translate-y-0.5',
                 statusFilter === f.id
-                  ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 font-bold shadow-md shadow-orange-500/20 border border-orange-400/40'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent'
+                  ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 font-black shadow-md shadow-orange-500/25 border border-orange-400/50'
+                  : 'text-slate-300 font-bold hover:text-white hover:bg-slate-800 border border-slate-700/60'
               )}
             >
               {f.label}
@@ -350,11 +350,11 @@ export default function ProjectsPage() {
                 <span className="text-[10px] font-mono uppercase text-blue-400 font-bold">
                   Recommended Idea #{idx + 1}
                 </span>
-                <h4 className="text-sm font-bold text-white">{item.title}</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">{item.description}</p>
-                <div className="flex flex-wrap gap-1 pt-1">
+                <h4 className="text-sm font-black text-white">{item.title}</h4>
+                <p className="text-xs text-slate-300 font-medium leading-relaxed">{item.description}</p>
+                <div className="flex flex-wrap gap-1.5 pt-1">
                   {item.technologies.map((t, i) => (
-                    <span key={i} className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">
+                    <span key={i} className="text-[11px] bg-slate-800/90 text-cyan-300 border border-slate-700 px-2 py-0.5 rounded-lg font-mono font-bold">
                       {t}
                     </span>
                   ))}

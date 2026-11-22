@@ -111,7 +111,7 @@ export default function WeeklyPlannerPage() {
                 <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
                 DOOR 01.2 // WEEKLY ROTATION PLANNER
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-cyan-950/80 text-cyan-300 border border-cyan-500/50">
                 <Clock size={11} className="text-cyan-400" /> 8:30 PM FOCUS ROTATION
               </span>
             </div>

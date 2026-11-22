@@ -257,26 +257,50 @@ export default function TimetablePage() {
                 variant="secondary"
                 size="sm"
                 onClick={() => setExceptionsModalOpen(true)}
-                className="text-xs text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
+                className="text-xs text-amber-300 hover:text-white font-bold border-amber-500/40 bg-amber-950/40 hover:bg-amber-900/50"
               >
-                <Layers size={14} /> Exceptions ({activeExceptionsCount})
+                <Layers size={14} className="text-amber-400" /> Exceptions ({activeExceptionsCount})
               </Button>
             )}
-            <Button variant="secondary" onClick={() => setCustomHolidayModalOpen(true)} size="sm" className="text-xs">
-              <Sun size={14} /> Advance Holiday
+            <Button
+              variant="secondary"
+              onClick={() => setCustomHolidayModalOpen(true)}
+              size="sm"
+              className="text-xs text-white font-bold bg-slate-800 hover:bg-slate-700 border-slate-600 hover:border-amber-400"
+            >
+              <Sun size={14} className="text-amber-400" /> Advance Holiday
             </Button>
             {entries.length > 0 && (
-              <Button variant="secondary" onClick={handleClearDay} size="sm" className="text-xs text-rose-500 hover:text-rose-600 border-rose-500/20 hover:bg-rose-500/10">
-                <Trash2 size={14} /> Clear Slots
+              <Button
+                variant="secondary"
+                onClick={handleClearDay}
+                size="sm"
+                className="text-xs text-rose-300 hover:text-white font-bold border-rose-500/40 bg-rose-950/40 hover:bg-rose-900/50"
+              >
+                <Trash2 size={14} className="text-rose-400" /> Clear Slots
               </Button>
             )}
-            <Button variant="secondary" onClick={handleLoadReadyMade} size="sm" className="text-xs text-blue-600 dark:text-cyan-400 border-blue-500/30 hover:bg-blue-500/10">
-              <Sparkles size={14} /> Ready-made Template
+            <Button
+              variant="secondary"
+              onClick={handleLoadReadyMade}
+              size="sm"
+              className="text-xs text-cyan-300 hover:text-white font-bold border-cyan-500/40 bg-cyan-950/40 hover:bg-cyan-900/50"
+            >
+              <Sparkles size={14} className="text-cyan-400" /> Ready-made Template
             </Button>
-            <Button variant="secondary" onClick={handleOpenAddSlot} size="sm" className="text-xs">
-              <Plus size={14} /> Add Slot
+            <Button
+              variant="secondary"
+              onClick={handleOpenAddSlot}
+              size="sm"
+              className="text-xs text-white font-bold bg-slate-800 hover:bg-slate-700 border-slate-600 hover:border-cyan-400"
+            >
+              <Plus size={14} className="text-cyan-400" /> Add Slot
             </Button>
-            <Button onClick={() => setTaskModalOpen(true)} size="sm" className="text-xs">
+            <Button
+              onClick={() => setTaskModalOpen(true)}
+              size="sm"
+              className="text-xs text-white font-bold bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-md shadow-blue-500/20"
+            >
               <Plus size={14} /> Add Task
             </Button>
           </div>
@@ -341,42 +365,45 @@ export default function TimetablePage() {
               </div>
 
               {/* Mode switch pills */}
-              <div className="flex items-center gap-1.5 shrink-0 self-end lg:self-center bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl text-xs">
+              <div className="flex items-center gap-1.5 shrink-0 self-end lg:self-center bg-slate-950 p-1.5 rounded-xl border border-slate-800 text-xs">
                 <button
                   type="button"
                   onClick={() => handleRequestModeChange('normal')}
                   className={cn(
-                    'px-2.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer flex items-center gap-1',
+                    'px-3 py-1.5 rounded-lg font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95',
                     currentHolidayMode === 'normal'
-                      ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs font-bold'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20 border border-blue-400/40'
+                      : 'text-slate-200 hover:text-white hover:bg-slate-800/80'
                   )}
                 >
-                  <GraduationCap size={13} /> Normal Day
+                  <GraduationCap size={14} className={currentHolidayMode === 'normal' ? 'text-white' : 'text-blue-400'} />
+                  <span>Normal Day</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleRequestModeChange('holiday-study')}
                   className={cn(
-                    'px-2.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer flex items-center gap-1',
+                    'px-3 py-1.5 rounded-lg font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95',
                     currentHolidayMode === 'holiday-study'
-                      ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs font-bold'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 border border-emerald-400/40'
+                      : 'text-slate-200 hover:text-white hover:bg-slate-800/80'
                   )}
                 >
-                  <Laptop size={13} /> Holiday Study
+                  <Laptop size={14} className={currentHolidayMode === 'holiday-study' ? 'text-white' : 'text-emerald-400'} />
+                  <span>Holiday Study</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleRequestModeChange('holiday-no-study')}
                   className={cn(
-                    'px-2.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer flex items-center gap-1',
+                    'px-3 py-1.5 rounded-lg font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95',
                     currentHolidayMode === 'holiday-no-study'
-                      ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-bold'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20 border border-indigo-400/40'
+                      : 'text-slate-200 hover:text-white hover:bg-slate-800/80'
                   )}
                 >
-                  <Palmtree size={13} /> Day Off
+                  <Palmtree size={14} className={currentHolidayMode === 'holiday-no-study' ? 'text-white' : 'text-indigo-400'} />
+                  <span>Rest Day</span>
                 </button>
               </div>
             </div>
@@ -386,9 +413,11 @@ export default function TimetablePage() {
           <Card className="p-4 space-y-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <Button variant="ghost" size="sm" onClick={prevDay}><ChevronLeft size={18} /></Button>
+                <Button variant="secondary" size="sm" onClick={prevDay} className="text-white hover:text-cyan-300 bg-slate-800 hover:bg-slate-700 border-slate-600">
+                  <ChevronLeft size={18} />
+                </Button>
                 <div className="text-center">
-                  <p className="text-lg font-bold text-slate-900 dark:text-white">
+                  <p className="text-lg font-extrabold text-white">
                     {formatDay(selectedDate)}, {formatDate(selectedDate)}
                   </p>
                   <div className="flex items-center justify-center gap-1.5 mt-0.5">
@@ -402,13 +431,15 @@ export default function TimetablePage() {
                     )}
                   </div>
                 </div>
-                <Button variant="ghost" size="sm" onClick={nextDay}><ChevronRight size={18} /></Button>
+                <Button variant="secondary" size="sm" onClick={nextDay} className="text-white hover:text-cyan-300 bg-slate-800 hover:bg-slate-700 border-slate-600">
+                  <ChevronRight size={18} />
+                </Button>
               </div>
 
               <div className="flex items-center gap-4">
                 {!isToday && (
-                  <Button variant="secondary" size="sm" onClick={goToday}>
-                    <Calendar size={14} /> Jump to Today
+                  <Button variant="secondary" size="sm" onClick={goToday} className="text-white font-bold bg-slate-800 hover:bg-slate-700 border-cyan-500/40 hover:border-cyan-400">
+                    <Calendar size={14} className="text-cyan-400" /> Jump to Today
                   </Button>
                 )}
                 <div className="flex items-center gap-2 px-3.5 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-xl">
@@ -568,11 +599,20 @@ export default function TimetablePage() {
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-2">
-                  <Button onClick={handleOpenAddSlot} size="sm" className="w-full sm:w-auto">
+                  <Button
+                    onClick={handleOpenAddSlot}
+                    size="sm"
+                    className="w-full sm:w-auto text-white font-bold bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-md shadow-blue-500/20"
+                  >
                     <Plus size={15} /> Build Custom Timetable
                   </Button>
-                  <Button onClick={handleLoadReadyMade} size="sm" variant="secondary" className="w-full sm:w-auto text-blue-600 dark:text-cyan-400 border-blue-500/30 hover:bg-blue-500/10">
-                    <Sparkles size={15} /> Load Ready-made Schedule
+                  <Button
+                    onClick={handleLoadReadyMade}
+                    size="sm"
+                    variant="secondary"
+                    className="w-full sm:w-auto text-cyan-300 hover:text-white font-bold bg-slate-800 hover:bg-slate-700 border-cyan-500/40 hover:border-cyan-400 shadow-sm"
+                  >
+                    <Sparkles size={15} className="text-cyan-400" /> Load Ready-made Schedule
                   </Button>
                 </div>
               </div>
@@ -749,38 +789,39 @@ export default function TimetablePage() {
                       </div>
 
                       {/* Right: Manage Slot and Actions */}
-                      <div className="flex items-center gap-2 shrink-0 self-end sm:self-center pl-8 sm:pl-0">
-                        {/* Manage Slot Button */}
-                        <Button
-                          variant="secondary"
-                          size="xs"
+                      <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-center pl-8 sm:pl-0">
+                        {/* Manage Slot Button - High Contrast & Crisp Text */}
+                        <button
+                          type="button"
                           onClick={() => setManageEntry(entry)}
-                          className="text-xs flex items-center gap-1.5 border-slate-300 dark:border-slate-700"
+                          className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-cyan-400 text-white font-bold text-xs shadow-sm flex items-center gap-1.5 cursor-pointer transition-all duration-200 active:scale-95 hover:-translate-y-0.5"
                         >
-                          <Sliders size={13} />
-                          <span>Manage Slot</span>
-                        </Button>
+                          <Sliders size={13} className="text-cyan-400 shrink-0" />
+                          <span className="text-white tracking-wide">Manage Slot</span>
+                        </button>
 
-                        <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-0.5" />
+                        <div className="h-4 w-px bg-slate-700 mx-0.5" />
 
                         {/* Edit Button */}
                         <button
+                          type="button"
                           title="Edit slot details"
                           onClick={() => handleOpenEditSlot(entry)}
-                          className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                          className="p-2 text-slate-200 hover:text-cyan-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-cyan-500/50 rounded-xl transition-all duration-200 cursor-pointer active:scale-95"
                         >
                           <Edit2 size={14} />
                         </button>
 
                         {/* Delete Button */}
                         <button
+                          type="button"
                           title="Delete slot"
                           onClick={async () => {
                             if (confirm(`Remove "${entry.activity}" from today's timetable?`)) {
                               await deleteTimetableEntry(entry.id);
                             }
                           }}
-                          className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                          className="p-2 text-slate-200 hover:text-red-400 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500/50 rounded-xl transition-all duration-200 cursor-pointer active:scale-95"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -883,8 +924,8 @@ export default function TimetablePage() {
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="ghost" onClick={() => setSwitchConfirmOpen(false)}>Cancel</Button>
-            <Button variant="primary" onClick={handleConfirmSwitch}>Confirm Switch to Normal Day</Button>
+            <Button variant="secondary" onClick={() => setSwitchConfirmOpen(false)} className="text-white font-bold bg-slate-800 border-slate-600">Cancel</Button>
+            <Button variant="primary" onClick={handleConfirmSwitch} className="text-white font-bold bg-blue-600 hover:bg-blue-500 shadow-md">Confirm Switch to Normal Day</Button>
           </div>
         </div>
       </Modal>
@@ -1125,68 +1166,68 @@ function ManageSlotModal({
           </div>
         ) : (
           /* Option Action Cards */
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <button
               type="button"
               onClick={() => handleExecuteRemoval('day')}
-              className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 bg-white dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left cursor-pointer"
+              className="w-full flex items-center justify-between p-3.5 rounded-xl border border-slate-700/80 hover:border-cyan-400 bg-slate-900/90 hover:bg-slate-800 transition-all text-left cursor-pointer active:scale-98 group"
             >
               <div>
-                <p className="font-bold text-slate-900 dark:text-white">1. Remove for Today Only</p>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="font-bold text-white group-hover:text-cyan-300 transition-colors">1. Remove for Today Only</p>
+                <p className="text-xs text-slate-300 mt-0.5">
                   Disappears only on {formatDate(selectedDate)}. Automatically returns tomorrow.
                 </p>
               </div>
-              <ChevronRight size={16} className="text-slate-400" />
+              <ChevronRight size={18} className="text-slate-400 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
             </button>
 
             <button
               type="button"
               onClick={() => setConfirmType('week')}
-              className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 bg-white dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left cursor-pointer"
+              className="w-full flex items-center justify-between p-3.5 rounded-xl border border-slate-700/80 hover:border-cyan-400 bg-slate-900/90 hover:bg-slate-800 transition-all text-left cursor-pointer active:scale-98 group"
             >
               <div>
-                <p className="font-bold text-slate-900 dark:text-white">2. Remove for the Entire Week</p>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="font-bold text-white group-hover:text-cyan-300 transition-colors">2. Remove for the Entire Week</p>
+                <p className="text-xs text-slate-300 mt-0.5">
                   Removes from {weekStart} to {weekEnd}. Automatically returns next Monday.
                 </p>
               </div>
-              <ChevronRight size={16} className="text-slate-400" />
+              <ChevronRight size={18} className="text-slate-400 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
             </button>
 
             <button
               type="button"
               onClick={() => setConfirmType('month')}
-              className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 bg-white dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left cursor-pointer"
+              className="w-full flex items-center justify-between p-3.5 rounded-xl border border-slate-700/80 hover:border-cyan-400 bg-slate-900/90 hover:bg-slate-800 transition-all text-left cursor-pointer active:scale-98 group"
             >
               <div>
-                <p className="font-bold text-slate-900 dark:text-white">3. Remove for the Entire Month</p>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="font-bold text-white group-hover:text-cyan-300 transition-colors">3. Remove for the Entire Month</p>
+                <p className="text-xs text-slate-300 mt-0.5">
                   Removes for all of {monthName}. Automatically returns next month.
                 </p>
               </div>
-              <ChevronRight size={16} className="text-slate-400" />
+              <ChevronRight size={18} className="text-slate-400 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
             </button>
 
             <button
               type="button"
               onClick={() => setConfirmType('permanent')}
-              className="w-full flex items-center justify-between p-3 rounded-xl border border-red-500/20 hover:border-red-500/50 bg-red-500/5 hover:bg-red-500/10 transition-all text-left cursor-pointer text-red-500"
+              className="w-full flex items-center justify-between p-3.5 rounded-xl border border-rose-500/30 hover:border-rose-500/60 bg-rose-950/30 hover:bg-rose-900/50 transition-all text-left cursor-pointer text-rose-300 hover:text-white active:scale-98 group"
             >
               <div>
-                <p className="font-bold">4. Remove Permanently</p>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="font-bold text-rose-300 group-hover:text-rose-200 transition-colors">4. Remove Permanently</p>
+                <p className="text-xs text-slate-300 mt-0.5">
                   Removes this recurring slot indefinitely until manually re-added.
                 </p>
               </div>
-              <Trash2 size={16} className="text-red-400" />
+              <Trash2 size={18} className="text-rose-400 group-hover:scale-110 transition-transform" />
             </button>
 
-            <div className="pt-2 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
-              <Button variant="ghost" size="sm" onClick={onEdit}>
-                <Edit2 size={13} /> Edit Slot Details
+            <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+              <Button variant="secondary" size="sm" onClick={onEdit} className="text-white hover:text-cyan-300 font-bold bg-slate-800 border-slate-600">
+                <Edit2 size={13} className="text-cyan-400" /> Edit Slot Details
               </Button>
-              <Button variant="secondary" size="sm" onClick={onClose}>
+              <Button variant="secondary" size="sm" onClick={onClose} className="text-white font-bold bg-slate-800 border-slate-600">
                 Cancel
               </Button>
             </div>
@@ -1244,17 +1285,17 @@ function ScheduleExceptionsModal({
                   size="xs"
                   variant="secondary"
                   onClick={() => onRestore(ex.id)}
-                  className="shrink-0"
+                  className="shrink-0 text-white font-bold bg-slate-800 border-slate-600 hover:border-cyan-400"
                 >
-                  <RotateCcw size={12} /> Restore Slot
+                  <RotateCcw size={12} className="text-cyan-400" /> Restore Slot
                 </Button>
               </div>
             ))}
           </div>
         )}
 
-        <div className="flex justify-end pt-2 border-t border-slate-200 dark:border-slate-700">
-          <Button variant="secondary" onClick={onClose}>Close</Button>
+        <div className="flex justify-end pt-2 border-t border-slate-800/80">
+          <Button variant="secondary" onClick={onClose} className="text-white font-bold bg-slate-800 border-slate-600">Close</Button>
         </div>
       </div>
     </Modal>
@@ -1333,9 +1374,9 @@ function AdvanceHolidayModal({
           />
         </div>
 
-        <div className="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-700">
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => onAddHoliday(date, mode, reason)}>Save Schedule Plan</Button>
+        <div className="flex justify-end gap-2 pt-3 border-t border-slate-800/80">
+          <Button variant="secondary" onClick={onClose} className="text-white font-bold bg-slate-800 border-slate-600">Cancel</Button>
+          <Button onClick={() => onAddHoliday(date, mode, reason)} className="text-white font-bold bg-gradient-to-r from-blue-600 to-cyan-600 shadow-md">Save Schedule Plan</Button>
         </div>
       </div>
     </Modal>
@@ -1469,8 +1510,8 @@ function SlotEditModal({
         </div>
 
         {/* Free Time / Break Toggle */}
-        <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-          <label className="flex items-center gap-2.5 cursor-pointer font-medium text-slate-800 dark:text-slate-200">
+        <div className="p-3 bg-slate-900 rounded-xl border border-slate-700">
+          <label className="flex items-center gap-2.5 cursor-pointer font-bold text-white">
             <input
               type="checkbox"
               checked={isBreak}
@@ -1484,9 +1525,9 @@ function SlotEditModal({
           </p>
         </div>
 
-        <div className="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-700">
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSave}>{entry ? 'Save Changes' : 'Add Time Slot'}</Button>
+        <div className="flex justify-end gap-2 pt-3 border-t border-slate-800/80">
+          <Button variant="secondary" onClick={onClose} className="text-white font-bold bg-slate-800 border-slate-600">Cancel</Button>
+          <Button onClick={handleSave} className="text-white font-bold bg-gradient-to-r from-blue-600 to-cyan-600 shadow-md">{entry ? 'Save Changes' : 'Add Time Slot'}</Button>
         </div>
       </div>
     </Modal>
@@ -1616,8 +1657,8 @@ function AddTaskModal({ open, onClose, date }: { open: boolean; onClose: () => v
           </p>
         )}
         <div className="flex justify-end gap-3 pt-2">
-          <Button variant="secondary" onClick={() => { reset(); onClose(); }}>Cancel</Button>
-          <Button onClick={handleSubmit}>Add Task</Button>
+          <Button variant="secondary" onClick={() => { reset(); onClose(); }} className="text-white font-bold bg-slate-800 border-slate-600">Cancel</Button>
+          <Button onClick={handleSubmit} className="text-white font-bold bg-gradient-to-r from-blue-600 to-cyan-600 shadow-md">Add Task</Button>
         </div>
       </div>
     </Modal>

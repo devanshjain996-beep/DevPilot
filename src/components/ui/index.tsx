@@ -148,14 +148,15 @@ export function Button({ children, onClick, variant = 'primary', size = 'md', di
   disabled?: boolean; className?: string; type?: 'button' | 'submit'; title?: string;
 }) {
   const variants: Record<string, string> = {
-    primary: 'bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white shadow-md shadow-blue-500/20 border border-cyan-400/30 hover:border-cyan-300',
-    secondary: 'bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-slate-600 text-slate-200 hover:text-white shadow-sm',
-    ghost: 'hover:bg-slate-800/70 text-slate-300 hover:text-white',
-    danger: 'bg-red-600/90 hover:bg-red-500 text-white shadow-md shadow-red-500/20 border border-red-400/30',
-    success: 'bg-emerald-600/90 hover:bg-emerald-500 text-white shadow-md shadow-emerald-500/20 border border-emerald-400/30',
+    primary: 'bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold shadow-md shadow-blue-500/25 border border-cyan-400/40 hover:border-cyan-300',
+    secondary: 'bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-cyan-400 text-white font-semibold shadow-sm',
+    ghost: 'hover:bg-slate-800/80 text-slate-200 hover:text-white font-medium',
+    danger: 'bg-red-600/90 hover:bg-red-500 text-white font-bold shadow-md shadow-red-500/20 border border-red-400/30',
+    success: 'bg-emerald-600/90 hover:bg-emerald-500 text-white font-bold shadow-md shadow-emerald-500/20 border border-emerald-400/30',
   };
 
   const sizes: Record<string, string> = {
+    xs: 'px-2.5 py-1 text-xs font-semibold rounded-lg',
     sm: 'px-3 py-1.5 text-xs font-semibold rounded-lg',
     md: 'px-4 py-2 text-sm font-semibold rounded-xl',
     lg: 'px-6 py-3 text-base font-bold rounded-xl',

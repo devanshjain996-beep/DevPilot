@@ -116,22 +116,50 @@ export default function GoalsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Goals & Productivity Analytics"
-        subtitle="Set milestone targets and track real tangible progress across topics, exercises, DSA problems and projects."
-        action={
-          <div className="flex gap-2">
-            {goals.length === 0 && (
-              <Button variant="secondary" onClick={handleSeedSuggestedGoals} size="sm">
-                Load Recommended Goals
-              </Button>
-            )}
-            <Button onClick={handleOpenAdd} size="sm">
-              <Plus size={16} /> New Goal
-            </Button>
+      {/* ── 3D GOALS & ANALYTICS CYBER PORTAL BANNER ── */}
+      <div className="relative rounded-3xl p-5 sm:p-7 border border-emerald-500/40 bg-gradient-to-r from-[#071c14] via-[#091524] to-[#070b16] shadow-2xl shadow-emerald-950/40 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-emerald-950/80 text-emerald-300 border border-emerald-400/50 shadow-sm shadow-emerald-500/20">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                DOOR 05 // GOALS & ANALYTICS RADAR
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+                <Target size={11} className="text-emerald-400" /> OUTCOME TELEMETRY
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Goals & Productivity Analytics
+            </h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-300 max-w-2xl leading-relaxed">
+              Define milestone targets, audit engineering velocity, and celebrate real curriculum completions.
+            </p>
           </div>
-        }
-      />
+
+          <div className="flex items-center gap-2 shrink-0">
+            {goals.length === 0 && (
+              <button
+                type="button"
+                onClick={handleSeedSuggestedGoals}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold text-emerald-300 hover:text-white bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/40 shadow-sm transition-all cursor-pointer active:scale-95"
+              >
+                Load Recommended Goals
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={handleOpenAdd}
+              className="px-4 py-2.5 rounded-xl text-xs font-extrabold text-white bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 shadow-lg shadow-emerald-500/25 flex items-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer"
+            >
+              <Plus size={16} /> New Goal
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Analytics Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -199,10 +227,13 @@ export default function GoalsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredGoals.map(goal => (
-            <Card key={goal.id} className="p-4 flex flex-col justify-between hover:border-blue-500/40 transition-all">
-              <div className="space-y-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-start gap-2.5 flex-1 min-w-0">
+            <div
+              key={goal.id}
+              className="p-5 rounded-2xl bg-gradient-to-br from-[#0c1426] via-[#09101f] to-[#070c18] border border-slate-800 border-l-[5px] border-l-emerald-400 shadow-lg flex flex-col justify-between hover:border-emerald-400/80 transition-all duration-200"
+            >
+              <div className="space-y-3.5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
                     <Checkbox
                       checked={goal.completed}
                       onChange={async (checked) => {
@@ -215,68 +246,68 @@ export default function GoalsPage() {
                     />
                     <div className="min-w-0 flex-1">
                       <h4 className={cn(
-                        'text-sm font-bold truncate',
-                        goal.completed ? 'text-slate-400 line-through' : 'text-slate-900 dark:text-white'
+                        'text-base sm:text-lg font-black tracking-tight',
+                        goal.completed ? 'text-slate-400 line-through' : 'text-white'
                       )}>
                         {goal.title}
                       </h4>
                       {goal.description && (
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
+                        <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1 leading-relaxed">
                           {goal.description}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <Badge variant={goal.completed ? 'success' : 'purple'} className="capitalize shrink-0">
+                  <span className="px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-wider bg-purple-950/80 text-purple-300 border border-purple-500/40 shrink-0">
                     {goal.period}
-                  </Badge>
+                  </span>
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1.5 pt-1">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-slate-500">Progress</span>
-                    <span className="font-semibold text-slate-700 dark:text-slate-300">{goal.progress}%</span>
+                    <span className="font-bold text-slate-400 uppercase tracking-wider">Milestone Progress</span>
+                    <span className="font-black text-emerald-300 text-sm">{goal.progress}%</span>
                   </div>
                   <ProgressBar
                     value={goal.progress}
                     color={goal.completed ? 'emerald' : 'blue'}
-                    size="sm"
+                    size="md"
                     showPct={false}
                   />
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
-                <div className="flex items-center gap-1">
-                  <Calendar size={13} />
-                  <span>Target: {formatDate(goal.targetDate)}</span>
+              <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400 font-medium">
+                <div className="flex items-center gap-1.5">
+                  <Calendar size={14} className="text-cyan-400" />
+                  <span>Target: <strong className="text-slate-200">{formatDate(goal.targetDate)}</strong></span>
                 </div>
 
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
                     onClick={() => handleOpenEdit(goal)}
-                    className="p-1 text-xs"
+                    className="p-2 text-slate-300 hover:text-cyan-300 bg-slate-800/80 hover:bg-slate-700 rounded-xl transition-all cursor-pointer"
+                    title="Edit goal"
                   >
                     <Edit2 size={13} />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
+                  </button>
+                  <button
+                    type="button"
                     onClick={async () => {
                       if (confirm(`Delete goal "${goal.title}"?`)) {
                         await deleteGoal(goal.id);
                       }
                     }}
-                    className="p-1 text-xs text-red-400 hover:text-red-500"
+                    className="p-2 text-slate-300 hover:text-red-400 bg-slate-800/80 hover:bg-slate-700 rounded-xl transition-all cursor-pointer"
+                    title="Delete goal"
                   >
                     <Trash2 size={13} />
-                  </Button>
+                  </button>
                 </div>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}

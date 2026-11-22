@@ -242,15 +242,41 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Website Owner · Admin Dashboard"
-        subtitle="Live platform metrics, online session presence, and verified user accounts."
-        action={
-          <Button variant="secondary" size="sm" onClick={fetchAdminData}>
-            <RefreshCw size={14} className={cn(isLoading && 'animate-spin')} /> Refresh Data
-          </Button>
-        }
-      />
+      {/* ── 3D ADMIN COMMAND PORTAL BANNER ── */}
+      <div className="relative rounded-3xl p-5 sm:p-7 border border-blue-500/40 bg-gradient-to-r from-[#07162c] via-[#091b38] to-[#070b16] shadow-2xl shadow-blue-950/40 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-400/60 to-transparent" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-blue-950/80 text-blue-300 border border-blue-400/50 shadow-sm shadow-blue-500/20">
+                <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />
+                SECURITY LEVEL 5 // OWNER CORE
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+                <ShieldCheck size={11} className="text-emerald-400" /> LIVE TELEMETRY
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Website Owner · Admin Dashboard
+            </h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-300 max-w-2xl leading-relaxed">
+              Live platform connection metrics, real-time presence indicators, and verified student account registry.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={fetchAdminData}
+              className="px-4 py-2.5 rounded-xl text-xs font-extrabold text-white bg-slate-800/90 hover:bg-slate-700 border border-slate-600 hover:border-cyan-400 shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95"
+            >
+              <RefreshCw size={14} className={cn(isLoading && 'animate-spin', 'text-cyan-400')} /> Refresh Data
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* ── Privacy Guarantee Notice ── */}
       <div className="p-3.5 bg-slate-900/40 border border-slate-800 rounded-xl text-xs flex items-start gap-3">

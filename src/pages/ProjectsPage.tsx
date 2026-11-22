@@ -121,15 +121,41 @@ export default function ProjectsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Developer Project Tracker"
-        subtitle="Build real-world full-stack and AI applications. Practice software architecture, version control and deployment."
-        action={
-          <Button onClick={() => handleOpenAdd()} size="sm">
-            <Plus size={16} /> New Project
-          </Button>
-        }
-      />
+      {/* ── 3D PROJECTS FORGE CYBER PORTAL BANNER ── */}
+      <div className="relative rounded-3xl p-5 sm:p-7 border border-orange-500/40 bg-gradient-to-r from-[#211107] via-[#150f1f] to-[#070b16] shadow-2xl shadow-orange-950/40 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-orange-400/60 to-transparent" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-orange-950/80 text-orange-300 border border-orange-400/50 shadow-sm shadow-orange-500/20">
+                <span className="w-2 h-2 rounded-full bg-orange-400 animate-ping" />
+                DOOR 03 // PROJECT LAB & FORGE
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+                <FolderKanban size={11} className="text-orange-400" /> REAL-WORLD BUILDS
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Developer Project Tracker
+            </h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-300 max-w-2xl leading-relaxed">
+              Design, engineer, and deploy real-world full-stack and AI applications proving your production capabilities.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => handleOpenAdd()}
+              className="px-4 py-2.5 rounded-xl text-xs font-extrabold text-slate-950 bg-gradient-to-r from-orange-400 via-amber-400 to-yellow-400 hover:from-orange-300 hover:to-yellow-300 shadow-lg shadow-orange-500/25 flex items-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer"
+            >
+              <Plus size={16} /> New Project
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Status Breakdown Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -180,62 +206,62 @@ export default function ProjectsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {filteredProjects.map(project => (
-            <Card
+            <div
               key={project.id}
-              className="p-5 flex flex-col justify-between hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 group"
+              className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#0f172a] via-[#0b1120] to-[#070b16] border border-slate-800 border-l-[6px] border-l-orange-400 hover:border-orange-400/80 hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 group flex flex-col justify-between"
             >
-              <div className="space-y-3">
+              <div className="space-y-3.5">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h3 className="text-base font-extrabold text-white group-hover:text-orange-300 transition-colors">
+                    <h3 className="text-lg font-black text-white group-hover:text-orange-300 transition-colors">
                       {project.title}
                     </h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge className={statusBg(project.status)}>
+                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                      <span className={cn('px-2.5 py-0.5 rounded-lg text-[11px] font-black uppercase tracking-wider', statusBg(project.status))}>
                         {project.status.toUpperCase()}
-                      </Badge>
+                      </span>
                       {project.showInPortfolio && (
-                        <Badge variant="purple" className="flex items-center gap-1 text-[10px]">
-                          <Eye size={10} /> Public Portfolio
-                        </Badge>
+                        <span className="px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-purple-950/80 text-purple-300 border border-purple-500/40 flex items-center gap-1">
+                          <Eye size={11} /> Public Portfolio
+                        </span>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
                       onClick={() => handleOpenEdit(project)}
-                      className="p-1.5 text-xs hover:text-cyan-400"
+                      className="p-2 text-slate-300 hover:text-cyan-300 bg-slate-800/80 hover:bg-slate-700 rounded-xl transition-all cursor-pointer"
+                      title="Edit project"
                     >
                       <Edit2 size={14} />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
+                    </button>
+                    <button
+                      type="button"
                       onClick={async () => {
                         if (confirm(`Delete project "${project.title}"?`)) {
                           await deleteProject(project.id);
                         }
                       }}
-                      className="p-1.5 text-xs text-red-400 hover:text-red-500"
+                      className="p-2 text-slate-300 hover:text-red-400 bg-slate-800/80 hover:bg-slate-700 rounded-xl transition-all cursor-pointer"
+                      title="Delete project"
                     >
                       <Trash2 size={14} />
-                    </Button>
+                    </button>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
                   {project.description}
                 </p>
 
                 {/* Tech Stack Badges */}
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5 pt-1">
                   {project.technologies.map((tech, i) => (
                     <span
                       key={i}
-                      className="px-2.5 py-0.5 rounded-lg text-[11px] font-mono bg-cyan-950/40 border border-cyan-800/40 text-cyan-300"
+                      className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-cyan-950/60 border border-cyan-500/40 text-cyan-200 shadow-xs"
                     >
                       {tech}
                     </span>
@@ -243,23 +269,23 @@ export default function ProjectsPage() {
                 </div>
 
                 {/* Dates & Links */}
-                <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 flex flex-wrap gap-3 items-center">
+                <div className="pt-2.5 border-t border-slate-800 text-xs text-slate-400 flex flex-wrap gap-3 items-center font-medium">
                   {project.startDate && <span>Started: {formatDate(project.startDate)}</span>}
                   {project.deadline && <span>Deadline: {formatDate(project.deadline)}</span>}
-                  {project.completionDate && <span className="text-emerald-500 font-semibold">Done: {formatDate(project.completionDate)}</span>}
+                  {project.completionDate && <span className="text-emerald-400 font-bold">Done: {formatDate(project.completionDate)}</span>}
                 </div>
 
                 {/* Notes & Lessons */}
                 {project.lessonsLearned && (
-                  <div className="bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-200/60 dark:border-slate-800 text-xs">
-                    <span className="font-semibold text-slate-400 block mb-0.5">Lessons Learned:</span>
-                    <p className="text-slate-600 dark:text-slate-300">{project.lessonsLearned}</p>
+                  <div className="bg-slate-900/90 p-3 rounded-xl border border-slate-800 text-xs">
+                    <span className="font-extrabold text-slate-300 block mb-0.5">Lessons Learned:</span>
+                    <p className="text-slate-300 leading-relaxed">{project.lessonsLearned}</p>
                   </div>
                 )}
               </div>
 
               {/* Links Footer */}
-              <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {project.githubUrl && (
                     <a
@@ -300,7 +326,7 @@ export default function ProjectsPage() {
                   <option value="completed">Completed</option>
                 </select>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}

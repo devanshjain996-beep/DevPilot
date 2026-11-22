@@ -38,17 +38,38 @@ export default function WebDevPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Web Development Track"
-        subtitle="Complete modern full-stack development — master both frontend (React + TS) and backend (FastAPI, Node, SQL)."
-        action={
-          <div className="flex items-center gap-2">
-            <Badge variant="info" className="px-3 py-1 font-semibold text-sm">
-              {progressPct}% Completed
-            </Badge>
+      {/* ── 3D WEB DEVELOPMENT CYBER PORTAL BANNER ── */}
+      <div className="relative rounded-3xl p-5 sm:p-7 border border-cyan-500/40 bg-gradient-to-r from-[#071926] via-[#09152a] to-[#070b16] shadow-2xl shadow-cyan-950/40 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-cyan-950/80 text-cyan-300 border border-cyan-400/50 shadow-sm shadow-cyan-500/20">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                PORTAL 02.4 // WEB DEVELOPMENT CHAMBER
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+                <Globe size={11} className="text-cyan-400" /> FULL-STACK PLATFORM
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Web Development Track
+            </h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-300 max-w-2xl leading-relaxed">
+              Build production full-stack systems — mastering modern React + TypeScript frontends and scalable FastAPI & SQL backends.
+            </p>
           </div>
-        }
-      />
+
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="px-4 py-2 bg-cyan-950/60 border border-cyan-500/40 rounded-2xl shadow-inner text-right">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">Progress</span>
+              <span className="text-xl font-black text-cyan-300">{progressPct}% Mastered</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

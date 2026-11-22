@@ -36,17 +36,38 @@ export default function PythonPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Python Mastery Track"
-        subtitle="Your primary programming language — mastering from zero to building AI-ready full-stack systems."
-        action={
-          <div className="flex items-center gap-2">
-            <Badge variant="success" className="px-3 py-1 font-semibold text-sm">
-              {progressPct}% Mastered
-            </Badge>
+      {/* ── 3D PYTHON MASTERY CHAMBER PORTAL BANNER ── */}
+      <div className="relative rounded-3xl p-5 sm:p-7 border border-emerald-500/40 bg-gradient-to-r from-[#061d13] via-[#0b1625] to-[#070b16] shadow-2xl shadow-emerald-950/40 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-emerald-950/80 text-emerald-300 border border-emerald-400/50 shadow-sm shadow-emerald-500/20">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                PORTAL 02.1 // PYTHON MASTERY CHAMBER
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+                <Code2 size={11} className="text-emerald-400" /> PRIMARY CORE LANGUAGE
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Python Mastery Track
+            </h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-300 max-w-2xl leading-relaxed">
+              Master Python from fundamentals to advanced asynchronous engineering and AI agent infrastructure.
+            </p>
           </div>
-        }
-      />
+
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="px-4 py-2 bg-emerald-950/60 border border-emerald-500/40 rounded-2xl shadow-inner text-right">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">Progress</span>
+              <span className="text-xl font-black text-emerald-300">{progressPct}% Mastered</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Progress & Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -131,53 +152,55 @@ export default function PythonPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 {levelTopics.map(topic => (
-                  <Card key={topic.id} className="p-4 transition-all">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                  <div
+                    key={topic.id}
+                    className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-950/20 via-[#0d1424] to-[#070b16] border border-slate-800 border-l-[5px] border-l-emerald-400 shadow-md hover:border-emerald-500/50 transition-all duration-200"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
                         <Checkbox
                           checked={topic.status === 'completed'}
                           onChange={checked => updateTopicStatus(topic.id, checked ? 'completed' : 'not-started')}
                         />
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs font-mono font-bold text-slate-400">#{topic.order}</span>
+                          <div className="flex items-center gap-2.5 flex-wrap">
+                            <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-500/40 px-2 py-0.5 rounded-lg">#{topic.order}</span>
                             <h4 className={cn(
-                              'text-sm font-semibold truncate',
-                              topic.status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-900 dark:text-white'
+                              'text-base sm:text-lg font-black tracking-tight',
+                              topic.status === 'completed' ? 'text-slate-400 line-through' : 'text-white'
                             )}>
                               {topic.title}
                             </h4>
-                            <Badge className={statusBg(topic.status)}>
+                            <span className={cn('px-2.5 py-0.5 rounded-lg text-[11px] font-black uppercase tracking-wider', statusBg(topic.status))}>
                               {topic.status.toUpperCase()}
-                            </Badge>
+                            </span>
                           </div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                          <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1 leading-relaxed">
                             {topic.description}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                         <select
                           value={topic.status}
                           onChange={e => updateTopicStatus(topic.id, e.target.value as LearningStatus)}
-                          className="text-xs bg-slate-100 dark:bg-slate-700 border-none rounded-md px-2 py-1 text-slate-800 dark:text-slate-200 font-medium"
+                          className="text-xs font-bold bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-white cursor-pointer"
                         >
                           <option value="not-started">Not Started</option>
                           <option value="learning">Learning</option>
                           <option value="practising">Practising</option>
                           <option value="completed">Completed</option>
                         </select>
-                        <Button
-                          variant="ghost"
-                          size="sm"
+                        <button
+                          type="button"
                           onClick={() => setExpandedTopicId(expandedTopicId === topic.id ? null : topic.id)}
-                          className="text-xs"
+                          className="px-3 py-1.5 text-xs font-bold text-cyan-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl cursor-pointer transition-all"
                         >
                           {expandedTopicId === topic.id ? 'Hide' : 'Exercises & Notes'}
-                        </Button>
+                        </button>
                       </div>
                     </div>
 
@@ -229,7 +252,7 @@ export default function PythonPage() {
                         </div>
                       </div>
                     )}
-                  </Card>
+                  </div>
                 ))}
               </div>
             </div>

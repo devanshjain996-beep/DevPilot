@@ -49,18 +49,38 @@ export default function LearningRoadmapPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Complete Learning Roadmap"
-        subtitle="Your structured path from beginner to professional AI-powered software developer."
-        action={
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-slate-500 dark:text-slate-400">Overall Progress:</span>
-            <Badge variant="purple" className="text-sm px-3 py-1 font-bold">
-              {overallPercentage}% Completed
-            </Badge>
+      {/* ── 3D LEARNING ROADMAP CYBER PORTAL BANNER ── */}
+      <div className="relative rounded-3xl p-5 sm:p-7 border border-violet-500/40 bg-gradient-to-r from-[#120e2e] via-[#0d142c] to-[#070b16] shadow-2xl shadow-violet-950/40 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-violet-400/60 to-transparent" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-violet-950/80 text-violet-300 border border-violet-400/50 shadow-sm shadow-violet-500/20">
+                <span className="w-2 h-2 rounded-full bg-violet-400 animate-ping" />
+                DOOR 02 // LEARNING ROADMAP UNIVERSE
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+                <Map size={11} className="text-violet-400" /> 6 DEDICATED TRACKS
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Engineering Learning Roadmap
+            </h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-300 max-w-2xl leading-relaxed">
+              Your structured pathway from foundational computer science to AI-powered full-stack software development.
+            </p>
           </div>
-        }
-      />
+
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="px-4 py-2 bg-gradient-to-r from-violet-950/60 to-cyan-950/60 border border-violet-500/40 rounded-2xl shadow-inner text-right">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">Overall Progress</span>
+              <span className="text-xl font-black text-violet-300">{overallPercentage}% Mastered</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Overall Progress Banner */}
       <Card className="bg-gradient-to-r from-blue-900/30 via-violet-900/30 to-purple-900/30 border-blue-500/20">

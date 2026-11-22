@@ -184,22 +184,50 @@ export default function AcademicsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="College Academics Management"
-        subtitle="Stay ahead in your college curriculum. Never compromise college assignments or exams for personal coding."
-        action={
-          <div className="flex gap-2">
-            {subjects.length === 0 && (
-              <Button variant="secondary" onClick={handleSeedDefaults} size="sm">
-                Load College Starter Subjects
-              </Button>
-            )}
-            <Button onClick={() => setSubjectModalOpen(true)} size="sm">
-              <Plus size={16} /> Add Subject
-            </Button>
+      {/* ── 3D COLLEGE ACADEMICS CYBER PORTAL BANNER ── */}
+      <div className="relative rounded-3xl p-5 sm:p-7 border border-amber-500/40 bg-gradient-to-r from-[#211606] via-[#161220] to-[#070b16] shadow-2xl shadow-amber-950/40 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-amber-950/80 text-amber-300 border border-amber-400/50 shadow-sm shadow-amber-500/20">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                PORTAL 02.6 // COLLEGE ACADEMICS CHAMBER
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+                <GraduationCap size={11} className="text-amber-400" /> DEGREE CURRICULUM
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              College Academics Management
+            </h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-300 max-w-2xl leading-relaxed">
+              Maintain academic excellence across semester subjects, internal exams, assignments, and practical laboratory records.
+            </p>
           </div>
-        }
-      />
+
+          <div className="flex items-center gap-2 shrink-0">
+            {subjects.length === 0 && (
+              <button
+                type="button"
+                onClick={handleSeedDefaults}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold text-amber-300 hover:text-white bg-amber-950/60 hover:bg-amber-900 border border-amber-500/40 shadow-sm transition-all cursor-pointer active:scale-95"
+              >
+                Load Starter Subjects
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setSubjectModalOpen(true)}
+              className="px-4 py-2.5 rounded-xl text-xs font-extrabold text-slate-950 bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 shadow-lg shadow-amber-500/25 flex items-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer"
+            >
+              <Plus size={16} /> Add Subject
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Overview Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

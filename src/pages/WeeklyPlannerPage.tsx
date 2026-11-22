@@ -99,17 +99,41 @@ export default function WeeklyPlannerPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Weekly Study Planner"
-        subtitle="Your structured 8:30–9:15 PM topic rotation and weekly task commitments."
-        action={
-          <div className="flex gap-2">
-            <Button onClick={handleOpenAdd} size="sm">
-              <Plus size={16} /> Add Task
-            </Button>
+      {/* ── 3D WEEKLY PLANNER CYBER PORTAL BANNER ── */}
+      <div className="relative rounded-3xl p-5 sm:p-7 border border-cyan-500/30 bg-gradient-to-r from-[#0b1429] via-[#0d1c3a] to-[#080e1e] shadow-2xl shadow-cyan-950/40 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-cyan-950/80 text-cyan-300 border border-cyan-400/50 shadow-sm shadow-cyan-500/20">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                DOOR 01.2 // WEEKLY ROTATION PLANNER
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+                <Clock size={11} className="text-cyan-400" /> 8:30 PM FOCUS ROTATION
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Weekly Study & Habit Engine
+            </h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-300 max-w-2xl leading-relaxed">
+              Maintain daily core invariants and execute your strategic 8:30–9:15 PM evening rotation commitments.
+            </p>
           </div>
-        }
-      />
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleOpenAdd}
+              className="px-4 py-2.5 rounded-xl text-xs font-extrabold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 shadow-lg shadow-cyan-500/25 flex items-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer"
+            >
+              <Plus size={15} /> Add Task
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Planned vs Actual Analytics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -132,56 +156,60 @@ export default function WeeklyPlannerPage() {
       {activeTab === 'schedule' ? (
         <div className="space-y-6">
           {/* Permanent Daily Invariants Banner */}
-          <Card className="bg-slate-900 border-violet-500/30 p-4">
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-[#0d1428] via-[#091122] to-[#070b16] border border-violet-500/40 shadow-xl">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
-                <span className="font-bold text-violet-300 text-xs uppercase tracking-wider block">
+                <span className="font-extrabold text-violet-300 text-xs uppercase tracking-wider block">
                   Daily Habit Foundations (Every Monday – Sunday)
                 </span>
-                <p className="text-xs text-slate-300 mt-0.5">
-                  • <strong>4:00 – 5:00 PM:</strong> Python Learning & Practice<br />
-                  • <strong>5:00 – 7:00 PM:</strong> Free Time / Break (or your custom hours)<br />
-                  • <strong>7:00 – 8:00 PM:</strong> C++ & DSA Practice
+                <p className="text-xs sm:text-sm text-slate-200 font-medium mt-1 leading-relaxed">
+                  • <strong className="text-emerald-400">4:00 – 5:00 PM:</strong> Python Learning & Practice<br />
+                  • <strong className="text-indigo-400">5:00 – 7:00 PM:</strong> Free Time / Personal Break (or custom hours)<br />
+                  • <strong className="text-violet-400">7:00 – 8:00 PM:</strong> C++ & DSA Deep Practice
                 </p>
               </div>
-              <Badge variant="purple" className="shrink-0">Daily Invariants</Badge>
+              <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-violet-950/80 text-violet-300 border border-violet-500/50 shadow-sm shrink-0">
+                Daily Invariants
+              </span>
             </div>
-          </Card>
+          </div>
 
           {/* Weekly 8:30 - 9:15 PM Table */}
           <div className="space-y-3">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center justify-between">
-              <span>8:30 – 9:15 PM Evening Focus Rotation</span>
-              <span className="text-xs text-slate-500 font-normal">Click any day to customize topic</span>
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-black text-white flex items-center gap-2">
+                <span>8:30 – 9:15 PM Evening Focus Rotation</span>
+              </h3>
+              <span className="text-xs text-slate-400 font-medium">Click any day card to customize topic</span>
+            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3.5">
               {schedule.map((slot: any) => (
-                <Card
+                <div
                   key={slot.id}
-                  className="p-3.5 flex flex-col justify-between hover:border-blue-500/50 cursor-pointer transition-all"
+                  className="p-4 rounded-2xl bg-gradient-to-b from-[#0c1426] to-[#070c18] border border-slate-800/90 hover:border-cyan-400/80 shadow-lg flex flex-col justify-between cursor-pointer transition-all duration-200 active:scale-95 group hover:-translate-y-1"
                   onClick={() => {
                     setEditingSlot(slot);
                     setEditSlotModal(true);
                   }}
                 >
-                  <div className="space-y-2">
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block uppercase tracking-wide">
+                  <div className="space-y-2.5">
+                    <span className="text-xs font-mono font-black text-cyan-400 block uppercase tracking-wider">
                       {slot.day}
                     </span>
-                    <Badge variant={slot.category === 'webdev' ? 'info' : slot.category === 'system-design' ? 'warning' : slot.category === 'python' ? 'success' : 'purple'}>
+                    <span className="inline-block px-2.5 py-0.5 rounded-lg text-[11px] font-mono font-bold bg-slate-950/90 text-slate-200 border border-slate-700">
                       {slot.timeSlot}
-                    </Badge>
-                    <p className="text-sm font-bold text-slate-900 dark:text-white mt-1 leading-snug">
+                    </span>
+                    <p className="text-sm sm:text-base font-extrabold text-white mt-1 leading-snug group-hover:text-cyan-300 transition-colors">
                       {slot.activity}
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-blue-500 flex items-center justify-between">
+                  <div className="pt-3 mt-3 border-t border-slate-800 text-xs font-bold text-cyan-400 flex items-center justify-between">
                     <span>Edit focus</span>
-                    <Edit2 size={12} />
+                    <Edit2 size={13} />
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
           </div>
@@ -190,12 +218,12 @@ export default function WeeklyPlannerPage() {
         /* Tasks List View */
         <div className="space-y-4">
           {/* Filter Bar */}
-          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800/80">
+          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 shadow-md">
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <select
                 value={filterStatus}
                 onChange={e => setFilterStatus(e.target.value)}
-                className="text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-white"
+                className="text-xs font-bold bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white"
               >
                 <option value="all">All Statuses</option>
                 <option value="pending">Pending</option>
@@ -206,7 +234,7 @@ export default function WeeklyPlannerPage() {
               <select
                 value={filterPriority}
                 onChange={e => setFilterPriority(e.target.value)}
-                className="text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-white"
+                className="text-xs font-bold bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white"
               >
                 <option value="all">All Priorities</option>
                 <option value="urgent">Urgent</option>
@@ -216,9 +244,13 @@ export default function WeeklyPlannerPage() {
               </select>
             </div>
 
-            <Button onClick={handleOpenAdd} size="sm">
+            <button
+              type="button"
+              onClick={handleOpenAdd}
+              className="px-4 py-2 rounded-xl text-xs font-extrabold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95"
+            >
               <Plus size={15} /> Add Task
-            </Button>
+            </button>
           </div>
 
           {filteredTasks.length === 0 ? (
@@ -226,14 +258,14 @@ export default function WeeklyPlannerPage() {
               icon={<ListTodo size={40} />}
               title="No tasks in this list"
               description="Keep a clear backlog of coding assignments, revision tasks, and project milestones."
-              action={<Button onClick={handleOpenAdd} size="sm"><Plus size={15} /> Add Task</Button>}
+              action={<Button onClick={handleOpenAdd} size="sm" className="text-white font-bold bg-blue-600"><Plus size={15} /> Add Task</Button>}
             />
           ) : (
             <div className="space-y-2.5">
               {filteredTasks.map(task => (
-                <Card key={task.id} className="p-3.5 transition-all">
+                <div key={task.id} className="p-4 rounded-2xl bg-gradient-to-r from-[#0c1426] via-[#09101f] to-[#070c18] border border-slate-800/90 shadow-md transition-all">
                   <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="flex items-center gap-3.5 flex-1 min-w-0">
                       <Checkbox
                         checked={task.status === 'completed'}
                         onChange={async (checked) => {
@@ -244,13 +276,13 @@ export default function WeeklyPlannerPage() {
                       />
                       <div className="min-w-0 flex-1">
                         <p className={cn(
-                          'text-sm font-semibold truncate',
-                          task.status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-900 dark:text-white'
+                          'text-base font-extrabold truncate',
+                          task.status === 'completed' ? 'text-slate-400 line-through' : 'text-white'
                         )}>
                           {task.title}
                         </p>
-                        <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-500">
-                          <span className="capitalize">{task.category}</span>
+                        <div className="flex items-center gap-2 mt-1 text-xs text-slate-300 font-medium">
+                          <span className="capitalize font-bold text-cyan-300">{task.category}</span>
                           <span>·</span>
                           <span>Due: {formatDate(task.deadline || task.date)}</span>
                         </div>
@@ -259,14 +291,12 @@ export default function WeeklyPlannerPage() {
 
                     <div className="flex items-center gap-2">
                       <Badge variant={task.priority === 'urgent' ? 'danger' : task.priority === 'high' ? 'warning' : 'default'}>
-                        {task.priority}
+                        {task.priority.toUpperCase()}
                       </Badge>
 
-                      <Button
-                        variant="ghost"
-                        size="sm"
+                      <button
+                        type="button"
                         onClick={async () => {
-                          // Reschedule task to tomorrow without overloading
                           const tomorrow = new Date();
                           tomorrow.setDate(tomorrow.getDate() + 1);
                           const tomorrowStr = tomorrow.toISOString().split('T')[0];
@@ -276,27 +306,27 @@ export default function WeeklyPlannerPage() {
                             status: 'rescheduled'
                           });
                         }}
-                        className="p-1.5 text-xs text-amber-500"
+                        className="p-2 text-xs text-amber-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition-all cursor-pointer"
                         title="Reschedule to tomorrow"
                       >
                         <RotateCcw size={14} />
-                      </Button>
+                      </button>
 
-                      <Button
-                        variant="ghost"
-                        size="sm"
+                      <button
+                        type="button"
                         onClick={async () => {
                           if (confirm(`Delete task "${task.title}"?`)) {
                             await deleteTask(task.id);
                           }
                         }}
-                        className="p-1.5 text-xs text-red-400 hover:text-red-500"
+                        className="p-2 text-xs text-rose-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition-all cursor-pointer"
+                        title="Delete task"
                       >
                         <Trash2 size={14} />
-                      </Button>
+                      </button>
                     </div>
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
           )}
@@ -362,9 +392,9 @@ export default function WeeklyPlannerPage() {
             rows={2}
           />
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-700">
-            <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleSaveTask}>{editingTask ? 'Save Changes' : 'Create Task'}</Button>
+          <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+            <Button variant="secondary" onClick={() => setModalOpen(false)} className="text-white font-bold bg-slate-800 border-slate-700">Cancel</Button>
+            <Button onClick={handleSaveTask} className="text-white font-extrabold bg-gradient-to-r from-blue-600 to-cyan-600 shadow-md">{editingTask ? 'Save Changes' : 'Create Task'}</Button>
           </div>
         </div>
       </Modal>
@@ -397,9 +427,9 @@ export default function WeeklyPlannerPage() {
               ]}
             />
 
-            <div className="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-700">
-              <Button variant="ghost" onClick={() => setEditSlotModal(false)}>Cancel</Button>
-              <Button onClick={handleSaveSlot}>Save Schedule</Button>
+            <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+              <Button variant="secondary" onClick={() => setEditSlotModal(false)} className="text-white font-bold bg-slate-800 border-slate-700">Cancel</Button>
+              <Button onClick={handleSaveSlot} className="text-white font-extrabold bg-gradient-to-r from-blue-600 to-cyan-600 shadow-md">Save Schedule</Button>
             </div>
           </div>
         </Modal>

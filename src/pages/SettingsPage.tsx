@@ -146,10 +146,29 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
-      <PageHeader
-        title="Settings & Account Management"
-        subtitle="Manage your authentication credentials, cloud profile, theme, and full data export."
-      />
+      {/* ── 3D SETTINGS CONTROL CORE CYBER PORTAL BANNER ── */}
+      <div className="relative rounded-3xl p-5 sm:p-7 border border-blue-500/40 bg-gradient-to-r from-[#0b1429] via-[#0d1c3a] to-[#080e1e] shadow-2xl shadow-blue-950/40 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-400/60 to-transparent" />
+
+        <div className="relative z-10 space-y-1.5">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-blue-950/80 text-blue-300 border border-blue-400/50 shadow-sm shadow-blue-500/20">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />
+              SYSTEM SETTINGS // CONTROL CORE
+            </span>
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+              <Settings size={11} className="text-cyan-400" /> SECURE CONFIGURATION
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            Settings & Account Management
+          </h1>
+          <p className="text-xs sm:text-sm font-medium text-slate-300 max-w-2xl leading-relaxed">
+            Manage your authentication credentials, cloud profile sync, appearance themes, and database backups.
+          </p>
+        </div>
+      </div>
 
       {/* ── 1. User Account & Authentication Status ── */}
       <Card className="p-5 space-y-4">

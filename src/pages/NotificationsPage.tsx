@@ -133,17 +133,41 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Notification & Reminder Center"
-        subtitle="Schedule automated activity reminders, set quiet hours, and inspect alert history."
-        action={
-          <div className="flex items-center gap-2">
-            <Button variant="secondary" size="sm" onClick={handleTestNotification}>
-              <Send size={14} /> Send Test Alert
-            </Button>
+      {/* ── 3D NOTIFICATIONS CYBER PORTAL BANNER ── */}
+      <div className="relative rounded-3xl p-5 sm:p-7 border border-cyan-500/40 bg-gradient-to-r from-[#071926] via-[#09152a] to-[#070b16] shadow-2xl shadow-cyan-950/40 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-cyan-950/80 text-cyan-300 border border-cyan-400/50 shadow-sm shadow-cyan-500/20">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                CHRONO DISPATCH // ALERTS SYSTEM
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+                <Bell size={11} className="text-cyan-400" /> SCHEDULE AUTOMATION
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Notification & Reminder Center
+            </h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-300 max-w-2xl leading-relaxed">
+              Automated timetable activity alerts, study slot triggers, quiet hours, and historical dispatch audit logs.
+            </p>
           </div>
-        }
-      />
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleTestNotification}
+              className="px-4 py-2.5 rounded-xl text-xs font-extrabold text-white bg-slate-800/90 hover:bg-slate-700 border border-slate-600 hover:border-cyan-400 shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95"
+            >
+              <Send size={14} className="text-cyan-400" /> Send Test Alert
+            </button>
+          </div>
+        </div>
+      </div>
 
       {saveMessage && (
         <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-500 text-xs flex items-center gap-2">

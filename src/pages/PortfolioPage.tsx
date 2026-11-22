@@ -48,29 +48,46 @@ export default function PortfolioPage() {
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      {/* Portfolio Header / Status Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3">
-            <Briefcase className="text-amber-400" />
-            Developer Identity Chamber
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            An authentic, verified developer portfolio reflecting genuine curriculum mastery and real production builds.
-          </p>
-        </div>
+      {/* ── 3D PORTFOLIO CYBER PORTAL BANNER ── */}
+      <div className="relative rounded-3xl p-5 sm:p-7 border border-amber-500/40 bg-gradient-to-r from-[#231505] via-[#161220] to-[#070b16] shadow-2xl shadow-amber-950/40 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
 
-        <div className="flex items-center gap-3">
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setProfile(p => ({ ...p, portfolioVisible: !p.portfolioVisible }))}
-          >
-            {profile.portfolioVisible ? <><Eye size={15} className="text-emerald-400" /> Public View Active</> : <><EyeOff size={15} /> Private Draft</>}
-          </Button>
-          <Button size="sm" onClick={() => setEditModalOpen(true)}>
-            <Edit2 size={15} /> Edit Profile Info
-          </Button>
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-amber-950/80 text-amber-300 border border-amber-400/50 shadow-sm shadow-amber-500/20">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                DOOR 04 // DEVELOPER IDENTITY CHAMBER
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/90 text-slate-300 border border-slate-700">
+                <Briefcase size={11} className="text-amber-400" /> VERIFIED PORTFOLIO
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Developer Identity & Showcase
+            </h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-300 max-w-2xl leading-relaxed">
+              Authentic, verified developer portfolio reflecting genuine curriculum mastery and real production builds.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => setProfile(p => ({ ...p, portfolioVisible: !p.portfolioVisible }))}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-slate-800/90 hover:bg-slate-700 border border-slate-600 hover:border-emerald-400 shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95"
+            >
+              {profile.portfolioVisible ? <><Eye size={15} className="text-emerald-400" /> Public View Active</> : <><EyeOff size={15} /> Private Draft</>}
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditModalOpen(true)}
+              className="px-4 py-2 rounded-xl text-xs font-extrabold text-slate-950 bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 shadow-lg shadow-amber-500/25 flex items-center gap-1.5 cursor-pointer active:scale-95"
+            >
+              <Edit2 size={15} /> Edit Profile Info
+            </button>
+          </div>
         </div>
       </div>
 

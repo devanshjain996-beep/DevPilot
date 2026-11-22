@@ -213,40 +213,40 @@ ${suggestedPriorities.map(p => `- ${p}`).join('\n')}
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800 text-xs">
-            <span className="font-semibold text-emerald-400 block mb-1">Python Mastery</span>
+          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs">
+            <span className="font-bold text-emerald-300 block mb-1">Python Mastery</span>
             <ProgressBar value={pythonDone} max={pythonTotal} color="emerald" size="sm" />
-            <span className="text-slate-400 mt-1 block">{pythonDone} of {pythonTotal} topics completed</span>
+            <span className="text-slate-300 font-medium mt-1.5 block">{pythonDone} of {pythonTotal} topics completed</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800 text-xs">
-            <span className="font-semibold text-violet-400 block mb-1">C++ & Algorithms</span>
+          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs">
+            <span className="font-bold text-violet-300 block mb-1">C++ & Algorithms</span>
             <ProgressBar value={dsaSolved} max={Math.max(dsaTotal, 1)} color="violet" size="sm" />
-            <span className="text-slate-400 mt-1 block">{dsaSolved} problems solved</span>
+            <span className="text-slate-300 font-medium mt-1.5 block">{dsaSolved} problems solved</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800 text-xs">
-            <span className="font-semibold text-cyan-400 block mb-1">Web Development</span>
+          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs">
+            <span className="font-bold text-cyan-300 block mb-1">Web Development</span>
             <ProgressBar value={webdevDone} max={webdevTotal} color="cyan" size="sm" />
-            <span className="text-slate-400 mt-1 block">{webdevDone} of {webdevTotal} topics completed</span>
+            <span className="text-slate-300 font-medium mt-1.5 block">{webdevDone} of {webdevTotal} topics completed</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800 text-xs">
-            <span className="font-semibold text-amber-400 block mb-1">System Design</span>
+          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs">
+            <span className="font-bold text-amber-300 block mb-1">System Design</span>
             <ProgressBar value={sysDesignDone} max={sysDesignTotal} color="amber" size="sm" />
-            <span className="text-slate-400 mt-1 block">{sysDesignDone} of {sysDesignTotal} concepts completed</span>
+            <span className="text-slate-300 font-medium mt-1.5 block">{sysDesignDone} of {sysDesignTotal} concepts completed</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800 text-xs">
-            <span className="font-semibold text-rose-400 block mb-1">AI/ML Development</span>
+          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs">
+            <span className="font-bold text-rose-300 block mb-1">AI/ML Development</span>
             <ProgressBar value={aimlDone} max={aimlTotal} color="rose" size="sm" />
-            <span className="text-slate-400 mt-1 block">{aimlDone} of {aimlTotal} topics completed</span>
+            <span className="text-slate-300 font-medium mt-1.5 block">{aimlDone} of {aimlTotal} topics completed</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800 text-xs">
-            <span className="font-semibold text-blue-400 block mb-1">College C Programming</span>
+          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs">
+            <span className="font-bold text-blue-300 block mb-1">College C Programming</span>
             <ProgressBar value={cDone} max={cTotal} color="blue" size="sm" />
-            <span className="text-slate-400 mt-1 block">{cDone} of {cTotal} syllabus items completed</span>
+            <span className="text-slate-300 font-medium mt-1.5 block">{cDone} of {cTotal} syllabus items completed</span>
           </div>
         </div>
       </Card>
@@ -339,12 +339,12 @@ ${suggestedPriorities.map(p => `- ${p}`).join('\n')}
 
       {/* Editable Reflections & Next Week Planner */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <Card className="p-5 space-y-4">
-          <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+        <Card className="p-5 space-y-4 bg-slate-900/90 border-slate-800">
+          <h3 className="font-bold text-base text-white flex items-center gap-2">
             <AlertTriangle className="text-amber-400" size={18} />
             Difficulties & Engineering Blockers
           </h3>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-300 font-medium">
             What was the hardest concept this week? What caused errors or took longer than expected?
           </p>
           <Textarea
@@ -356,12 +356,12 @@ ${suggestedPriorities.map(p => `- ${p}`).join('\n')}
           />
         </Card>
 
-        <Card className="p-5 space-y-4">
-          <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+        <Card className="p-5 space-y-4 bg-slate-900/90 border-slate-800">
+          <h3 className="font-bold text-base text-white flex items-center gap-2">
             <CheckCircle2 className="text-emerald-400" size={18} />
             Weekly Wins & Milestones
           </h3>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-300 font-medium">
             Celebrate tangible progress. What did you successfully build or solve this week?
           </p>
           <Textarea
@@ -375,14 +375,14 @@ ${suggestedPriorities.map(p => `- ${p}`).join('\n')}
       </div>
 
       {/* Next Week Plan & Auto-priorities */}
-      <Card className="p-5 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
+      <Card className="p-5 space-y-4 bg-slate-900/90 border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
           <div>
-            <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
-              <CalendarCheck className="text-blue-500" size={18} />
+            <h3 className="font-bold text-base text-white flex items-center gap-2">
+              <CalendarCheck className="text-blue-400" size={18} />
               Next Week Execution Plan
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-300 font-medium">
               Generated suggestions based on your unfinished curriculum topics and scheduled college dates.
             </p>
           </div>

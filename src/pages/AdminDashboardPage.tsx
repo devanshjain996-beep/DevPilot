@@ -222,10 +222,10 @@ export default function AdminDashboardPage() {
         <div className="w-16 h-16 mx-auto rounded-2xl bg-red-500/10 text-red-500 flex items-center justify-center">
           <Lock size={32} />
         </div>
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+        <h2 className="text-2xl font-black text-white">
           Administrator Access Required
         </h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-300 font-medium max-w-md mx-auto leading-relaxed">
           This dashboard is strictly reserved for the website owner. You must be signed in with an authorized administrator account to view platform metrics and online user tracking.
         </p>
         <div className="pt-2">
@@ -291,68 +291,68 @@ export default function AdminDashboardPage() {
 
       {/* ── Key Metrics Cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4 border-l-4 border-l-blue-500">
+        <Card className="p-4 border-l-4 border-l-blue-500 bg-slate-900/90 border-slate-800">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Total Registered Users</span>
-            <Users size={16} className="text-blue-500" />
+            <span className="text-xs font-bold text-slate-300">Total Registered Users</span>
+            <Users size={16} className="text-blue-400" />
           </div>
-          <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+          <p className="text-2xl font-black text-white mt-1">
             {platformStats.totalUsers}
           </p>
-          <p className="text-[11px] text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-300 font-medium mt-0.5">
             Accounts created on DevPilot
           </p>
         </Card>
 
-        <Card className="p-4 border-l-4 border-l-emerald-500">
+        <Card className="p-4 border-l-4 border-l-emerald-500 bg-slate-900/90 border-slate-800">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Currently Active / Online</span>
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+            <span className="text-xs font-bold text-slate-300">Currently Active / Online</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
           </div>
-          <p className="text-2xl font-bold text-emerald-500 mt-1">
+          <p className="text-2xl font-black text-emerald-400 mt-1">
             {onlineCount}{' '}
-            <span className="text-xs font-normal text-slate-400">({awayCount} away)</span>
+            <span className="text-xs font-medium text-slate-300">({awayCount} away)</span>
           </p>
-          <p className="text-[11px] text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-300 font-medium mt-0.5">
             Live heartbeat within last 2 mins
           </p>
         </Card>
 
-        <Card className="p-4 border-l-4 border-l-violet-500">
+        <Card className="p-4 border-l-4 border-l-violet-500 bg-slate-900/90 border-slate-800">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Verified Google Accounts</span>
-            <Mail size={16} className="text-violet-500" />
+            <span className="text-xs font-bold text-slate-300">Verified Google Accounts</span>
+            <Mail size={16} className="text-violet-400" />
           </div>
-          <p className="text-2xl font-bold text-violet-500 mt-1">
+          <p className="text-2xl font-black text-violet-300 mt-1">
             {platformStats.googleVerified}
           </p>
-          <p className="text-[11px] text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-300 font-medium mt-0.5">
             Authenticated with Gmail OAuth
           </p>
         </Card>
 
-        <Card className="p-4 border-l-4 border-l-amber-500">
+        <Card className="p-4 border-l-4 border-l-amber-500 bg-slate-900/90 border-slate-800">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Verified Phone Accounts</span>
-            <Phone size={16} className="text-amber-500" />
+            <span className="text-xs font-bold text-slate-300">Verified Phone Accounts</span>
+            <Phone size={16} className="text-amber-400" />
           </div>
-          <p className="text-2xl font-bold text-amber-500 mt-1">
+          <p className="text-2xl font-black text-amber-300 mt-1">
             {platformStats.phoneVerified}
           </p>
-          <p className="text-[11px] text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-300 font-medium mt-0.5">
             Verified via SMS OTP
           </p>
         </Card>
       </div>
 
       {/* ── User List & Session Presence Table ── */}
-      <Card className="p-4 space-y-4">
+      <Card className="p-4 space-y-4 bg-slate-900/90 border-slate-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 className="font-bold text-base text-slate-900 dark:text-white">
+            <h3 className="font-black text-base text-white">
               Connected Accounts & Presence
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-300 font-medium">
               Real-time monitoring of registered users, verification badges, and last active sessions.
             </p>
           </div>
@@ -376,8 +376,8 @@ export default function AdminDashboardPage() {
                   className={cn(
                     'px-2.5 py-1 rounded-md capitalize font-medium transition-all cursor-pointer',
                     statusFilter === filter
-                      ? 'bg-white dark:bg-slate-900 text-blue-500 shadow-xs font-bold'
-                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-slate-900 text-cyan-300 shadow-xs font-bold border border-cyan-400/40'
+                      : 'text-slate-300 hover:text-white font-semibold'
                   )}
                 >
                   {filter}
@@ -397,28 +397,28 @@ export default function AdminDashboardPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400 text-[11px]">
-                  <th className="py-2.5 px-3 font-semibold">User</th>
-                  <th className="py-2.5 px-3 font-semibold">Verification Status</th>
-                  <th className="py-2.5 px-3 font-semibold">Presence</th>
-                  <th className="py-2.5 px-3 font-semibold">Role</th>
-                  <th className="py-2.5 px-3 font-semibold">Registered</th>
-                  <th className="py-2.5 px-3 font-semibold">Last Active</th>
+                <tr className="border-b border-slate-800 text-slate-300 text-xs font-bold uppercase tracking-wider">
+                  <th className="py-2.5 px-3">User</th>
+                  <th className="py-2.5 px-3">Verification Status</th>
+                  <th className="py-2.5 px-3">Presence</th>
+                  <th className="py-2.5 px-3">Role</th>
+                  <th className="py-2.5 px-3">Registered</th>
+                  <th className="py-2.5 px-3">Last Active</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+              <tbody className="divide-y divide-slate-800/80">
                 {filteredUsers.map((u) => (
-                  <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                  <tr key={u.id} className="hover:bg-slate-800/40 transition-colors">
                     <td className="py-3 px-3">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-bold flex items-center justify-center shrink-0 text-xs">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-bold flex items-center justify-center shrink-0 text-xs shadow-md">
                           {u.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                          <p className="font-bold text-white truncate">
                             {u.name}
                           </p>
-                          <p className="text-[11px] text-slate-400 truncate">
+                          <p className="text-xs text-slate-300 font-medium truncate">
                             {u.email || u.phone || 'No direct identifier'}
                           </p>
                         </div>
@@ -428,17 +428,17 @@ export default function AdminDashboardPage() {
                     <td className="py-3 px-3">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         {u.emailVerified && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40">
                             <Mail size={10} /> Google Verified
                           </span>
                         )}
                         {u.phoneVerified && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                             <Phone size={10} /> Phone OTP Verified
                           </span>
                         )}
                         {!u.emailVerified && !u.phoneVerified && (
-                          <span className="text-slate-400 text-[11px]">Unverified</span>
+                          <span className="text-slate-400 font-medium text-xs">Unverified</span>
                         )}
                       </div>
                     </td>
@@ -448,17 +448,17 @@ export default function AdminDashboardPage() {
                         <span
                           className={cn(
                             'w-2 h-2 rounded-full shrink-0',
-                            u.status === 'online' && 'bg-emerald-500 animate-pulse',
-                            u.status === 'away' && 'bg-amber-500',
-                            u.status === 'offline' && 'bg-slate-400'
+                            u.status === 'online' && 'bg-emerald-400 animate-pulse',
+                            u.status === 'away' && 'bg-amber-400',
+                            u.status === 'offline' && 'bg-slate-500'
                           )}
                         />
                         <span
                           className={cn(
-                            'font-medium capitalize text-[11px]',
-                            u.status === 'online' && 'text-emerald-500 font-semibold',
-                            u.status === 'away' && 'text-amber-500',
-                            u.status === 'offline' && 'text-slate-400'
+                            'font-bold capitalize text-xs',
+                            u.status === 'online' && 'text-emerald-400',
+                            u.status === 'away' && 'text-amber-400',
+                            u.status === 'offline' && 'text-slate-300'
                           )}
                         >
                           {u.status}
@@ -467,16 +467,16 @@ export default function AdminDashboardPage() {
                     </td>
 
                     <td className="py-3 px-3">
-                      <Badge variant={u.role === 'admin' ? 'purple' : 'default'} className="text-[10px]">
+                      <Badge variant={u.role === 'admin' ? 'purple' : 'default'} className="text-[10px] font-bold">
                         {u.role.toUpperCase()}
                       </Badge>
                     </td>
 
-                    <td className="py-3 px-3 text-slate-500 text-[11px]">
+                    <td className="py-3 px-3 text-slate-300 font-medium text-xs">
                       {formatDate(u.createdAt.slice(0, 10))}
                     </td>
 
-                    <td className="py-3 px-3 text-slate-400 text-[11px]">
+                    <td className="py-3 px-3 text-slate-300 font-medium text-xs">
                       {new Date(u.lastLoginAt).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit',

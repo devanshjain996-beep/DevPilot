@@ -215,108 +215,110 @@ export default function SystemDesignPage() {
                   const blueprint = SYSTEM_DESIGN_BLUEPRINTS[topic.title];
 
                   return (
-                    <Card key={topic.id} className="p-4 transition-all">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div
+                      key={topic.id}
+                      className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-950/20 via-[#0d1424] to-[#070b16] border border-slate-800 border-l-[5px] border-l-amber-400 shadow-md hover:border-amber-500/50 transition-all duration-200"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
                           <Checkbox
                             checked={topic.status === 'completed'}
                             onChange={checked => updateTopicStatus(topic.id, checked ? 'completed' : 'not-started')}
                           />
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-xs font-mono font-bold text-slate-400">#{topic.order}</span>
+                            <div className="flex items-center gap-2.5 flex-wrap">
+                              <span className="text-xs font-mono font-bold text-amber-300 bg-amber-950/70 border border-amber-500/40 px-2 py-0.5 rounded-lg">#{topic.order}</span>
                               <h4 className={cn(
-                                'text-sm font-semibold truncate',
-                                topic.status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-900 dark:text-white'
+                                'text-base sm:text-lg font-black tracking-tight',
+                                topic.status === 'completed' ? 'text-slate-400 line-through' : 'text-white'
                               )}>
                                 {topic.title}
                               </h4>
-                              <Badge className={statusBg(topic.status)}>
+                              <span className={cn('px-2.5 py-0.5 rounded-lg text-[11px] font-black uppercase tracking-wider', statusBg(topic.status))}>
                                 {topic.status.toUpperCase()}
-                              </Badge>
+                              </span>
                               {blueprint && (
-                                <Badge variant="purple" className="flex items-center gap-1">
-                                  <Zap size={10} /> Architecture Blueprint
-                                </Badge>
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-purple-950/80 text-purple-300 border border-purple-500/40">
+                                  <Zap size={11} className="text-purple-400" /> Architecture Blueprint
+                                </span>
                               )}
                             </div>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                            <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1 leading-relaxed">
                               {topic.description}
                             </p>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                           <select
                             value={topic.status}
                             onChange={e => updateTopicStatus(topic.id, e.target.value as LearningStatus)}
-                            className="text-xs bg-slate-100 dark:bg-slate-700 border-none rounded-md px-2 py-1 text-slate-800 dark:text-slate-200 font-medium"
+                            className="text-xs font-bold bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-white cursor-pointer"
                           >
                             <option value="not-started">Not Started</option>
                             <option value="learning">Learning</option>
                             <option value="practising">Practising</option>
                             <option value="completed">Completed</option>
                           </select>
-                          <Button
-                            variant="ghost"
-                            size="sm"
+                          <button
+                            type="button"
                             onClick={() => setExpandedTopicId(expandedTopicId === topic.id ? null : topic.id)}
-                            className="text-xs"
+                            className="px-3 py-1.5 text-xs font-bold text-cyan-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl cursor-pointer transition-all"
                           >
                             {expandedTopicId === topic.id ? 'Close' : blueprint ? 'View Architecture' : 'Exercises & Notes'}
-                          </Button>
+                          </button>
                         </div>
                       </div>
 
                       {expandedTopicId === topic.id && (
-                        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-4 text-xs">
+                        <div className="mt-4 pt-3 border-t border-slate-800 space-y-4 text-xs">
                           {/* Rich Blueprint if this is one of the 6 Design Exercises */}
                           {blueprint && (
-                            <div className="space-y-3 bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-200">
+                            <div className="space-y-3.5 bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-slate-200">
                               <div>
-                                <span className="font-bold text-amber-400 text-xs uppercase tracking-wider block mb-1">
+                                <span className="font-extrabold text-amber-300 text-xs uppercase tracking-wider block mb-1">
                                   1. Requirements Analysis:
                                 </span>
-                                <ul className="list-disc pl-5 space-y-0.5 text-slate-300">
+                                <ul className="list-disc pl-5 space-y-1 text-slate-200 font-medium">
                                   {blueprint.requirements.map((req, i) => <li key={i}>{req}</li>)}
                                 </ul>
                               </div>
 
                               <div>
-                                <span className="font-bold text-cyan-400 text-xs uppercase tracking-wider block mb-1">
+                                <span className="font-extrabold text-cyan-300 text-xs uppercase tracking-wider block mb-1">
                                   2. Architecture Flow & Diagram:
                                 </span>
-                                <pre className="bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono text-[11px] text-slate-300 whitespace-pre-wrap overflow-x-auto">
+                                <pre className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 font-mono text-xs text-cyan-200 whitespace-pre-wrap overflow-x-auto leading-relaxed">
                                   {blueprint.diagram}
                                 </pre>
                               </div>
 
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                                 <div>
-                                  <span className="font-bold text-violet-400 text-xs uppercase tracking-wider block mb-1">
+                                  <span className="font-extrabold text-violet-300 text-xs uppercase tracking-wider block mb-1">
                                     3. Core Components:
                                   </span>
-                                  <ul className="list-disc pl-5 space-y-0.5 text-slate-300">
+                                  <ul className="list-disc pl-5 space-y-1 text-slate-200 font-medium">
                                     {blueprint.components.map((c, i) => <li key={i}>{c}</li>)}
                                   </ul>
                                 </div>
                                 <div>
-                                  <span className="font-bold text-emerald-400 text-xs uppercase tracking-wider block mb-1">
+                                  <span className="font-extrabold text-emerald-300 text-xs uppercase tracking-wider block mb-1">
                                     4. Database Schema:
                                   </span>
-                                  <p className="bg-slate-950 p-2 rounded border border-slate-800 font-mono text-[11px] text-slate-300">
+                                  <p className="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-xs text-emerald-200 leading-relaxed">
                                     {blueprint.database}
                                   </p>
                                 </div>
                               </div>
 
                               <div>
-                                <span className="font-bold text-blue-400 text-xs uppercase tracking-wider block mb-1">
+                                <span className="font-extrabold text-blue-300 text-xs uppercase tracking-wider block mb-1">
                                   5. API Endpoints:
                                 </span>
-                                <div className="space-y-1">
+                                <div className="space-y-1.5">
                                   {blueprint.apis.map((api, i) => (
-                                    <div key={i} className="font-mono bg-slate-950 px-2.5 py-1 rounded border border-slate-800 text-[11px]">
+                                    <div key={i} className="font-mono bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 text-xs text-slate-200">
                                       {api}
                                     </div>
                                   ))}
@@ -324,10 +326,10 @@ export default function SystemDesignPage() {
                               </div>
 
                               <div>
-                                <span className="font-bold text-rose-400 text-xs uppercase tracking-wider block mb-1">
+                                <span className="font-extrabold text-rose-300 text-xs uppercase tracking-wider block mb-1">
                                   6. Trade-offs & Deep Dive:
                                 </span>
-                                <ul className="list-disc pl-5 space-y-0.5 text-slate-300">
+                                <ul className="list-disc pl-5 space-y-1 text-slate-200 font-medium">
                                   {blueprint.tradeoffs.map((t, i) => <li key={i}>{t}</li>)}
                                 </ul>
                               </div>
@@ -335,18 +337,18 @@ export default function SystemDesignPage() {
                           )}
 
                           {topic.exercises && topic.exercises.length > 0 && !blueprint && (
-                            <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-200/60 dark:border-slate-800">
-                              <span className="font-semibold text-amber-500 block mb-1">
+                            <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+                              <span className="font-extrabold text-amber-300 block mb-1.5 text-xs uppercase tracking-wider">
                                 Practical Exercises:
                               </span>
-                              <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-300">
+                              <ul className="list-disc pl-5 space-y-1.5 text-slate-200 font-medium">
                                 {topic.exercises.map((ex, i) => <li key={i}>{ex}</li>)}
                               </ul>
                             </div>
                           )}
 
                           <div>
-                            <span className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                            <span className="font-bold text-slate-200 block mb-1">
                               Personal System Design Notes:
                             </span>
                             <Textarea
@@ -359,7 +361,7 @@ export default function SystemDesignPage() {
                           </div>
                         </div>
                       )}
-                    </Card>
+                    </div>
                   );
                 })}
               </div>

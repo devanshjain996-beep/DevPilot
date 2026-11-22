@@ -180,7 +180,7 @@ export default function WeeklyPlannerPage() {
               <h3 className="text-lg font-black text-white flex items-center gap-2">
                 <span>8:30 – 9:15 PM Evening Focus Rotation</span>
               </h3>
-              <span className="text-xs text-slate-400 font-medium">Click any day card to customize topic</span>
+              <span className="text-xs text-slate-300 font-semibold">Click any day card to customize topic</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3.5">

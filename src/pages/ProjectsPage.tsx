@@ -334,11 +334,11 @@ export default function ProjectsPage() {
       {/* Recommended Starter Project Ideas Section */}
       <div className="mt-8 space-y-4">
         <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <h3 className="text-xl font-black text-white flex items-center gap-2">
             <Sparkles className="text-amber-400" size={18} />
             Recommended Full-Stack & AI Project Ideas
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-300 font-medium">
             Click "Start Project" to adopt any of these curriculum-recommended projects into your planner.
           </p>
         </div>

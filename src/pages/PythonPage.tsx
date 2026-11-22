@@ -211,7 +211,7 @@ export default function PythonPage() {
                             <span className="font-semibold text-emerald-500 block mb-1 flex items-center gap-1.5">
                               <Terminal size={14} /> Coding Exercises & Challenges:
                             </span>
-                            <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-300">
+                            <ul className="list-disc pl-5 space-y-1.5 text-slate-200 font-medium">
                               {topic.exercises.map((ex, i) => <li key={i}>{ex}</li>)}
                             </ul>
                           </div>

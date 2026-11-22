@@ -198,7 +198,7 @@ export default function GoalsPage() {
                 'px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 whitespace-nowrap cursor-pointer active:scale-95 hover:-translate-y-0.5',
                 periodFilter === p.id
                   ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-md shadow-emerald-500/20 border border-emerald-400/40'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent'
+                  : 'text-slate-300 font-bold hover:text-white hover:bg-slate-800/80 border border-slate-700/60'
               )}
             >
               {p.label}
@@ -215,10 +215,10 @@ export default function GoalsPage() {
           description="Clear goals keep your learning focused every single day."
           action={
             <div className="flex gap-2">
-              <Button onClick={handleSeedSuggestedGoals} variant="secondary" size="sm">
+              <Button onClick={handleSeedSuggestedGoals} variant="secondary" size="sm" className="font-bold text-slate-200 bg-slate-800 border-slate-700">
                 Load Recommended Goals
               </Button>
-              <Button onClick={handleOpenAdd} size="sm">
+              <Button onClick={handleOpenAdd} size="sm" className="font-bold text-white bg-emerald-600">
                 <Plus size={16} /> Create Goal
               </Button>
             </div>
@@ -247,7 +247,7 @@ export default function GoalsPage() {
                     <div className="min-w-0 flex-1">
                       <h4 className={cn(
                         'text-base sm:text-lg font-black tracking-tight',
-                        goal.completed ? 'text-slate-400 line-through' : 'text-white'
+                        goal.completed ? 'text-emerald-400 line-through opacity-75' : 'text-white'
                       )}>
                         {goal.title}
                       </h4>
@@ -266,7 +266,7 @@ export default function GoalsPage() {
 
                 <div className="space-y-1.5 pt-1">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-bold text-slate-400 uppercase tracking-wider">Milestone Progress</span>
+                    <span className="font-bold text-slate-300 uppercase tracking-wider">Milestone Progress</span>
                     <span className="font-black text-emerald-300 text-sm">{goal.progress}%</span>
                   </div>
                   <ProgressBar
@@ -278,10 +278,10 @@ export default function GoalsPage() {
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400 font-medium">
+              <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-300 font-semibold">
                 <div className="flex items-center gap-1.5">
                   <Calendar size={14} className="text-cyan-400" />
-                  <span>Target: <strong className="text-slate-200">{formatDate(goal.targetDate)}</strong></span>
+                  <span>Target: <strong className="text-white font-bold">{formatDate(goal.targetDate)}</strong></span>
                 </div>
 
                 <div className="flex items-center gap-1.5">

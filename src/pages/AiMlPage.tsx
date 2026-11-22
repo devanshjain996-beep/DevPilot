@@ -154,9 +154,12 @@ export default function AiMlPage() {
                 </Badge>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {secTopics.map(topic => (
-                  <Card key={topic.id} className="p-4 transition-all">
+                  <div
+                    key={topic.id}
+                    className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-violet-950/20 via-[#0d1424] to-[#070b16] border border-slate-800 border-l-[5px] border-l-violet-400 shadow-lg shadow-violet-950/20 transition-all hover:border-violet-500/50"
+                  >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start gap-3 flex-1 min-w-0">
                         <Checkbox
@@ -165,10 +168,10 @@ export default function AiMlPage() {
                         />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs font-mono font-bold text-slate-400">#{topic.order}</span>
+                            <span className="text-xs font-mono font-bold text-violet-300">#{topic.order}</span>
                             <h4 className={cn(
-                              'text-sm font-semibold truncate',
-                              topic.status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-900 dark:text-white'
+                              'text-base sm:text-lg font-black tracking-tight truncate',
+                              topic.status === 'completed' ? 'text-violet-400 line-through opacity-75' : 'text-white'
                             )}>
                               {topic.title}
                             </h4>
@@ -176,7 +179,7 @@ export default function AiMlPage() {
                               {topic.status.toUpperCase()}
                             </Badge>
                           </div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                          <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1 leading-relaxed">
                             {topic.description}
                           </p>
                         </div>
@@ -186,7 +189,7 @@ export default function AiMlPage() {
                         <select
                           value={topic.status}
                           onChange={e => updateTopicStatus(topic.id, e.target.value as LearningStatus)}
-                          className="text-xs bg-slate-100 dark:bg-slate-700 border-none rounded-md px-2 py-1 text-slate-800 dark:text-slate-200 font-medium"
+                          className="text-xs bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-white font-bold cursor-pointer hover:border-slate-500"
                         >
                           <option value="not-started">Not Started</option>
                           <option value="learning">Learning</option>
@@ -197,7 +200,7 @@ export default function AiMlPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => setExpandedTopicId(expandedTopicId === topic.id ? null : topic.id)}
-                          className="text-xs"
+                          className="text-xs font-bold text-slate-200 hover:text-white bg-slate-800/80 hover:bg-slate-700"
                         >
                           {expandedTopicId === topic.id ? 'Hide' : 'Hands-on & Notes'}
                         </Button>
@@ -205,13 +208,13 @@ export default function AiMlPage() {
                     </div>
 
                     {expandedTopicId === topic.id && (
-                      <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3 text-xs">
+                      <div className="mt-4 pt-3 border-t border-slate-800 space-y-3 text-xs">
                         {topic.exercises && topic.exercises.length > 0 && (
-                          <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-200/60 dark:border-slate-800">
-                            <span className="font-semibold text-rose-400 block mb-1 flex items-center gap-1.5">
-                              <Bot size={14} /> Practical Building Challenge:
+                          <div className="bg-slate-900/90 p-4 rounded-xl border border-slate-800">
+                            <span className="font-bold text-rose-400 block mb-2 flex items-center gap-1.5">
+                              <Bot size={15} /> Practical Building Challenge:
                             </span>
-                            <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-300">
+                            <ul className="list-disc pl-5 space-y-1.5 text-slate-200 font-medium leading-relaxed">
                               {topic.exercises.map((ex, i) => <li key={i}>{ex}</li>)}
                             </ul>
                           </div>
@@ -231,7 +234,7 @@ export default function AiMlPage() {
                         </div>
                       </div>
                     )}
-                  </Card>
+                  </div>
                 ))}
               </div>
             </div>

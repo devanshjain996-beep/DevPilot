@@ -78,13 +78,13 @@ export function StatCard({ label, value, icon, color = 'blue', sub }: {
       )}
     >
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-semibold text-slate-400 tracking-wide uppercase">{label}</span>
+        <span className="text-xs font-bold text-slate-300 tracking-wider uppercase">{label}</span>
         <span className={cn('p-2 rounded-xl bg-slate-900/80 border border-slate-800', c.text)}>
           {icon}
         </span>
       </div>
-      <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">{value}</div>
-      {sub && <div className="text-xs text-slate-400 mt-1 font-medium">{sub}</div>}
+      <div className="text-2xl sm:text-3xl font-black tracking-tight text-white">{value}</div>
+      {sub && <div className="text-xs text-slate-300 mt-1 font-semibold">{sub}</div>}
     </div>
   );
 }
@@ -108,8 +108,8 @@ export function ProgressBar({ value, max = 100, color = 'blue', label, showPct =
     <div className="w-full">
       {(label || showPct) && (
         <div className="flex justify-between items-center mb-1.5">
-          {label && <span className="text-xs font-semibold text-slate-300">{label}</span>}
-          {showPct && <span className="text-xs font-mono font-bold text-slate-400">{pct}%</span>}
+          {label && <span className="text-xs font-bold text-slate-200">{label}</span>}
+          {showPct && <span className="text-xs font-mono font-black text-slate-200">{pct}%</span>}
         </div>
       )}
       <div className={cn('w-full bg-slate-900 border border-slate-800/80 rounded-full overflow-hidden p-0.5', heights[size])}>
@@ -127,16 +127,16 @@ export function Badge({ children, variant = 'default', className }: {
   children: React.ReactNode; variant?: string; className?: string;
 }) {
   const variants: Record<string, string> = {
-    default: 'bg-slate-800/90 border border-slate-700/80 text-slate-300',
-    success: 'bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 shadow-xs shadow-emerald-500/10',
-    warning: 'bg-amber-950/60 border border-amber-500/40 text-amber-300 shadow-xs shadow-amber-500/10',
-    danger: 'bg-red-950/60 border border-red-500/40 text-red-300 shadow-xs shadow-red-500/10',
-    info: 'bg-blue-950/60 border border-blue-500/40 text-blue-300 shadow-xs shadow-blue-500/10',
-    purple: 'bg-violet-950/60 border border-violet-500/40 text-violet-300 shadow-xs shadow-violet-500/10',
+    default: 'bg-slate-800/95 border border-slate-700 text-slate-200 font-bold',
+    success: 'bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 font-bold shadow-xs shadow-emerald-500/10',
+    warning: 'bg-amber-950/80 border border-amber-500/50 text-amber-300 font-bold shadow-xs shadow-amber-500/10',
+    danger: 'bg-red-950/80 border border-red-500/50 text-red-300 font-bold shadow-xs shadow-red-500/10',
+    info: 'bg-blue-950/80 border border-blue-500/50 text-blue-300 font-bold shadow-xs shadow-blue-500/10',
+    purple: 'bg-violet-950/80 border border-violet-500/50 text-violet-300 font-bold shadow-xs shadow-violet-500/10',
   };
 
   return (
-    <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wide', variants[variant] || variants.default, className)}>
+    <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wide', variants[variant] || variants.default, className)}>
       {children}
     </span>
   );
@@ -189,17 +189,17 @@ export function Input({ label, error, ...props }: React.InputHTMLAttributes<HTML
 }) {
   return (
     <div className="w-full">
-      {label && <label className="block text-xs font-semibold text-slate-300 tracking-wide uppercase mb-1.5">{label}</label>}
+      {label && <label className="block text-xs font-bold text-slate-200 tracking-wider uppercase mb-1.5">{label}</label>}
       <input
         {...props}
         className={cn(
-          'w-full px-3.5 py-2.5 bg-[#0b101e] border rounded-xl text-slate-100 placeholder-slate-500 transition-all duration-200',
+          'w-full px-3.5 py-2.5 bg-[#0b101e] border rounded-xl text-white font-medium placeholder-slate-400 transition-all duration-200',
           'focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500',
           error ? 'border-red-500' : 'border-slate-800 hover:border-slate-700',
           props.className
         )}
       />
-      {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+      {error && <p className="mt-1 text-xs text-red-400 font-semibold">{error}</p>}
     </div>
   );
 }
@@ -210,17 +210,17 @@ export function Textarea({ label, error, ...props }: React.TextareaHTMLAttribute
 }) {
   return (
     <div className="w-full">
-      {label && <label className="block text-xs font-semibold text-slate-300 tracking-wide uppercase mb-1.5">{label}</label>}
+      {label && <label className="block text-xs font-bold text-slate-200 tracking-wider uppercase mb-1.5">{label}</label>}
       <textarea
         {...props}
         className={cn(
-          'w-full px-3.5 py-2.5 bg-[#0b101e] border rounded-xl text-slate-100 placeholder-slate-500 transition-all duration-200 resize-y min-h-[80px]',
+          'w-full px-3.5 py-2.5 bg-[#0b101e] border rounded-xl text-white font-medium placeholder-slate-400 transition-all duration-200 resize-y min-h-[80px]',
           'focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500',
           error ? 'border-red-500' : 'border-slate-800 hover:border-slate-700',
           props.className
         )}
       />
-      {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+      {error && <p className="mt-1 text-xs text-red-400 font-semibold">{error}</p>}
     </div>
   );
 }
@@ -231,16 +231,16 @@ export function Select({ label, options, ...props }: React.SelectHTMLAttributes<
 }) {
   return (
     <div className="w-full">
-      {label && <label className="block text-xs font-semibold text-slate-300 tracking-wide uppercase mb-1.5">{label}</label>}
+      {label && <label className="block text-xs font-bold text-slate-200 tracking-wider uppercase mb-1.5">{label}</label>}
       <select
         {...props}
         className={cn(
-          'w-full px-3.5 py-2.5 bg-[#0b101e] border border-slate-800 hover:border-slate-700 rounded-xl text-slate-100 transition-all duration-200',
+          'w-full px-3.5 py-2.5 bg-[#0b101e] border border-slate-800 hover:border-slate-700 rounded-xl text-white font-semibold transition-all duration-200',
           'focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500',
           props.className
         )}
       >
-        {options.map(o => <option key={o.value} value={o.value} className="bg-slate-900 text-white">{o.label}</option>)}
+        {options.map(o => <option key={o.value} value={o.value} className="bg-slate-900 text-white font-medium">{o.label}</option>)}
       </select>
     </div>
   );
@@ -260,7 +260,7 @@ export function Modal({ open, onClose, title, children, size = 'md' }: {
           <h2 className="text-xl font-bold tracking-tight text-white">{title}</h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -283,10 +283,10 @@ export function Tabs({ tabs, active, onChange }: {
           key={t.id}
           onClick={() => onChange(t.id)}
           className={cn(
-            'flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap transition-all duration-200 cursor-pointer',
+            'flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap transition-all duration-200 cursor-pointer active:scale-95',
             active === t.id
               ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-xs'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+              : 'text-slate-300 hover:text-white hover:bg-slate-900/60'
           )}
         >
           {t.icon}{t.label}
@@ -302,11 +302,11 @@ export function EmptyState({ icon, title, description, action }: {
 }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-      <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-slate-400 mb-4 shadow-inner">
+      <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-cyan-400 mb-4 shadow-inner">
         {icon}
       </div>
-      <h3 className="text-lg font-bold text-white mb-1">{title}</h3>
-      <p className="text-sm text-slate-400 max-w-sm mb-5 leading-relaxed">{description}</p>
+      <h3 className="text-lg font-black text-white mb-1">{title}</h3>
+      <p className="text-sm text-slate-300 max-w-sm mb-5 leading-relaxed font-medium">{description}</p>
       {action}
     </div>
   );
@@ -324,10 +324,10 @@ export function Accordion({ title, children, defaultOpen = false, badge }: {
         className="w-full flex items-center justify-between px-5 py-4 bg-slate-900/40 hover:bg-slate-900/80 transition-colors text-left cursor-pointer"
       >
         <div className="flex items-center gap-3">
-          <span className="font-semibold text-slate-100">{title}</span>
+          <span className="font-bold text-white">{title}</span>
           {badge}
         </div>
-        {open ? <ChevronUp size={18} className="text-slate-400" /> : <ChevronDown size={18} className="text-slate-400" />}
+        {open ? <ChevronUp size={18} className="text-slate-300" /> : <ChevronDown size={18} className="text-slate-300" />}
       </button>
       {open && <div className="px-5 py-4 border-t border-slate-800/60 bg-[#0a0f1d]/40">{children}</div>}
     </div>
@@ -344,7 +344,7 @@ export function Checkbox({ checked, onChange, label, className }: {
         'w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all duration-200',
         checked
           ? 'bg-cyan-500 border-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.4)]'
-          : 'border-slate-700 bg-slate-900 group-hover:border-cyan-400/60'
+          : 'border-slate-600 bg-slate-900 group-hover:border-cyan-400/60'
       )}>
         {checked && (
           <svg className="w-3.5 h-3.5 text-slate-950" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3.5}>
@@ -352,7 +352,7 @@ export function Checkbox({ checked, onChange, label, className }: {
           </svg>
         )}
       </div>
-      {label && <span className={cn('text-sm font-medium transition-colors', checked ? 'text-slate-500 line-through' : 'text-slate-200')}>{label}</span>}
+      {label && <span className={cn('text-sm font-semibold transition-colors', checked ? 'text-slate-400 line-through' : 'text-slate-100')}>{label}</span>}
     </label>
   );
 }
@@ -367,7 +367,7 @@ export function PageHeader({ title, subtitle, action }: {
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
           {title}
         </h1>
-        {subtitle && <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">{subtitle}</p>}
+        {subtitle && <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1 max-w-2xl">{subtitle}</p>}
       </div>
       {action && <div className="shrink-0 flex items-center gap-2">{action}</div>}
     </div>

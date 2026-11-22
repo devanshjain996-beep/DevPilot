@@ -171,27 +171,27 @@ export default function PortfolioPage() {
       {/* Verified Real Learning Track Skills */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Code2 className="text-emerald-500" />
+          <h3 className="text-xl font-black text-white flex items-center gap-2">
+            <Code2 className="text-emerald-400" />
             Verified Curriculum Progress & Technical Skills
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-300 font-medium">
             Skills are mathematically calculated from your completed topics in the DevPilot command center.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {tracks.map(track => (
-            <Card key={track.id} className="p-4 bg-slate-900 border-slate-800 space-y-2">
+            <div key={track.id} className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
               <div className="flex justify-between items-center text-sm">
-                <span className="font-semibold text-white">{track.name}</span>
-                <span className="text-xs font-bold text-blue-400">{track.percentage}%</span>
+                <span className="font-bold text-white">{track.name}</span>
+                <span className="text-xs font-black text-cyan-300">{track.percentage}%</span>
               </div>
               <ProgressBar value={track.percentage} color={track.color} size="sm" showPct={false} />
-              <p className="text-[11px] text-slate-400">
+              <p className="text-xs text-slate-300 font-medium">
                 {track.completed} of {track.total} verified concepts mastered
               </p>
-            </Card>
+            </div>
           ))}
         </div>
       </div>
@@ -199,42 +199,42 @@ export default function PortfolioPage() {
       {/* Featured Projects Section */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Rocket className="text-cyan-500" />
+          <h3 className="text-xl font-black text-white flex items-center gap-2">
+            <Rocket className="text-cyan-400" />
             Featured Software & AI Projects
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-300 font-medium">
             Real projects built with modern frameworks and AI technologies.
           </p>
         </div>
 
         {featuredProjects.length === 0 ? (
-          <Card className="p-6 text-center text-slate-500 text-sm">
-            No projects featured yet. Go to the <strong>Projects</strong> tab and check "Feature this project on My Public Developer Portfolio".
-          </Card>
+          <div className="p-8 text-center text-slate-300 font-medium text-sm bg-slate-900/80 rounded-2xl border border-slate-800">
+            No projects featured yet. Go to the <strong className="text-white font-bold">Projects</strong> tab and check "Feature this project on My Public Developer Portfolio".
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {featuredProjects.map(p => (
-              <Card key={p.id} className="p-5 flex flex-col justify-between bg-slate-900 border-slate-800">
+              <div key={p.id} className="p-5 flex flex-col justify-between bg-slate-900/90 rounded-2xl border border-slate-800">
                 <div className="space-y-2.5">
                   <div className="flex items-start justify-between">
-                    <h4 className="text-base font-bold text-white">{p.title}</h4>
+                    <h4 className="text-base font-black text-white">{p.title}</h4>
                     <Badge variant={p.status === 'completed' ? 'success' : 'info'}>
                       {p.status.toUpperCase()}
                     </Badge>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">{p.description}</p>
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">{p.description}</p>
 
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {p.technologies.map((t, i) => (
-                      <span key={i} className="text-[10px] font-mono bg-slate-800 text-cyan-400 px-2 py-0.5 rounded">
+                      <span key={i} className="text-xs font-mono font-bold bg-slate-800 text-cyan-300 border border-slate-700 px-2 py-0.5 rounded-lg">
                         {t}
                       </span>
                     ))}
                   </div>
 
                   {p.lessonsLearned && (
-                    <p className="text-[11px] text-slate-400 italic pt-1 border-t border-slate-800">
+                    <p className="text-xs text-slate-300 italic pt-1 border-t border-slate-800 font-medium">
                       " {p.lessonsLearned} "
                     </p>
                   )}
@@ -262,7 +262,7 @@ export default function PortfolioPage() {
                     </a>
                   )}
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         )}

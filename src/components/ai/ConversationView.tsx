@@ -107,10 +107,10 @@ export default function ConversationView({
           </div>
 
           <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
               How can I assist your code today, {userName}?
             </h1>
-            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed max-w-lg mx-auto">
+            <p className="text-sm sm:text-base text-slate-300 font-medium leading-relaxed max-w-lg mx-auto">
               DevPilot AI provides instant full-stack mentoring, roadmap creation, algorithmic problem solving, and architecture reviews.
             </p>
           </div>
@@ -122,13 +122,13 @@ export default function ConversationView({
                 key={idx}
                 type="button"
                 onClick={() => onPromptClick(item.prompt)}
-                className="group p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 hover:border-indigo-400/60 dark:hover:border-cyan-500/60 transition-all cursor-pointer shadow-xs text-left"
+                className="group p-3.5 rounded-xl border border-slate-800 bg-slate-900/80 hover:bg-slate-800/90 hover:border-cyan-400/60 transition-all cursor-pointer shadow-xs text-left"
               >
-                <div className="flex items-center justify-between text-xs font-semibold text-slate-400 dark:text-slate-500 mb-1">
+                <div className="flex items-center justify-between text-xs font-bold text-cyan-300 mb-1">
                   <span>{item.icon} {item.category}</span>
-                  <ArrowRight size={13} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-indigo-500 dark:text-cyan-400" />
+                  <ArrowRight size={13} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-cyan-400" />
                 </div>
-                <h3 className="font-semibold text-sm text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-cyan-400 transition-colors">
+                <h3 className="font-bold text-sm text-white group-hover:text-cyan-300 transition-colors">
                   {item.title}
                 </h3>
               </button>

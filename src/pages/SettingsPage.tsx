@@ -191,7 +191,7 @@ export default function SettingsPage() {
                   </Badge>
                 )}
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              <p className="text-xs text-slate-300 font-medium mt-1">
                 {user?.email || (user?.phone ? `Phone: ${user.phone}` : 'Stored locally in browser')}
               </p>
             </div>
@@ -199,11 +199,11 @@ export default function SettingsPage() {
 
           <div className="flex items-center gap-2 shrink-0">
             {user ? (
-              <Button variant="secondary" size="sm" onClick={logout} className="text-xs text-red-500 hover:text-red-600">
+              <Button variant="secondary" size="sm" onClick={logout} className="text-xs text-red-400 hover:text-red-300 font-bold bg-slate-800 border-slate-700">
                 <LogOut size={14} /> Log Out
               </Button>
             ) : (
-              <Button size="sm" onClick={() => setAuthModalOpen(true)} className="text-xs">
+              <Button size="sm" onClick={() => setAuthModalOpen(true)} className="text-xs font-bold text-white bg-blue-600">
                 <ShieldCheck size={14} /> Sign In / Register
               </Button>
             )}
@@ -212,19 +212,19 @@ export default function SettingsPage() {
 
         {/* Verification Status Badges Row */}
         {user && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-800 text-xs">
             {/* Google Status */}
-            <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex items-center justify-between">
+            <div className="p-3.5 rounded-xl border border-slate-800 bg-slate-900/90 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <Mail size={16} className="text-blue-500 shrink-0" />
+                <Mail size={16} className="text-blue-400 shrink-0" />
                 <div>
-                  <p className="font-semibold text-slate-800 dark:text-slate-200">Google OAuth Account</p>
-                  <p className="text-[11px] text-slate-400">{user.email || 'No Google account linked'}</p>
+                  <p className="font-bold text-white">Google OAuth Account</p>
+                  <p className="text-xs text-slate-300 font-medium mt-0.5">{user.email || 'No Google account linked'}</p>
                 </div>
               </div>
               {user.isGoogleVerified ? (
-                <span className="inline-flex items-center gap-1 text-[11px] text-emerald-500 font-semibold">
-                  <CheckCircle2 size={13} /> Verified
+                <span className="inline-flex items-center gap-1 text-xs text-emerald-400 font-bold">
+                  <CheckCircle2 size={14} /> Verified
                 </span>
               ) : (
                 <Button size="xs" variant="secondary" onClick={() => setAuthModalOpen(true)}>
@@ -234,17 +234,17 @@ export default function SettingsPage() {
             </div>
 
             {/* Phone Status */}
-            <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex items-center justify-between">
+            <div className="p-3.5 rounded-xl border border-slate-800 bg-slate-900/90 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <Phone size={16} className="text-emerald-500 shrink-0" />
+                <Phone size={16} className="text-emerald-400 shrink-0" />
                 <div>
-                  <p className="font-semibold text-slate-800 dark:text-slate-200">Mobile Phone Number</p>
-                  <p className="text-[11px] text-slate-400">{user.phone || 'No phone number verified'}</p>
+                  <p className="font-bold text-white">Mobile Phone Number</p>
+                  <p className="text-xs text-slate-300 font-medium mt-0.5">{user.phone || 'No phone number verified'}</p>
                 </div>
               </div>
               {user.isPhoneVerified ? (
-                <span className="inline-flex items-center gap-1 text-[11px] text-emerald-500 font-semibold">
-                  <CheckCircle2 size={13} /> Verified
+                <span className="inline-flex items-center gap-1 text-xs text-emerald-400 font-bold">
+                  <CheckCircle2 size={14} /> Verified
                 </span>
               ) : (
                 <Button size="xs" variant="secondary" onClick={() => setAuthModalOpen(true)}>
@@ -258,14 +258,14 @@ export default function SettingsPage() {
 
       {/* ── 2. Theme & Display ── */}
       <Card className="p-5 space-y-4">
-        <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+        <h3 className="font-bold text-base text-white flex items-center gap-2">
           {theme === 'dark' ? <Moon size={18} className="text-violet-400" /> : <Sun size={18} className="text-amber-500" />}
           Appearance & Theme
         </h3>
         <div className="flex items-center justify-between pt-2">
           <div>
-            <p className="text-sm font-semibold text-slate-900 dark:text-white">Active Theme Mode</p>
-            <p className="text-xs text-slate-500">Currently in {theme === 'dark' ? 'Dark Mode (Navy/Charcoal)' : 'Light Mode'}</p>
+            <p className="text-sm font-bold text-white">Active Theme Mode</p>
+            <p className="text-xs text-slate-300 font-medium mt-0.5">Currently in {theme === 'dark' ? 'Dark Mode (Navy/Charcoal)' : 'Light Mode'}</p>
           </div>
           <Button variant="secondary" size="sm" onClick={toggleTheme}>
             {theme === 'dark' ? <><Sun size={15} /> Switch to Light Mode</> : <><Moon size={15} /> Switch to Dark Mode</>}
@@ -347,8 +347,8 @@ export default function SettingsPage() {
 
           <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
             <div>
-              <p className="font-semibold text-slate-800 dark:text-slate-200">Public Portfolio Visibility</p>
-              <p className="text-slate-500">Enable or disable your portfolio page presentation.</p>
+              <p className="font-bold text-white">Public Portfolio Visibility</p>
+              <p className="text-xs text-slate-300 font-medium">Enable or disable your portfolio page presentation.</p>
             </div>
             <Button
               type="button"
@@ -371,14 +371,14 @@ export default function SettingsPage() {
       {/* ── 4. Notifications & Reminders Shortcut ── */}
       <Card className="p-5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-500">
+          <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-400">
             <Bell size={20} />
           </div>
           <div>
-            <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+            <h4 className="font-bold text-sm text-white">
               Notification & Alert Preferences
             </h4>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-300 font-medium">
               Configure activity reminder times, quiet hours, and inspection history.
             </p>
           </div>
@@ -398,7 +398,7 @@ export default function SettingsPage() {
           Routine Invariants & Timetable Rules
         </h3>
 
-        <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+        <div className="space-y-3 text-xs text-slate-200 font-medium">
           <div className="p-3.5 rounded-xl bg-blue-950/20 border border-blue-500/30 flex items-start gap-3">
             <Shield className="text-blue-400 shrink-0 mt-0.5" size={18} />
             <div className="space-y-1">
@@ -455,7 +455,7 @@ export default function SettingsPage() {
           Data Persistence, Export & Account Deletion
         </h3>
 
-        <p className="text-xs text-slate-500 leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
           Your DevPilot command center synchronizes with your secure cloud database and caches in local IndexedDB. You can export complete personal data backups anytime or request account deletion.
         </p>
 
@@ -466,7 +466,7 @@ export default function SettingsPage() {
         )}
 
         <div className="flex flex-wrap items-center gap-3 pt-2">
-          <Button size="sm" onClick={handleExportBackup} className="text-xs">
+          <Button size="sm" onClick={handleExportBackup} className="text-xs font-bold text-white bg-blue-600">
             <Download size={14} />
             {backupSuccess ? 'Data Exported!' : 'Export All Personal Data (JSON)'}
           </Button>
@@ -483,7 +483,7 @@ export default function SettingsPage() {
             variant="secondary"
             size="sm"
             onClick={() => fileInputRef.current?.click()}
-            className="text-xs"
+            className="text-xs font-bold text-slate-200 bg-slate-800 border-slate-700"
           >
             <Upload size={14} /> Restore from Backup
           </Button>
@@ -492,17 +492,17 @@ export default function SettingsPage() {
             variant="danger"
             size="sm"
             onClick={() => setClearModalOpen(true)}
-            className="text-xs ml-auto"
+            className="text-xs ml-auto font-bold"
           >
             <Trash2 size={14} /> Reset Local Data
           </Button>
         </div>
 
         {user && (
-          <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-red-500">Permanent Account Deletion</p>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-xs font-bold text-red-400">Permanent Account Deletion</p>
+              <p className="text-xs text-slate-300 font-medium">
                 Permanently delete your cloud account, profile, timetable, and study records.
               </p>
             </div>
@@ -532,8 +532,8 @@ export default function SettingsPage() {
             </p>
           </div>
 
-          <p className="text-slate-600 dark:text-slate-300">
-            To proceed, type <strong>DELETE</strong> below:
+          <p className="text-slate-200 font-medium">
+            To proceed, type <strong className="text-white font-bold">DELETE</strong> below:
           </p>
 
           <Input
@@ -570,8 +570,8 @@ export default function SettingsPage() {
             </p>
           </div>
 
-          <p className="text-slate-600 dark:text-slate-300">
-            To confirm permanent deletion, type <strong>PERMANENTLY DELETE</strong> below:
+          <p className="text-slate-200 font-medium">
+            To confirm permanent deletion, type <strong className="text-red-400 font-bold">PERMANENTLY DELETE</strong> below:
           </p>
 
           <Input

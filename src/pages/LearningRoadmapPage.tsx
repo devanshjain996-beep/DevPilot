@@ -93,7 +93,7 @@ export default function LearningRoadmapPage() {
             <span className="text-blue-500 dark:text-blue-400 font-bold">{overallPercentage}%</span>
           </div>
           <ProgressBar value={overallPercentage} color="violet" size="lg" showPct={false} />
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-300 font-medium">
             Calculated automatically from your real topic completions. Every topic completed moves you closer to your career goal.
           </p>
         </div>
@@ -172,32 +172,32 @@ export default function LearningRoadmapPage() {
 
       {/* TRACK A: C Programming Details Section (College Curriculum) */}
       <div className="mt-8 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <GraduationCap className="text-amber-500" />
+            <h2 className="text-xl font-black text-white flex items-center gap-2">
+              <GraduationCap className="text-amber-400" />
               Track A: C Programming (College Academic Curriculum)
             </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-300 font-medium mt-0.5">
               Covers your mandatory college curriculum and forms the foundation for systems programming and C++.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             <div className="relative">
-              <Search size={16} className="absolute left-3 top-3 text-slate-400" />
+              <Search size={16} className="absolute left-3 top-3 text-cyan-400" />
               <input
                 type="text"
                 placeholder="Search C topics..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="pl-9 pr-3 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white"
+                className="pl-9 pr-3 py-2 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white font-medium placeholder-slate-400 focus:outline-none focus:border-cyan-400"
               />
             </div>
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-white"
+              className="text-xs bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold cursor-pointer"
             >
               <option value="all">All Statuses</option>
               <option value="not-started">Not Started</option>
@@ -210,62 +210,61 @@ export default function LearningRoadmapPage() {
 
         <div className="space-y-3">
           {filteredCTopics.map(topic => (
-            <Card key={topic.id} className="p-4 transition-all">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3 flex-1 min-w-0">
+            <div key={topic.id} className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-950/20 via-[#0d1424] to-[#070b16] border border-slate-800 border-l-[5px] border-l-blue-400 shadow-md hover:border-blue-500/50 transition-all duration-200">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
                   <Checkbox
                     checked={topic.status === 'completed'}
                     onChange={checked => updateTopicStatus(topic.id, checked ? 'completed' : 'not-started')}
                   />
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-mono text-slate-400">#{topic.order}</span>
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span className="text-xs font-mono font-bold text-blue-300 bg-blue-950/70 border border-blue-500/40 px-2 py-0.5 rounded-lg">#{topic.order}</span>
                       <h4 className={cn(
-                        'text-sm font-semibold truncate',
-                        topic.status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-900 dark:text-white'
+                        'text-base sm:text-lg font-black tracking-tight',
+                        topic.status === 'completed' ? 'text-slate-400 line-through' : 'text-white'
                       )}>
                         {topic.title}
                       </h4>
-                      <Badge className={statusBg(topic.status)}>
+                      <span className={cn('px-2.5 py-0.5 rounded-lg text-[11px] font-black uppercase tracking-wider', statusBg(topic.status))}>
                         {topic.status.toUpperCase()}
-                      </Badge>
+                      </span>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1 leading-relaxed">
                       {topic.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                   <select
                     value={topic.status}
                     onChange={e => updateTopicStatus(topic.id, e.target.value as LearningStatus)}
-                    className="text-xs bg-slate-100 dark:bg-slate-700 border-none rounded-md px-2 py-1 text-slate-800 dark:text-slate-200 font-medium"
+                    className="text-xs font-bold bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-white cursor-pointer"
                   >
                     <option value="not-started">Not Started</option>
                     <option value="learning">Learning</option>
                     <option value="practising">Practising</option>
                     <option value="completed">Completed</option>
                   </select>
-                  <Button
-                    variant="ghost"
-                    size="sm"
+                  <button
+                    type="button"
                     onClick={() => setExpandedTopicId(expandedTopicId === topic.id ? null : topic.id)}
-                    className="text-xs"
+                    className="px-3 py-1.5 text-xs font-bold text-cyan-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl cursor-pointer transition-all"
                   >
                     {expandedTopicId === topic.id ? 'Close' : 'Details'}
-                  </Button>
+                  </button>
                 </div>
               </div>
 
               {expandedTopicId === topic.id && (
-                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3 text-xs">
+                <div className="mt-4 pt-3 border-t border-slate-800 space-y-3 text-xs">
                   {topic.exercises && topic.exercises.length > 0 && (
-                    <div>
-                      <span className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                    <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+                      <span className="font-extrabold text-blue-300 block mb-1 text-xs uppercase tracking-wider">
                         Recommended Exercises:
                       </span>
-                      <ul className="list-disc pl-5 space-y-0.5 text-slate-600 dark:text-slate-400">
+                      <ul className="list-disc pl-5 space-y-1 text-slate-200 font-medium">
                         {topic.exercises.map((ex, i) => <li key={i}>{ex}</li>)}
                       </ul>
                     </div>
@@ -273,7 +272,7 @@ export default function LearningRoadmapPage() {
 
                   {topic.resources && topic.resources.length > 0 && (
                     <div>
-                      <span className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                      <span className="font-bold text-slate-200 block mb-1">
                         Free Learning Resources:
                       </span>
                       <div className="flex flex-wrap gap-2">
@@ -306,7 +305,7 @@ export default function LearningRoadmapPage() {
                   </div>
                 </div>
               )}
-            </Card>
+            </div>
           ))}
         </div>
       </div>

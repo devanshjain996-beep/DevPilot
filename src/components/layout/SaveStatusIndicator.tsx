@@ -27,9 +27,9 @@ export default function SaveStatusIndicator() {
     return (
       <div
         title="Saved locally in browser IndexedDB"
-        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700 select-none"
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-200 border border-slate-700 select-none"
       >
-        <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
         <span>Local Mode</span>
       </div>
     );

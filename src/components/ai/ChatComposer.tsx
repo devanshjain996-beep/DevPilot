@@ -112,11 +112,11 @@ export default function ChatComposer({
           placeholder={placeholder}
           disabled={disabled}
           rows={1}
-          className="w-full resize-none bg-transparent px-4 pt-3.5 pb-2 text-[15px] leading-relaxed text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none max-h-[150px] chat-scroll"
+          className="w-full resize-none bg-transparent px-4 pt-3.5 pb-2 text-[15px] leading-relaxed text-white placeholder:text-slate-400 focus:outline-none max-h-[150px] chat-scroll font-medium"
         />
 
         {/* Composer Action Toolbar */}
-        <div className="flex items-center justify-between px-3 pb-2.5 pt-1 border-t border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400">
+        <div className="flex items-center justify-between px-3 pb-2.5 pt-1 border-t border-slate-800 text-slate-300">
           <div className="flex items-center gap-1">
             {/* Voice Input Button */}
             <button
@@ -125,23 +125,23 @@ export default function ChatComposer({
               title={isListening ? 'Stop listening' : 'Speak message'}
               className={`p-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${
                 isListening
-                  ? 'bg-rose-500/15 text-rose-500 animate-pulse'
-                  : 'hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200'
+                  ? 'bg-rose-500/15 text-rose-400 animate-pulse'
+                  : 'hover:bg-slate-800 hover:text-white text-slate-300'
               }`}
             >
               {isListening ? <MicOff size={16} /> : <Mic size={16} />}
             </button>
 
             {/* Quick helper badge */}
-            <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 text-[11px] font-medium text-slate-400 dark:text-slate-500">
-              <Sparkles size={12} className="text-cyan-500 dark:text-cyan-400" />
+            <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 text-xs font-bold text-cyan-300">
+              <Sparkles size={12} className="text-cyan-400" />
               <span>Gemini Flash 3D</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             {/* Keyboard hint */}
-            <span className="hidden md:inline-block text-[11px] text-slate-400 dark:text-slate-500 select-none">
+            <span className="hidden md:inline-block text-xs text-slate-400 select-none font-medium">
               Enter to send, Shift + Enter for new line
             </span>
 

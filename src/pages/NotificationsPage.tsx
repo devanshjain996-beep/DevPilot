@@ -192,14 +192,14 @@ export default function NotificationsPage() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-base text-slate-900 dark:text-white">
+                <h3 className="font-bold text-base text-white">
                   DevPilot Study Reminders
                 </h3>
                 <Badge variant={prefs.enabled ? 'success' : 'default'}>
                   {prefs.enabled ? 'Active' : 'Disabled'}
                 </Badge>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1 max-w-xl leading-relaxed">
                 Receive browser alerts before scheduled timetable events, college lectures, and project deadlines. Reminders are strictly optional and can be toggled on or off at any moment.
               </p>
             </div>
@@ -220,13 +220,13 @@ export default function NotificationsPage() {
       {/* ── Customization Controls ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Category Controls */}
-        <Card className="p-5 space-y-4">
+        <Card className="p-5 space-y-4 bg-slate-900/90 border-slate-800">
           <div>
-            <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-              <Sliders size={16} className="text-blue-500" />
+            <h4 className="font-bold text-sm text-white flex items-center gap-2">
+              <Sliders size={16} className="text-blue-400" />
               <span>Reminder Categories</span>
             </h4>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-300 font-medium mt-0.5">
               Select which activities should send notifications.
             </p>
           </div>
@@ -249,11 +249,11 @@ export default function NotificationsPage() {
               return (
                 <label
                   key={cat.key}
-                  className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors"
+                  className="flex items-center justify-between p-2.5 rounded-xl border border-slate-800 hover:bg-slate-800/60 cursor-pointer transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    <Icon size={14} className={active ? 'text-blue-500' : 'text-slate-400'} />
-                    <span className="text-slate-700 dark:text-slate-300 font-medium">{cat.label}</span>
+                    <Icon size={14} className={active ? 'text-cyan-400' : 'text-slate-400'} />
+                    <span className="text-slate-200 font-semibold">{cat.label}</span>
                   </div>
                   <input
                     type="checkbox"
@@ -269,20 +269,20 @@ export default function NotificationsPage() {
 
         {/* Quiet Hours & Delivery Schedule */}
         <div className="space-y-6">
-          <Card className="p-5 space-y-4">
+          <Card className="p-5 space-y-4 bg-slate-900/90 border-slate-800">
             <div>
-              <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+              <h4 className="font-bold text-sm text-white flex items-center gap-2">
                 <Moon size={16} className="text-indigo-400" />
                 <span>Quiet Hours</span>
               </h4>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-300 font-medium mt-0.5">
                 Automatically silence all notifications during your rest or sleep hours.
               </p>
             </div>
 
             <div className="space-y-3 text-xs">
-              <label className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 cursor-pointer">
-                <span className="font-medium text-slate-700 dark:text-slate-300">
+              <label className="flex items-center justify-between p-2.5 rounded-xl border border-slate-800 cursor-pointer">
+                <span className="font-bold text-slate-200">
                   Enable Quiet Hours
                 </span>
                 <input
@@ -300,7 +300,7 @@ export default function NotificationsPage() {
 
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div>
-                  <label className="block text-slate-500 text-[11px] mb-1">Start Time</label>
+                  <label className="block text-slate-300 font-bold text-xs mb-1">Start Time</label>
                   <Input
                     type="time"
                     value={prefs.quietHoursStart}
@@ -314,7 +314,7 @@ export default function NotificationsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-500 text-[11px] mb-1">End Time</label>
+                  <label className="block text-slate-300 font-bold text-xs mb-1">End Time</label>
                   <Input
                     type="time"
                     value={prefs.quietHoursEnd}
@@ -331,13 +331,13 @@ export default function NotificationsPage() {
             </div>
           </Card>
 
-          <Card className="p-5 space-y-4">
+          <Card className="p-5 space-y-4 bg-slate-900/90 border-slate-800">
             <div>
-              <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-                <Calendar size={16} className="text-emerald-500" />
+              <h4 className="font-bold text-sm text-white flex items-center gap-2">
+                <Calendar size={16} className="text-emerald-400" />
                 <span>Active Weekdays</span>
               </h4>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-300 font-medium mt-0.5">
                 Days of the week when activity reminders should trigger.
               </p>
             </div>
@@ -351,10 +351,10 @@ export default function NotificationsPage() {
                     type="button"
                     onClick={() => handleToggleDay(idx)}
                     className={cn(
-                      'px-3 py-1.5 rounded-lg font-medium cursor-pointer transition-all',
+                      'px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all',
                       active
-                        ? 'bg-blue-600 text-white font-bold'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25 border border-blue-400/50'
+                        : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60'
                     )}
                   >
                     {day}
@@ -367,29 +367,29 @@ export default function NotificationsPage() {
       </div>
 
       {/* ── Notification History Table ── */}
-      <Card className="p-5 space-y-4">
+      <Card className="p-5 space-y-4 bg-slate-900/90 border-slate-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-              <History size={16} className="text-amber-500" />
+            <h4 className="font-bold text-sm text-white flex items-center gap-2">
+              <History size={16} className="text-amber-400" />
               <span>Notification History</span>
             </h4>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-300 font-medium mt-0.5">
               Audit log of sent, pending, and blocked reminder alerts.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg text-xs">
+            <div className="flex items-center bg-slate-800 p-0.5 rounded-xl text-xs border border-slate-700">
               {(['all', 'sent', 'failed'] as const).map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setStatusFilter(filter)}
                   className={cn(
-                    'px-2.5 py-1 rounded-md capitalize font-medium transition-all cursor-pointer',
+                    'px-2.5 py-1 rounded-lg capitalize font-semibold transition-all cursor-pointer',
                     statusFilter === filter
-                      ? 'bg-white dark:bg-slate-900 text-blue-500 shadow-xs font-bold'
-                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-blue-600 text-white shadow-xs font-bold'
+                      : 'text-slate-300 hover:text-white'
                   )}
                 >
                   {filter}
@@ -398,7 +398,7 @@ export default function NotificationsPage() {
             </div>
 
             {history.length > 0 && (
-              <Button variant="ghost" size="xs" onClick={handleClearHistory} className="text-red-500">
+              <Button variant="ghost" size="xs" onClick={handleClearHistory} className="text-red-400 hover:text-red-300 font-bold">
                 <Trash2 size={12} /> Clear
               </Button>
             )}
@@ -412,22 +412,22 @@ export default function NotificationsPage() {
             description="When reminders trigger, their delivery status will appear here."
           />
         ) : (
-          <div className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs">
+          <div className="divide-y divide-slate-800 text-xs">
             {filteredHistory.map((item) => (
               <div key={item.id} className="py-2.5 flex items-start justify-between gap-3">
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold text-slate-900 dark:text-slate-100">{item.title}</p>
-                    <Badge variant={item.status === 'sent' ? 'success' : 'danger'} className="text-[10px]">
+                    <p className="font-bold text-white">{item.title}</p>
+                    <Badge variant={item.status === 'sent' ? 'success' : 'danger'} className="text-[10px] font-bold">
                       {item.status.toUpperCase()}
                     </Badge>
                   </div>
-                  <p className="text-slate-500 text-[11px]">{item.body}</p>
+                  <p className="text-slate-300 text-xs font-medium">{item.body}</p>
                   {item.error && (
                     <p className="text-red-400 text-[10px]">Reason: {item.error}</p>
                   )}
                 </div>
-                <span className="text-slate-400 text-[10px] shrink-0 font-mono">
+                <span className="text-slate-300 text-[11px] shrink-0 font-mono font-medium">
                   {new Date(item.scheduledFor).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>

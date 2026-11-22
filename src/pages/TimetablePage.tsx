@@ -25,7 +25,7 @@ import {
   deleteTimetableEntry, initTimetableForDate, resetTimetableForDate,
   lockExpiredSlotsForDate, applyHolidayToDate, removeSlotWithException,
   repairAndSyncTimetable, calculateTimetableStats, loadReadyMadeTimetable,
-  clearTimetableForDate
+  clearTimetableForDate, deduplicateEntriesInMemory
 } from '../hooks/useDatabase';
 import { todayStr, formatDate, formatDay, cn, priorityColor } from '../utils/helpers';
 import { DEFAULT_TIMETABLE } from '../data/roadmapData';
@@ -216,7 +216,7 @@ export default function TimetablePage() {
 
   // Filtered entries
   const filteredEntries = useMemo(() => {
-    return [...entries]
+    return deduplicateEntriesInMemory(entries)
       .sort((a, b) => a.startHour - b.startHour)
       .filter(entry => {
         if (statusFilter === 'all') return true;
@@ -1040,7 +1040,7 @@ export default function TimetablePage() {
             <AlertTriangle size={18} className="shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold text-sm">Notice: 6:00 AM – 2:00 PM Slot Has Ended</p>
-              <p className="mt-1 text-slate-600 dark:text-slate-300">
+              <p className="mt-1 text-slate-200 font-medium leading-relaxed">
                 You are switching today back to a Normal Day after 2:00 PM.
                 College hours (6:00 AM – 2:00 PM) will remain recorded as normal institutional routine, while 3:00 PM – 4:00 PM College Academics will maintain its active status.
               </p>
@@ -1075,8 +1075,8 @@ export default function TimetablePage() {
         exceptions={exceptions}
         onRestore={async (id) => {
           await deleteScheduleException(id);
-          // Re-init current date to restore slots
-          await initTimetableForDate(selectedDate, DEFAULT_TIMETABLE);
+          // Re-sync current date to restore slots
+          await repairAndSyncTimetable(selectedDate);
         }}
       />
 
@@ -1131,25 +1131,25 @@ function HolidayPromptModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-6 text-center space-y-5">
-        <div className="w-14 h-14 mx-auto rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
-          <Calendar size={28} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="w-full max-w-2xl bg-[#0c1426] border border-cyan-500/40 rounded-3xl shadow-2xl shadow-cyan-950/70 p-6 sm:p-8 text-center space-y-6">
+        <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-cyan-500/20 via-blue-500/20 to-indigo-500/20 border border-cyan-400/40 text-cyan-400 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <Calendar size={32} />
         </div>
 
         <div>
-          <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider">
+          <span className="text-xs font-black text-cyan-400 uppercase tracking-widest block mb-1">
             Daily Routine Plan · {formatDate(date)}
           </span>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-1">
+          <h2 className="text-2xl font-black text-white mt-1 tracking-tight">
             What is your schedule for today?
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-md mx-auto">
-            Choose your daily structure. On normal days, College (6 AM – 2 PM) is fixed routine. On holidays, you can divide morning hours into focused study sessions or take a complete Day Off cut off from weekly progress.
+          <p className="text-xs sm:text-sm text-slate-300 mt-2 max-w-lg mx-auto font-medium leading-relaxed">
+            Select your schedule mode. DevPilot keeps your schedule clean with zero pre-filled clutter — you can build your custom routine from scratch, or load our ready-made template anytime.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-2">
           {/* 1. NORMAL COLLEGE DAY */}
           <button
             type="button"
@@ -1159,14 +1159,14 @@ function HolidayPromptModal({
               await onSelect('normal');
               setLoading(false);
             }}
-            className="flex flex-col p-4 rounded-xl border-2 border-blue-500/30 hover:border-blue-500 bg-blue-500/5 hover:bg-blue-500/15 text-left transition-all cursor-pointer group"
+            className="flex flex-col p-4 rounded-2xl border-2 border-blue-500/40 hover:border-blue-400 bg-blue-950/40 hover:bg-blue-900/50 text-left transition-all cursor-pointer group shadow-lg shadow-blue-950/40 active:scale-95"
           >
-            <GraduationCap size={22} className="text-blue-500 group-hover:scale-110 transition-transform mb-2" />
-            <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
+            <GraduationCap size={24} className="text-blue-400 group-hover:scale-110 transition-transform mb-2.5" />
+            <span className="text-sm font-black text-blue-300">
               Normal College Day
             </span>
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-              6 AM – 2 PM College (locked, no checkbox). 3–4 PM College Academics active.
+            <span className="text-xs text-slate-200 font-medium mt-1.5 leading-relaxed">
+              Standard weekday. 6 AM – 2 PM College block locked, revision & study afternoon.
             </span>
           </button>
 
@@ -1179,14 +1179,14 @@ function HolidayPromptModal({
               await onSelect('holiday-study');
               setLoading(false);
             }}
-            className="flex flex-col p-4 rounded-xl border-2 border-emerald-500/30 hover:border-emerald-500 bg-emerald-500/5 hover:bg-emerald-500/15 text-left transition-all cursor-pointer group"
+            className="flex flex-col p-4 rounded-2xl border-2 border-emerald-500/40 hover:border-emerald-400 bg-emerald-950/40 hover:bg-emerald-900/50 text-left transition-all cursor-pointer group shadow-lg shadow-emerald-950/40 active:scale-95"
           >
-            <Laptop size={22} className="text-emerald-500 group-hover:scale-110 transition-transform mb-2" />
-            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+            <Laptop size={24} className="text-emerald-400 group-hover:scale-110 transition-transform mb-2.5" />
+            <span className="text-sm font-black text-emerald-300">
               Holiday (Study Plan)
             </span>
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-              Divides 6 AM – 2 PM into Python, Web Dev, System Design & Academics.
+            <span className="text-xs text-slate-200 font-medium mt-1.5 leading-relaxed">
+              Self-study day. Focused study sessions across Python, DSA, Web Dev & Academics.
             </span>
           </button>
 
@@ -1199,17 +1199,21 @@ function HolidayPromptModal({
               await onSelect('holiday-no-study');
               setLoading(false);
             }}
-            className="flex flex-col p-4 rounded-xl border-2 border-indigo-500/30 hover:border-indigo-500 bg-indigo-500/5 hover:bg-indigo-500/15 text-left transition-all cursor-pointer group"
+            className="flex flex-col p-4 rounded-2xl border-2 border-indigo-500/40 hover:border-indigo-400 bg-indigo-950/40 hover:bg-indigo-900/50 text-left transition-all cursor-pointer group shadow-lg shadow-indigo-950/40 active:scale-95"
           >
-            <Palmtree size={22} className="text-indigo-500 group-hover:scale-110 transition-transform mb-2" />
-            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+            <Palmtree size={24} className="text-indigo-400 group-hover:scale-110 transition-transform mb-2.5" />
+            <span className="text-sm font-black text-indigo-300">
               No Study (Day Off)
             </span>
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-              Full rest day. Automatically cut off from this week's study progress.
+            <span className="text-xs text-slate-200 font-medium mt-1.5 leading-relaxed">
+              Full rest day. Excused from weekly completion metrics to preserve your streak.
             </span>
           </button>
         </div>
+
+        <p className="text-xs text-cyan-200 font-medium bg-cyan-950/60 border border-cyan-500/40 rounded-xl py-2.5 px-3">
+          💡 You will start with a clean schedule to add your own slots. Click "Load Ready-made Schedule" if you prefer our curated template.
+        </p>
       </div>
     </div>
   );
@@ -1251,9 +1255,9 @@ function ManageSlotModal({
   return (
     <Modal open={open} onClose={onClose} title={`Manage Slot: ${entry.activity}`}>
       <div className="space-y-4 text-xs">
-        <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700">
-          <p className="font-semibold text-slate-900 dark:text-white">{entry.activity}</p>
-          <p className="text-[11px] text-slate-500 mt-0.5">
+        <div className="p-3.5 bg-slate-800/90 rounded-2xl border border-slate-700">
+          <p className="font-black text-white text-sm">{entry.activity}</p>
+          <p className="text-xs text-slate-300 font-medium mt-1">
             Scheduled: {entry.time} · Date: {formatDate(selectedDate)}
           </p>
         </div>
@@ -1267,7 +1271,7 @@ function ManageSlotModal({
                 <p className="font-bold text-sm text-slate-900 dark:text-white">
                   Confirm Removal for {confirmType.toUpperCase()}
                 </p>
-                <p className="text-slate-600 dark:text-slate-300 mt-1">
+                <p className="text-slate-200 font-medium mt-1">
                   {confirmType === 'day' && `Remove "${entry.activity}" for today (${formatDate(selectedDate)}) only? It will return tomorrow.`}
                   {confirmType === 'week' && `Remove "${entry.activity}" for the entire week (${weekStart} – ${weekEnd})? It will automatically return next week.`}
                   {confirmType === 'month' && `Remove "${entry.activity}" for the entire month of ${monthName}? It will automatically return on the 1st of next month.`}
@@ -1378,29 +1382,29 @@ function ScheduleExceptionsModal({
   return (
     <Modal open={open} onClose={onClose} title="Active Schedule Exceptions">
       <div className="space-y-4 text-xs">
-        <p className="text-slate-500">
+        <p className="text-slate-300 font-medium leading-relaxed">
           The following timetable slots have been temporarily or permanently removed. You can restore any slot with one click.
         </p>
 
         {exceptions.length === 0 ? (
-          <p className="text-center py-6 text-slate-400">No active exceptions found.</p>
+          <p className="text-center py-6 text-slate-300 font-medium">No active exceptions found.</p>
         ) : (
           <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
             {exceptions.map(ex => (
               <div
                 key={ex.id}
-                className="p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-between gap-3"
+                className="p-3 bg-slate-800/80 border border-slate-700 rounded-xl flex items-center justify-between gap-3"
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-slate-900 dark:text-white capitalize">
+                    <span className="font-bold text-white capitalize">
                       {ex.slotId.replace('slot-', '')}
                     </span>
                     <Badge variant={ex.type === 'permanent' ? 'danger' : 'warning'}>
                       {ex.type.toUpperCase()}
                     </Badge>
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
+                  <p className="text-xs text-slate-300 font-medium mt-0.5">
                     Range: {ex.startDate} to {ex.endDate} · {ex.reason}
                   </p>
                 </div>
@@ -1449,13 +1453,13 @@ function AdvanceHolidayModal({
     <Modal open={open} onClose={onClose} title="Holidays & Day-Off Preferences">
       <div className="space-y-4 text-xs">
         {/* Auto Sundays setting */}
-        <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl">
+        <div className="p-3.5 bg-slate-800/80 border border-slate-700 rounded-xl">
           <label className="flex items-center justify-between cursor-pointer">
             <div>
-              <p className="font-semibold text-slate-900 dark:text-white">
+              <p className="font-bold text-white">
                 Automatically treat Sundays as Day Off
               </p>
-              <p className="text-[11px] text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-300 font-medium mt-0.5">
                 When enabled, Sundays are automatically cut off from weekly study progress.
               </p>
             </div>
@@ -1643,7 +1647,7 @@ function SlotEditModal({
             />
             <span>Mark as Free Time / Rest Break</span>
           </label>
-          <p className="text-[11px] text-slate-500 mt-1 pl-6">
+          <p className="text-xs text-slate-300 font-medium mt-1 pl-6">
             Tagging a slot as free time or break excludes it from penalizing daily completion percentages.
           </p>
         </div>
@@ -1679,7 +1683,7 @@ function DayCard({ date, isSelected, onSelect }: { date: string; isSelected: boo
   const today = date === todayStr();
 
   useEffect(() => {
-    initTimetableForDate(date, DEFAULT_TIMETABLE);
+    initTimetableForDate(date);
   }, [date]);
 
   const stats = useMemo(() => {
@@ -1691,12 +1695,12 @@ function DayCard({ date, isSelected, onSelect }: { date: string; isSelected: boo
       onClick={onSelect}
       className={cn(
         'text-center cursor-pointer transition-all p-3.5',
-        isSelected && 'ring-2 ring-blue-500 border-blue-500',
-        today && !isSelected && 'border-blue-400/50',
+        isSelected && 'ring-2 ring-cyan-400 border-cyan-400 shadow-lg shadow-cyan-500/20',
+        today && !isSelected && 'border-cyan-400/50',
       )}
     >
-      <p className="text-xs text-slate-500 dark:text-slate-400">{formatDay(date)}</p>
-      <p className={cn('text-sm font-semibold mt-0.5', today ? 'text-blue-400' : 'text-slate-900 dark:text-white')}>
+      <p className="text-xs text-slate-300 font-bold">{formatDay(date)}</p>
+      <p className={cn('text-sm font-black mt-0.5', today ? 'text-cyan-300' : 'text-white')}>
         {format(parseISO(date), 'MMM dd')}
       </p>
       <div className="flex items-center justify-center gap-1 mt-1">
@@ -1714,7 +1718,7 @@ function DayCard({ date, isSelected, onSelect }: { date: string; isSelected: boo
           showPct={false}
           color={stats.completionPct >= 80 ? 'emerald' : stats.completionPct >= 50 ? 'amber' : 'blue'}
         />
-        <p className="text-xs mt-1 text-slate-500 dark:text-slate-400">
+        <p className="text-xs mt-1 text-slate-300 font-medium">
           {dailySettings?.isNoStudyDay ? 'Excused' : `${stats.completed}/${stats.totalRequired} req`}
         </p>
       </div>

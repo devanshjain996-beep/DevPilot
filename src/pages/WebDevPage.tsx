@@ -151,64 +151,66 @@ export default function WebDevPage() {
               </Badge>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {secTopics.map(topic => (
-                <Card key={topic.id} className="p-4 transition-all">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                <div
+                  key={topic.id}
+                  className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-cyan-950/20 via-[#0d1424] to-[#070b16] border border-slate-800 border-l-[5px] border-l-cyan-400 shadow-md hover:border-cyan-500/50 transition-all duration-200"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
                       <Checkbox
                         checked={topic.status === 'completed'}
                         onChange={checked => updateTopicStatus(topic.id, checked ? 'completed' : 'not-started')}
                       />
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-mono font-bold text-slate-400">#{topic.order}</span>
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <span className="text-xs font-mono font-bold text-cyan-300 bg-cyan-950/70 border border-cyan-500/40 px-2 py-0.5 rounded-lg">#{topic.order}</span>
                           <h4 className={cn(
-                            'text-sm font-semibold truncate',
-                            topic.status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-900 dark:text-white'
+                            'text-base sm:text-lg font-black tracking-tight',
+                            topic.status === 'completed' ? 'text-slate-400 line-through' : 'text-white'
                           )}>
                             {topic.title}
                           </h4>
-                          <Badge className={statusBg(topic.status)}>
+                          <span className={cn('px-2.5 py-0.5 rounded-lg text-[11px] font-black uppercase tracking-wider', statusBg(topic.status))}>
                             {topic.status.toUpperCase()}
-                          </Badge>
+                          </span>
                         </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1 leading-relaxed">
                           {topic.description}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                       <select
                         value={topic.status}
                         onChange={e => updateTopicStatus(topic.id, e.target.value as LearningStatus)}
-                        className="text-xs bg-slate-100 dark:bg-slate-700 border-none rounded-md px-2 py-1 text-slate-800 dark:text-slate-200 font-medium"
+                        className="text-xs font-bold bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-white cursor-pointer"
                       >
                         <option value="not-started">Not Started</option>
                         <option value="learning">Learning</option>
                         <option value="practising">Practising</option>
                         <option value="completed">Completed</option>
                       </select>
-                      <Button
-                        variant="ghost"
-                        size="sm"
+                      <button
+                        type="button"
                         onClick={() => setExpandedTopicId(expandedTopicId === topic.id ? null : topic.id)}
-                        className="text-xs"
+                        className="px-3 py-1.5 text-xs font-bold text-cyan-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl cursor-pointer transition-all"
                       >
                         {expandedTopicId === topic.id ? 'Hide' : 'Exercises & Notes'}
-                      </Button>
+                      </button>
                     </div>
                   </div>
 
                   {expandedTopicId === topic.id && (
-                    <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3 text-xs">
+                    <div className="mt-4 pt-3 border-t border-slate-800 space-y-3 text-xs">
                       {topic.exercises && topic.exercises.length > 0 && (
-                        <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-200/60 dark:border-slate-800">
-                          <span className="font-semibold text-cyan-400 block mb-1">
+                        <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+                          <span className="font-extrabold text-cyan-300 block mb-1 text-xs uppercase tracking-wider">
                             Hands-on Mini Tasks:
                           </span>
-                          <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-300">
+                          <ul className="list-disc pl-5 space-y-1 text-slate-200 font-medium">
                             {topic.exercises.map((ex, i) => <li key={i}>{ex}</li>)}
                           </ul>
                         </div>
@@ -216,7 +218,7 @@ export default function WebDevPage() {
 
                       {topic.resources && topic.resources.length > 0 && (
                         <div>
-                          <span className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                          <span className="font-bold text-slate-200 block mb-1">
                             Official Docs & Guides:
                           </span>
                           <div className="flex flex-wrap gap-2">
@@ -226,9 +228,10 @@ export default function WebDevPage() {
                                 href={res}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-500 hover:underline flex items-center gap-1"
+                                className="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-950/60 hover:bg-cyan-900 border border-cyan-500/40 rounded-lg text-cyan-200 font-bold transition-all duration-200 active:scale-95"
                               >
-                                {res} <ExternalLink size={12} />
+                                <span>{res}</span>
+                                <ExternalLink size={12} />
                               </a>
                             ))}
                           </div>
@@ -236,20 +239,20 @@ export default function WebDevPage() {
                       )}
 
                       <div>
-                        <span className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                        <span className="font-bold text-slate-200 block mb-1">
                           Personal Notes & Snippets:
                         </span>
                         <Textarea
                           placeholder="Note key code patterns, gotchas, architecture choices..."
                           value={topic.notes}
                           onChange={e => updateTopicNotes(topic.id, e.target.value)}
-                          className="text-xs"
+                          className="text-xs font-mono"
                           rows={2}
                         />
                       </div>
                     </div>
                   )}
-                </Card>
+                </div>
               ))}
             </div>
           </div>

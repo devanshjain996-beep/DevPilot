@@ -322,11 +322,11 @@ export default function AcademicsPage() {
 
                   <ProgressBar value={subject.progress} color="blue" size="sm" showPct={false} />
 
-                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
-                    <div>Chapters: <span className="text-slate-900 dark:text-white font-semibold">{chapDone}/{chapTotal}</span></div>
-                    <div>Assignments: <span className="text-slate-900 dark:text-white font-semibold">{assignDone}/{assignTotal}</span></div>
-                    <div>Exams: <span className="text-slate-900 dark:text-white font-semibold">{subject.exams?.length || 0}</span></div>
-                    <div>Practicals: <span className="text-slate-900 dark:text-white font-semibold">{subject.practicals?.length || 0}</span></div>
+                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 font-medium pt-2 border-t border-slate-800">
+                    <div>Chapters: <span className="text-white font-bold">{chapDone}/{chapTotal}</span></div>
+                    <div>Assignments: <span className="text-white font-bold">{assignDone}/{assignTotal}</span></div>
+                    <div>Exams: <span className="text-white font-bold">{subject.exams?.length || 0}</span></div>
+                    <div>Practicals: <span className="text-white font-bold">{subject.practicals?.length || 0}</span></div>
                   </div>
                 </div>
 
@@ -380,7 +380,7 @@ export default function AcademicsPage() {
           </div>
 
           {/* Subject Tabs */}
-          <div className="flex gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+          <div className="flex gap-2 border-b border-slate-800 pb-2 flex-wrap">
             {[
               { id: 'chapters', label: `Chapters (${activeSubject.chapters?.length || 0})` },
               { id: 'assignments', label: `Assignments (${activeSubject.assignments?.length || 0})` },
@@ -391,10 +391,10 @@ export default function AcademicsPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={cn(
-                  'px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors',
+                  'px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer',
                   activeTab === tab.id
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-500 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25 border border-blue-400/50'
+                    : 'text-slate-200 hover:text-white bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60'
                 )}
               >
                 {tab.label}
@@ -406,10 +406,10 @@ export default function AcademicsPage() {
           {activeTab === 'chapters' && (
             <div className="space-y-2">
               {(!activeSubject.chapters || activeSubject.chapters.length === 0) ? (
-                <p className="text-sm text-slate-500 py-4">No chapters added yet.</p>
+                <p className="text-sm text-slate-300 font-medium py-4">No chapters added yet.</p>
               ) : (
                 activeSubject.chapters.map(chap => (
-                  <div key={chap.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800">
+                  <div key={chap.id} className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
                     <div className="flex items-center gap-3">
                       <Checkbox
                         checked={chap.completed}
@@ -426,11 +426,11 @@ export default function AcademicsPage() {
                         }}
                       />
                       <div>
-                        <p className={cn('text-sm font-semibold', chap.completed ? 'text-slate-400 line-through' : 'text-slate-900 dark:text-white')}>
+                        <p className={cn('text-sm font-bold', chap.completed ? 'text-slate-400 line-through opacity-75' : 'text-white')}>
                           {chap.name}
                         </p>
                         {chap.topics && chap.topics.length > 0 && (
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                          <p className="text-xs text-slate-300 font-medium mt-0.5">
                             Subtopics: {chap.topics.join(', ')}
                           </p>
                         )}
@@ -449,10 +449,10 @@ export default function AcademicsPage() {
           {activeTab === 'assignments' && (
             <div className="space-y-2">
               {(!activeSubject.assignments || activeSubject.assignments.length === 0) ? (
-                <p className="text-sm text-slate-500 py-4">No assignments tracked for this subject.</p>
+                <p className="text-sm text-slate-300 font-medium py-4">No assignments tracked for this subject.</p>
               ) : (
                 activeSubject.assignments.map(ass => (
-                  <div key={ass.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800">
+                  <div key={ass.id} className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
                     <div className="flex items-center gap-3">
                       <Checkbox
                         checked={ass.completed}
@@ -466,10 +466,10 @@ export default function AcademicsPage() {
                         }}
                       />
                       <div>
-                        <p className={cn('text-sm font-semibold', ass.completed ? 'text-slate-400 line-through' : 'text-slate-900 dark:text-white')}>
+                        <p className={cn('text-sm font-bold', ass.completed ? 'text-slate-400 line-through opacity-75' : 'text-white')}>
                           {ass.title}
                         </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                        <p className="text-xs text-slate-300 font-medium mt-0.5">
                           Due Date: {formatDate(ass.dueDate)} {ass.maxMarks ? `· Max Marks: ${ass.maxMarks}` : ''}
                         </p>
                       </div>
@@ -487,17 +487,17 @@ export default function AcademicsPage() {
           {activeTab === 'exams' && (
             <div className="space-y-2">
               {(!activeSubject.exams || activeSubject.exams.length === 0) ? (
-                <p className="text-sm text-slate-500 py-4">No exams scheduled.</p>
+                <p className="text-sm text-slate-300 font-medium py-4">No exams scheduled.</p>
               ) : (
                 activeSubject.exams.map(exam => (
-                  <div key={exam.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800">
+                  <div key={exam.id} className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">{exam.title}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <p className="text-sm font-bold text-white">{exam.title}</p>
+                      <p className="text-xs text-slate-300 font-medium mt-0.5">
                         Date: {formatDate(exam.date)} · ({daysUntil(exam.date)} days remaining)
                       </p>
                     </div>
-                    <label className="flex items-center gap-2 text-xs font-medium text-slate-400 cursor-pointer">
+                    <label className="flex items-center gap-2 text-xs font-bold text-slate-200 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={exam.prepared}
@@ -523,10 +523,10 @@ export default function AcademicsPage() {
           {activeTab === 'practicals' && (
             <div className="space-y-2">
               {(!activeSubject.practicals || activeSubject.practicals.length === 0) ? (
-                <p className="text-sm text-slate-500 py-4">No lab practicals added.</p>
+                <p className="text-sm text-slate-300 font-medium py-4">No lab practicals added.</p>
               ) : (
                 activeSubject.practicals.map(prac => (
-                  <div key={prac.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800">
+                  <div key={prac.id} className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
                     <div className="flex items-center gap-3">
                       <Checkbox
                         checked={prac.completed}
@@ -539,7 +539,7 @@ export default function AcademicsPage() {
                           setActiveSubject(updated);
                         }}
                       />
-                      <span className={cn('text-sm font-semibold', prac.completed ? 'text-slate-400 line-through' : 'text-slate-900 dark:text-white')}>
+                      <span className={cn('text-sm font-bold', prac.completed ? 'text-slate-400 line-through opacity-75' : 'text-white')}>
                         {prac.title}
                       </span>
                     </div>

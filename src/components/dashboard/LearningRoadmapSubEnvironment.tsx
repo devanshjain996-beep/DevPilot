@@ -204,24 +204,24 @@ export default function LearningRoadmapSubEnvironment({ onBackToMain }: Learning
                 </div>
 
                 <div className="space-y-1 mb-3">
-                  <h3 className="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors flex items-center justify-between">
+                  <h3 className="text-xl font-black text-white group-hover:text-cyan-300 transition-colors flex items-center justify-between">
                     <span>{portal.name}</span>
-                    <ArrowUpRight size={16} className="text-slate-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                    <ArrowUpRight size={18} className="text-slate-400 group-hover:text-cyan-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                   </h3>
-                  <p className="text-xs font-medium text-slate-400" style={{ color: portal.themeColor }}>
+                  <p className="text-xs font-bold" style={{ color: portal.themeColor }}>
                     {portal.tagline}
                   </p>
                 </div>
 
-                <p className="text-xs text-slate-400 leading-relaxed line-clamp-3">
+                <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed line-clamp-3">
                   {portal.description}
                 </p>
 
                 {/* Bottom Threshold Line */}
                 <div
-                  className="mt-4 h-0.5 w-full rounded-full transition-all duration-300"
+                  className="mt-4 h-1 w-full rounded-full transition-all duration-300"
                   style={{
-                    backgroundColor: `rgba(${portal.glowRgb}, 0.3)`,
+                    backgroundColor: `rgba(${portal.glowRgb}, 0.5)`,
                   }}
                 />
               </motion.div>
@@ -231,7 +231,7 @@ export default function LearningRoadmapSubEnvironment({ onBackToMain }: Learning
       </div>
 
       {/* ── CHAMBER FOOTER NOTE ── */}
-      <div className="text-center text-xs text-slate-500 font-mono py-2 border-t border-slate-800/60">
+      <div className="text-center text-xs text-slate-300 font-mono font-medium py-3 border-t border-slate-800/80">
         DevPilot Multi-Track Knowledge Architecture • All progress is synchronized to your profile
       </div>
     </motion.div>

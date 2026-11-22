@@ -61,16 +61,22 @@ export async function updateTopicNotes(id: string, notes: string) {
 // ── Timetable operations ──
 export function deduplicateEntriesInMemory(entries: TimetableEntry[]): TimetableEntry[] {
   if (entries.length <= 1) return entries;
-  const seen = new Set<string>();
+  const seenTimeActivity = new Set<string>();
+  const seenSlotId = new Set<string>();
   const result: TimetableEntry[] = [];
+
   for (const e of entries) {
-    const key = e.slotId
-      ? `slot:${e.slotId}`
-      : `time:${e.startHour}-${e.endHour}-${(e.activity || '').trim().toLowerCase()}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      result.push(e);
+    const normActivity = (e.activity || '').trim().toLowerCase();
+    const actKey = `${e.startHour}-${e.endHour}-${normActivity}`;
+    const slotKey = e.slotId ? `slot:${e.slotId}` : null;
+
+    if (seenTimeActivity.has(actKey) || (slotKey && seenSlotId.has(slotKey))) {
+      continue;
     }
+
+    seenTimeActivity.add(actKey);
+    if (slotKey) seenSlotId.add(slotKey);
+    result.push(e);
   }
   return result;
 }
@@ -169,34 +175,42 @@ export async function deduplicateTimetableForDate(date: string): Promise<number>
   const entries = await db.timetable.where('date').equals(date).toArray();
   if (entries.length <= 1) return 0;
 
-  const seenMap = new Map<string, TimetableEntry>();
-  const duplicateIds: string[] = [];
+  const seenActMap = new Map<string, TimetableEntry>();
+  const seenSlotMap = new Map<string, TimetableEntry>();
+  const duplicateIds = new Set<string>();
 
   for (const entry of entries) {
-    const key = entry.slotId
-      ? `slot:${entry.slotId}`
-      : `time:${entry.startHour}-${entry.endHour}-${(entry.activity || '').trim().toLowerCase()}`;
+    const normActivity = (entry.activity || '').trim().toLowerCase();
+    const actKey = `${entry.startHour}-${entry.endHour}-${normActivity}`;
+    const slotKey = entry.slotId ? `slot:${entry.slotId}` : null;
 
-    if (seenMap.has(key)) {
-      const existing = seenMap.get(key)!;
+    let existing: TimetableEntry | undefined = seenActMap.get(actKey);
+    if (!existing && slotKey) {
+      existing = seenSlotMap.get(slotKey);
+    }
+
+    if (existing) {
       // If the duplicate entry is completed while the existing is pending, keep the completed one
       if (entry.status === 'completed' && existing.status !== 'completed') {
-        duplicateIds.push(existing.id);
-        seenMap.set(key, entry);
+        duplicateIds.add(existing.id);
+        seenActMap.set(actKey, entry);
+        if (slotKey) seenSlotMap.set(slotKey, entry);
       } else {
-        duplicateIds.push(entry.id);
+        duplicateIds.add(entry.id);
       }
     } else {
-      seenMap.set(key, entry);
+      seenActMap.set(actKey, entry);
+      if (slotKey) seenSlotMap.set(slotKey, entry);
     }
   }
 
-  if (duplicateIds.length > 0) {
-    await db.timetable.bulkDelete(duplicateIds);
-    for (const id of duplicateIds) {
+  if (duplicateIds.size > 0) {
+    const ids = Array.from(duplicateIds);
+    await db.timetable.bulkDelete(ids);
+    for (const id of ids) {
       await syncEngine.queueChange('timetable', { id }, 'delete');
     }
-    return duplicateIds.length;
+    return ids.length;
   }
   return 0;
 }

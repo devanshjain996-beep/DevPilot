@@ -383,15 +383,15 @@ export default function FiveDoorDashboard({
       </main>
 
       {/* ── BOTTOM TELEMETRY FOOTER ── */}
-      <footer className="relative z-20 px-4 sm:px-8 py-3 border-t border-slate-800/40 bg-slate-950/30 backdrop-blur-xs flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500 shrink-0">
+      <footer className="relative z-20 px-4 sm:px-8 py-3 border-t border-slate-800/40 bg-slate-950/40 backdrop-blur-xs flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-300 font-medium shrink-0">
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span>Core Engine Active</span>
-          <span className="text-slate-700">|</span>
-          <span>Google Gemini Flash 3D</span>
+          <span className="text-slate-200 font-semibold">Core Engine Active</span>
+          <span className="text-slate-600">|</span>
+          <span className="text-cyan-300 font-mono font-bold">Google Gemini Flash 3D</span>
         </div>
 
-        <div className="flex items-center gap-4 text-slate-400">
+        <div className="flex items-center gap-4 text-slate-300">
           <Link to="/weekly-planner" className="hover:text-cyan-400 transition-colors">
             Weekly Planner
           </Link>

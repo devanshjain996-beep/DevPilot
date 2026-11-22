@@ -49,14 +49,14 @@ export default function PortfolioPage() {
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Portfolio Header / Status Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Briefcase className="text-blue-500" />
-            Developer Portfolio Showcase
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3">
+            <Briefcase className="text-amber-400" />
+            Developer Identity Chamber
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            A clean, authentic profile that reflects your actual skills, completed tracks, and real projects.
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            An authentic, verified developer portfolio reflecting genuine curriculum mastery and real production builds.
           </p>
         </div>
 
@@ -66,7 +66,7 @@ export default function PortfolioPage() {
             size="sm"
             onClick={() => setProfile(p => ({ ...p, portfolioVisible: !p.portfolioVisible }))}
           >
-            {profile.portfolioVisible ? <><Eye size={15} /> Public View Active</> : <><EyeOff size={15} /> Private Draft</>}
+            {profile.portfolioVisible ? <><Eye size={15} className="text-emerald-400" /> Public View Active</> : <><EyeOff size={15} /> Private Draft</>}
           </Button>
           <Button size="sm" onClick={() => setEditModalOpen(true)}>
             <Edit2 size={15} /> Edit Profile Info
@@ -80,9 +80,9 @@ export default function PortfolioPage() {
           <div className="flex items-start gap-3">
             <AlertCircle className="text-amber-400 shrink-0 mt-0.5" size={18} />
             <div className="space-y-1 text-xs">
-              <span className="font-bold text-amber-300">Notice: Placeholder Content Active</span>
-              <p className="text-slate-300">
-                Text in brackets <code className="bg-slate-900 px-1 py-0.5 rounded text-amber-200 font-mono">[like this]</code> is temporary placeholder text. Click <strong>Edit Profile Info</strong> above to customize with your genuine background. DevPilot never fabricates qualifications.
+              <span className="font-bold text-amber-300">Notice: Customizable Profile Attributes</span>
+              <p className="text-slate-300 leading-relaxed">
+                Text in brackets <code className="bg-slate-900 px-1.5 py-0.5 rounded text-amber-200 font-mono">[like this]</code> is temporary placeholder text. Click <strong>Edit Profile Info</strong> above to customize with your genuine background. DevPilot never fabricates qualifications.
               </p>
             </div>
           </div>
@@ -90,11 +90,11 @@ export default function PortfolioPage() {
       )}
 
       {/* Main Profile Hero Card */}
-      <Card className="p-8 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border-slate-800 text-white relative overflow-hidden">
+      <Card className="p-8 bg-gradient-to-br from-amber-950/25 via-slate-900/90 to-[#070b14] border-amber-500/30 text-white relative overflow-hidden shadow-2xl shadow-amber-500/5">
         <div className="relative z-10 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span className="text-xs font-mono uppercase tracking-widest text-blue-400 font-bold block mb-1">
+              <span className="text-xs font-mono uppercase tracking-widest text-amber-400 font-bold block mb-1">
                 Aspiring AI-Powered Software Developer
               </span>
               <h2 className="text-3xl font-extrabold tracking-tight text-white">{profile.name}</h2>
@@ -110,7 +110,7 @@ export default function PortfolioPage() {
                   href={profile.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                  className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-amber-400 text-slate-300 hover:text-white hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                 >
                   <GithubIcon size={18} />
                 </a>
@@ -120,7 +120,7 @@ export default function PortfolioPage() {
                   href={profile.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                  className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-amber-400 text-slate-300 hover:text-white hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                 >
                   <LinkedinIcon size={18} />
                 </a>
@@ -128,7 +128,7 @@ export default function PortfolioPage() {
               {profile.email && (
                 <a
                   href={`mailto:${profile.email}`}
-                  className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                  className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-amber-400 text-slate-300 hover:text-white hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                 >
                   <Mail size={18} />
                 </a>
@@ -140,11 +140,11 @@ export default function PortfolioPage() {
             {profile.bio || '[Your bio here - tell the world about yourself, your learning journey, and what drives you to build software.]'}
           </p>
 
-          <div className="p-3.5 rounded-xl bg-blue-950/40 border border-blue-500/20 max-w-2xl">
-            <span className="text-xs font-semibold text-blue-400 uppercase tracking-wider block mb-0.5">
+          <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-500/30 max-w-2xl shadow-xs">
+            <span className="text-xs font-semibold text-amber-400 uppercase tracking-wider block mb-0.5">
               North Star Career Goal:
             </span>
-            <p className="text-xs text-slate-200">
+            <p className="text-xs font-medium text-slate-200">
               {profile.careerGoal}
             </p>
           </div>

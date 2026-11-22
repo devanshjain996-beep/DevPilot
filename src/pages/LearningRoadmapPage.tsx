@@ -79,62 +79,69 @@ export default function LearningRoadmapPage() {
         </div>
       </Card>
 
-      {/* Track Selection Cards */}
+      {/* 3D Dimensional Track Selection Gateways */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {tracks.map(track => {
           const Icon = TRACK_ICONS[track.id] || BookOpen;
           const link = TRACK_LINKS[track.id];
 
           return (
-            <Card key={track.id} className="flex flex-col justify-between hover:border-blue-500/40 transition-all">
-              <div className="space-y-3">
+            <Card
+              key={track.id}
+              className="flex flex-col justify-between hover:border-violet-500/60 hover:shadow-2xl hover:shadow-violet-500/10 transition-all duration-300 group"
+            >
+              <div className="space-y-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-500">
-                      <Icon size={20} />
+                    <div className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/30 flex items-center justify-center text-violet-400 group-hover:scale-110 transition-transform duration-300 shadow-md">
+                      <Icon size={22} />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-900 dark:text-white">{track.name}</h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
-                        {track.completed} of {track.total} topics ({track.percentage}%)
+                      <h3 className="font-extrabold text-base text-white group-hover:text-cyan-300 transition-colors">
+                        {track.name}
+                      </h3>
+                      <p className="text-xs text-slate-400">
+                        {track.completed} of {track.total} concepts ({track.percentage}%)
                       </p>
                     </div>
                   </div>
-                  <Badge variant={track.percentage === 100 ? 'success' : track.percentage > 0 ? 'info' : 'default'}>
+                  <Badge variant={track.percentage === 100 ? 'success' : track.percentage > 0 ? 'purple' : 'default'}>
                     {track.percentage}%
                   </Badge>
                 </div>
 
-                <ProgressBar value={track.percentage} color={track.color} size="md" showPct={false} />
+                <ProgressBar value={track.percentage} color={track.color || 'violet'} size="md" showPct={false} />
 
                 {track.nextTopic ? (
-                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 text-xs">
-                    <span className="text-slate-400 font-medium block mb-0.5">NEXT UP:</span>
-                    <span className="text-slate-800 dark:text-slate-200 font-medium truncate block">
+                  <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-xs">
+                    <span className="text-[10px] font-mono text-cyan-400 font-bold block mb-0.5 tracking-wider">NEXT UP IN SEQUENCE:</span>
+                    <span className="text-slate-200 font-semibold truncate block">
                       {track.nextTopic.order}. {track.nextTopic.title}
                     </span>
                   </div>
                 ) : (
-                  <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400 font-medium flex items-center gap-1.5">
-                    <CheckCircle2 size={14} /> Track Complete!
+                  <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 font-semibold flex items-center gap-2">
+                    <CheckCircle2 size={15} /> Track Complete!
                   </div>
                 )}
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <div className="mt-5 pt-3 border-t border-slate-800/80 flex justify-between items-center">
                 {link ? (
                   <Link
                     to={link}
-                    className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-500 flex items-center gap-1.5 group"
+                    className="inline-flex items-center gap-2 text-xs font-bold text-cyan-400 hover:text-white px-3 py-1.5 rounded-lg bg-cyan-950/40 border border-cyan-500/30 hover:border-cyan-400 transition-all duration-200 active:scale-95 group/btn"
                   >
-                    Open Track Workspace <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                    <span>Enter Subject Chamber</span>
+                    <ArrowRight size={13} className="group-hover/btn:translate-x-1 transition-transform" />
                   </Link>
                 ) : (
                   <button
                     onClick={() => setSelectedTrack(track.id)}
-                    className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-500 flex items-center gap-1.5 group"
+                    className="inline-flex items-center gap-2 text-xs font-bold text-cyan-400 hover:text-white px-3 py-1.5 rounded-lg bg-cyan-950/40 border border-cyan-500/30 hover:border-cyan-400 transition-all duration-200 active:scale-95 group/btn cursor-pointer"
                   >
-                    View C Programming Topics <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                    <span>View Curriculum Matrix</span>
+                    <ArrowRight size={13} className="group-hover/btn:translate-x-1 transition-transform" />
                   </button>
                 )}
               </div>

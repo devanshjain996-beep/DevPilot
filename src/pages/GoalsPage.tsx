@@ -142,19 +142,19 @@ export default function GoalsPage() {
       </div>
 
       {/* Productivity Insight Banner */}
-      <Card className="bg-slate-900 border-blue-500/30 p-4">
-        <div className="flex items-center gap-2 mb-2 text-blue-400 font-bold text-sm">
+      <Card className="bg-gradient-to-r from-emerald-950/30 via-slate-900 to-[#070b14] border-emerald-500/30 p-5 shadow-lg shadow-emerald-500/5">
+        <div className="flex items-center gap-2 mb-1.5 text-emerald-400 font-bold text-sm">
           <Sparkles size={18} />
-          True Developer Metric: Outcomes Over Hours
+          True Engineering Metric: Outcomes Over Passive Hours
         </div>
         <p className="text-xs text-slate-300 leading-relaxed">
-          DevPilot measures your growth through verified topic completions, algorithms solved, and deployed applications rather than passive screen time alone. Keep shipping!
+          DevPilot measures your career momentum through verified curriculum completions, algorithms solved, and deployed applications rather than passive screen time alone. Keep shipping!
         </p>
       </Card>
 
       {/* Period Filter Tabs */}
-      <div className="flex items-center justify-between bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
-        <div className="flex gap-1 overflow-x-auto">
+      <div className="flex items-center justify-between bg-slate-950/60 p-2 rounded-2xl border border-slate-800/80">
+        <div className="flex gap-1.5 overflow-x-auto">
           {[
             { id: 'all', label: `All Goals (${goals.length})` },
             { id: 'daily', label: 'Daily' },
@@ -167,10 +167,10 @@ export default function GoalsPage() {
               key={p.id}
               onClick={() => setPeriodFilter(p.id as any)}
               className={cn(
-                'px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap',
+                'px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 whitespace-nowrap cursor-pointer active:scale-95 hover:-translate-y-0.5',
                 periodFilter === p.id
-                  ? 'bg-blue-600 text-white'
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-md shadow-emerald-500/20 border border-emerald-400/40'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent'
               )}
             >
               {p.label}

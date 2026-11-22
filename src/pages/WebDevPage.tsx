@@ -73,7 +73,7 @@ export default function WebDevPage() {
       </Card>
 
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-950/70 p-3 sm:p-4 rounded-2xl border border-slate-800/80 shadow-md backdrop-blur-md">
         <div className="relative w-full sm:w-72">
           <Search size={16} className="absolute left-3 top-3 text-slate-400" />
           <input

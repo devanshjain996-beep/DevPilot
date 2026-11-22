@@ -190,7 +190,7 @@ export default function WeeklyPlannerPage() {
         /* Tasks List View */
         <div className="space-y-4">
           {/* Filter Bar */}
-          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700">
+          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800/80">
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <select
                 value={filterStatus}

@@ -133,15 +133,15 @@ export default function ProjectsPage() {
 
       {/* Status Breakdown Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard label="Ideas" value={ideasCount} icon={<Lightbulb size={20} />} color="slate" />
+        <StatCard label="Ideas" value={ideasCount} icon={<Lightbulb size={20} />} color="cyan" />
         <StatCard label="Planning" value={planningCount} icon={<Clock size={20} />} color="violet" />
         <StatCard label="In Progress" value={inProgressCount} icon={<FolderKanban size={20} />} color="blue" sub="Active Focus" />
         <StatCard label="Completed" value={completedCount} icon={<CheckCircle2 size={20} />} color="emerald" sub="Portfolio Ready" />
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center justify-between bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
-        <div className="flex gap-1 overflow-x-auto">
+      <div className="flex items-center justify-between bg-slate-950/60 p-2 rounded-2xl border border-slate-800/80">
+        <div className="flex gap-1.5 overflow-x-auto">
           {[
             { id: 'all', label: `All (${projects.length})` },
             { id: 'in-progress', label: `In Progress (${inProgressCount})` },
@@ -153,10 +153,10 @@ export default function ProjectsPage() {
               key={f.id}
               onClick={() => setStatusFilter(f.id)}
               className={cn(
-                'px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap',
+                'px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 whitespace-nowrap cursor-pointer active:scale-95 hover:-translate-y-0.5',
                 statusFilter === f.id
-                  ? 'bg-blue-600 text-white'
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700'
+                  ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 font-bold shadow-md shadow-orange-500/20 border border-orange-400/40'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent'
               )}
             >
               {f.label}
@@ -180,11 +180,14 @@ export default function ProjectsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {filteredProjects.map(project => (
-            <Card key={project.id} className="p-5 flex flex-col justify-between hover:border-blue-500/40 transition-all">
+            <Card
+              key={project.id}
+              className="p-5 flex flex-col justify-between hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 group"
+            >
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    <h3 className="text-base font-extrabold text-white group-hover:text-orange-300 transition-colors">
                       {project.title}
                     </h3>
                     <div className="flex items-center gap-2 mt-1">
@@ -204,7 +207,7 @@ export default function ProjectsPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleOpenEdit(project)}
-                      className="p-1.5 text-xs"
+                      className="p-1.5 text-xs hover:text-cyan-400"
                     >
                       <Edit2 size={14} />
                     </Button>
@@ -223,7 +226,7 @@ export default function ProjectsPage() {
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="text-xs text-slate-300 leading-relaxed">
                   {project.description}
                 </p>
 
@@ -232,7 +235,7 @@ export default function ProjectsPage() {
                   {project.technologies.map((tech, i) => (
                     <span
                       key={i}
-                      className="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300"
+                      className="px-2.5 py-0.5 rounded-lg text-[11px] font-mono bg-cyan-950/40 border border-cyan-800/40 text-cyan-300"
                     >
                       {tech}
                     </span>

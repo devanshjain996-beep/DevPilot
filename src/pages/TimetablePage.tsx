@@ -36,13 +36,13 @@ import type {
 
 // ── Category → color map ──
 const CAT_COLOR: Record<string, string> = {
-  python: 'border-l-emerald-500 bg-emerald-500/5',
-  'cpp-dsa': 'border-l-violet-500 bg-violet-500/5',
-  webdev: 'border-l-cyan-500 bg-cyan-500/5',
-  academics: 'border-l-amber-500 bg-amber-500/5',
-  personal: 'border-l-indigo-400 bg-indigo-500/5',
-  college: 'border-l-blue-500 bg-blue-500/5',
-  planning: 'border-l-slate-400 bg-slate-500/5',
+  python: 'border-l-emerald-400 bg-emerald-950/20 shadow-emerald-500/5 hover:border-l-emerald-300',
+  'cpp-dsa': 'border-l-violet-400 bg-violet-950/20 shadow-violet-500/5 hover:border-l-violet-300',
+  webdev: 'border-l-cyan-400 bg-cyan-950/20 shadow-cyan-500/5 hover:border-l-cyan-300',
+  academics: 'border-l-amber-400 bg-amber-950/20 shadow-amber-500/5 hover:border-l-amber-300',
+  personal: 'border-l-indigo-400 bg-indigo-950/20 shadow-indigo-500/5 hover:border-l-indigo-300',
+  college: 'border-l-blue-500 bg-blue-950/20 shadow-blue-500/5 hover:border-l-blue-400',
+  planning: 'border-l-slate-400 bg-slate-900/40 shadow-slate-500/5 hover:border-l-slate-300',
 };
 
 const CAT_BADGE: Record<string, string> = {
@@ -426,33 +426,33 @@ export default function TimetablePage() {
               </div>
             </div>
 
-            {/* Quick Metrics Strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-2 border-t border-slate-200 dark:border-slate-800 text-xs">
-              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <p className="text-[11px] text-slate-400 font-medium">Required Study Slots</p>
-                <p className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
+            {/* Quick Holographic Metrics Strip */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-3 border-t border-slate-800/80 text-xs">
+              <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 shadow-inner">
+                <p className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Required Slots</p>
+                <p className="text-base font-extrabold text-white mt-1">
                   {dailySettings?.isNoStudyDay ? '0 (Day Off)' : stats.totalRequired}
                 </p>
               </div>
-              <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                <p className="text-[11px] text-emerald-400 font-medium">Completed</p>
-                <p className="text-base font-bold text-emerald-500 mt-0.5">{stats.completed}</p>
+              <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 shadow-sm shadow-emerald-500/10">
+                <p className="text-[11px] text-emerald-300 font-semibold uppercase tracking-wider">Completed</p>
+                <p className="text-base font-extrabold text-emerald-400 mt-1">{stats.completed}</p>
               </div>
-              <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/20">
-                <p className="text-[11px] text-red-400 font-medium">Missed (Locked)</p>
-                <p className="text-base font-bold text-red-500 mt-0.5">{stats.missed}</p>
+              <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/30 text-red-400 shadow-sm shadow-red-500/10">
+                <p className="text-[11px] text-red-300 font-semibold uppercase tracking-wider">Missed / Locked</p>
+                <p className="text-base font-extrabold text-red-400 mt-1">{stats.missed}</p>
               </div>
-              <div className="p-2.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                <p className="text-[11px] text-blue-400 font-medium">In Progress</p>
-                <p className="text-base font-bold text-blue-500 mt-0.5">{stats.inProgress}</p>
+              <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/40 text-cyan-300 shadow-sm shadow-cyan-500/10">
+                <p className="text-[11px] text-cyan-300 font-semibold uppercase tracking-wider">In Progress</p>
+                <p className="text-base font-extrabold text-cyan-400 mt-1">{stats.inProgress}</p>
               </div>
-              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <p className="text-[11px] text-slate-400 font-medium">Upcoming</p>
-                <p className="text-base font-bold text-slate-400 mt-0.5">{stats.upcoming}</p>
+              <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 shadow-inner">
+                <p className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Upcoming</p>
+                <p className="text-base font-extrabold text-slate-300 mt-1">{stats.upcoming}</p>
               </div>
-              <div className="p-2.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
-                <p className="text-[11px] text-indigo-400 font-medium">College & Breaks</p>
-                <p className="text-base font-bold text-indigo-400 mt-0.5">{stats.exempt}</p>
+              <div className="p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-indigo-300 shadow-sm shadow-indigo-500/10">
+                <p className="text-[11px] text-indigo-300 font-semibold uppercase tracking-wider">College & Breaks</p>
+                <p className="text-base font-extrabold text-indigo-400 mt-1">{stats.exempt}</p>
               </div>
             </div>
 
@@ -465,17 +465,17 @@ export default function TimetablePage() {
           </Card>
 
           {/* Filter Chips Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-3 p-2 bg-slate-950/60 rounded-2xl border border-slate-800/80">
             <div className="flex flex-wrap items-center gap-1.5 text-xs">
-              <span className="text-slate-400 font-medium mr-1 text-[11px]">Filter:</span>
+              <span className="text-slate-400 font-semibold mr-1 text-[11px] uppercase tracking-wider pl-1">Filter:</span>
               <button
                 type="button"
                 onClick={() => setStatusFilter('all')}
                 className={cn(
-                  'px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer',
+                  'px-3 py-1.5 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
                   statusFilter === 'all'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md shadow-blue-500/20 border border-cyan-400/40'
+                    : 'bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
                 )}
               >
                 All ({entries.length})
@@ -484,10 +484,10 @@ export default function TimetablePage() {
                 type="button"
                 onClick={() => setStatusFilter('in-progress')}
                 className={cn(
-                  'px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer',
+                  'px-3 py-1.5 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
                   statusFilter === 'in-progress'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/40'
+                    : 'bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
                 )}
               >
                 In Progress ({stats.inProgress})
@@ -496,10 +496,10 @@ export default function TimetablePage() {
                 type="button"
                 onClick={() => setStatusFilter('upcoming')}
                 className={cn(
-                  'px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer',
+                  'px-3 py-1.5 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
                   statusFilter === 'upcoming'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 border border-blue-400/40'
+                    : 'bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
                 )}
               >
                 Upcoming ({stats.upcoming})
@@ -508,10 +508,10 @@ export default function TimetablePage() {
                 type="button"
                 onClick={() => setStatusFilter('completed')}
                 className={cn(
-                  'px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer',
+                  'px-3 py-1.5 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
                   statusFilter === 'completed'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/20 border border-emerald-400/40'
+                    : 'bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
                 )}
               >
                 Completed ({stats.completed})
@@ -520,10 +520,10 @@ export default function TimetablePage() {
                 type="button"
                 onClick={() => setStatusFilter('missed')}
                 className={cn(
-                  'px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer',
+                  'px-3 py-1.5 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
                   statusFilter === 'missed'
-                    ? 'bg-red-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-500/20 border border-red-400/40'
+                    : 'bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
                 )}
               >
                 Missed ({stats.missed})
@@ -532,18 +532,18 @@ export default function TimetablePage() {
                 type="button"
                 onClick={() => setStatusFilter('exempt')}
                 className={cn(
-                  'px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer',
+                  'px-3 py-1.5 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-xs active:scale-95 hover:-translate-y-0.5',
                   statusFilter === 'exempt'
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20 border border-indigo-400/40'
+                    : 'bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
                 )}
               >
                 College & Breaks ({stats.exempt})
               </button>
             </div>
 
-            <div className="flex items-center gap-2 text-[11px] text-slate-400">
-              <Clock size={12} />
+            <div className="flex items-center gap-2 text-xs font-mono text-cyan-400/80 bg-cyan-950/40 px-3 py-1 rounded-xl border border-cyan-800/30">
+              <Clock size={13} className="text-cyan-400" />
               <span>Current Time: {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
           </div>

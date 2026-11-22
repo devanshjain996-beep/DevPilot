@@ -1,16 +1,17 @@
 // ============================================================================
-// DevPilot — Master Five-Door 3D Futuristic Universe Dashboard
+// DevPilot — Master Five-Door 3D Futuristic Universe Dashboard (3D-Only)
 // ============================================================================
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock, Compass, FolderKanban, Award, TrendingUp,
   Sparkles, Layers, ShieldCheck, Flame, User, ArrowRight,
-  Sliders, LayoutGrid, CheckCircle2
+  CheckCircle2, Bell, LogIn, Target, Rocket
 } from 'lucide-react';
 import PortalDoor3D, { type DoorThemeConfig } from './PortalDoor3D';
 import LearningRoadmapSubEnvironment from './LearningRoadmapSubEnvironment';
+import SaveStatusIndicator from '../layout/SaveStatusIndicator';
 import { useAuth } from '../../context/AuthContext';
 import { useProfile } from '../../store/useStore';
 import type { TimetableEntry, LearningTopic, Project, Goal } from '../../types';
@@ -21,7 +22,6 @@ interface FiveDoorDashboardProps {
   overallPercentage: number;
   projects: Project[];
   goals: Goal[];
-  onSwitchToClassicView?: () => void;
 }
 
 const DOOR_THEMES: Record<string, DoorThemeConfig> = {
@@ -78,10 +78,9 @@ export default function FiveDoorDashboard({
   overallPercentage,
   projects,
   goals,
-  onSwitchToClassicView,
 }: FiveDoorDashboardProps) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, setAuthModalOpen } = useAuth();
   const { profile } = useProfile();
 
   const [activeSubEnvironment, setActiveSubEnvironment] = useState<'main' | 'roadmap'>('main');
@@ -108,11 +107,11 @@ export default function FiveDoorDashboard({
     window.addEventListener('resize', handleResize);
 
     const particles: { x: number; y: number; r: number; s: number; a: number }[] = [];
-    for (let i = 0; i < 75; i++) {
+    for (let i = 0; i < 80; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        r: 0.8 + Math.random() * 1.6,
+        r: 0.8 + Math.random() * 1.8,
         s: 0.15 + Math.random() * 0.45,
         a: 0.2 + Math.random() * 0.5,
       });
@@ -170,7 +169,7 @@ export default function FiveDoorDashboard({
   const todayCompletedSlots = timetable.filter((s) => s.status === 'completed').length;
 
   return (
-    <div className="relative w-full min-h-full bg-[#070b14] overflow-x-hidden flex flex-col justify-between select-none">
+    <div className="relative w-full h-full min-h-screen bg-[#070b14] overflow-y-auto flex flex-col justify-between select-none">
       {/* ── BACKGROUND VOLUMETRIC LIGHTS & ATMOSPHERE ── */}
       <canvas
         ref={canvasRef}
@@ -193,11 +192,11 @@ export default function FiveDoorDashboard({
         }}
       />
 
-      {/* ── TOP HUD NAVIGATION & STATUS BAR ── */}
-      <header className="relative z-20 px-4 sm:px-8 pt-5 pb-3 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/60 bg-slate-950/40 backdrop-blur-md">
+      {/* ── TOP HUD NAVIGATION & STATUS BAR (SLEEK FLOATING HUD) ── */}
+      <header className="relative z-20 px-4 sm:px-8 pt-5 pb-3 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/60 bg-slate-950/40 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/30">
-            <Sparkles size={20} className="animate-pulse" />
+            <Rocket size={20} className="animate-pulse" />
           </div>
 
           <div>
@@ -205,18 +204,18 @@ export default function FiveDoorDashboard({
               <h1 className="text-lg sm:text-xl font-bold tracking-tight text-white">
                 DevPilot 3D Universe
               </h1>
-              <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+              <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
                 ACTIVE PORTAL HUB
               </span>
             </div>
             <p className="text-xs text-slate-400">
-              Welcome back, <span className="text-slate-200 font-semibold">{user?.displayName || profile?.name || 'Developer'}</span>. Choose a destination portal to enter.
+              Welcome back, <span className="text-slate-200 font-semibold">{user?.displayName || profile?.name || 'Developer'}</span>. Choose a dimensional door to enter.
             </p>
           </div>
         </div>
 
-        {/* Quick HUD Metrics & View Switcher */}
-        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+        {/* Quick HUD Metrics & Profile */}
+        <div className="flex items-center gap-3 flex-wrap">
           <div className="hidden sm:flex items-center gap-3 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs">
             <div className="flex items-center gap-1.5 text-slate-300 font-medium">
               <CheckCircle2 size={14} className="text-emerald-400" />
@@ -227,23 +226,52 @@ export default function FiveDoorDashboard({
               <Compass size={14} className="text-violet-400" />
               <span>{overallPercentage}% Roadmap</span>
             </div>
+            <span className="text-slate-700">|</span>
+            <div className="flex items-center gap-1.5 text-slate-300 font-medium">
+              <FolderKanban size={14} className="text-orange-400" />
+              <span>{activeProjectsCount} Builds</span>
+            </div>
           </div>
 
-          {onSwitchToClassicView && (
+          <div className="hidden sm:block">
+            <SaveStatusIndicator />
+          </div>
+
+          <Link
+            to="/notifications"
+            title="Notifications & Alerts"
+            className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition-colors"
+          >
+            <Bell size={16} />
+          </Link>
+
+          {user ? (
+            <Link
+              to="/settings"
+              className="flex items-center gap-2 p-1.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-colors group"
+            >
+              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-600 text-white font-bold text-xs flex items-center justify-center">
+                {user.displayName.charAt(0).toUpperCase()}
+              </div>
+              <span className="hidden sm:inline text-xs font-semibold text-slate-300 group-hover:text-cyan-400 max-w-[100px] truncate">
+                {user.displayName}
+              </span>
+            </Link>
+          ) : (
             <button
               type="button"
-              onClick={onSwitchToClassicView}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-700 hover:border-cyan-400 bg-slate-900/90 text-slate-300 hover:text-white transition-all text-xs font-semibold cursor-pointer shadow-xs"
+              onClick={() => setAuthModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
             >
-              <LayoutGrid size={13} />
-              <span>Classic View</span>
+              <LogIn size={13} />
+              <span>Sign In</span>
             </button>
           )}
         </div>
       </header>
 
-      {/* ── MAIN INTERACTIVE AREA: FIVE DOORS OR ROADMAP SUB-ENVIRONMENT ── */}
-      <main className="relative z-10 flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 py-6">
+      {/* ── MAIN INTERACTIVE AREA: FIVE ARCHITECTURAL 3D DOORS OR ROADMAP SUB-ENVIRONMENT ── */}
+      <main className="relative z-10 flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 py-6 my-auto">
         <AnimatePresence mode="wait">
           {activeSubEnvironment === 'roadmap' ? (
             <LearningRoadmapSubEnvironment
@@ -261,14 +289,14 @@ export default function FiveDoorDashboard({
             >
               {/* Universe Title Intro */}
               <div className="text-center space-y-1.5 mb-2">
-                <span className="font-mono text-[11px] font-semibold text-cyan-400 uppercase tracking-widest px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-800/40">
+                <span className="font-mono text-[11px] font-bold text-cyan-400 uppercase tracking-widest px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-800/40">
                   PRIMARY NAVIGATION MATRIX
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
                   Five Gateways to Engineering Mastery
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">
-                  Step through any portal to enter your daily timetable, explore 6 technical curriculum tracks, view active builds, inspect your portfolio, or analyze weekly goals.
+                  Step through any physical doorway to enter your daily routine, master 6 technical curriculum tracks, command active builds, inspect your portfolio, or track consistency.
                 </p>
               </div>
 
@@ -313,7 +341,7 @@ export default function FiveDoorDashboard({
                   description="Track production web apps, engineering repositories, milestone progress, and tech stacks."
                   icon={FolderKanban}
                   theme={DOOR_THEMES.projects}
-                  telemetryBadge={projects.length > 0 ? `${activeProjectsCount || projects.length} Projects` : 'Start Build'}
+                  telemetryBadge={projects.length > 0 ? `${activeProjectsCount || projects.length} Active Builds` : 'Start Build'}
                   telemetrySub="Showcase"
                   isOpening={openingDoorId === 'projects'}
                   onClick={() => handleDoorClick('projects', '/projects')}
@@ -323,13 +351,13 @@ export default function FiveDoorDashboard({
                 <PortalDoor3D
                   id="portfolio"
                   doorNumber="04"
-                  title="Portfolio"
-                  subtitle="Career & Profile"
-                  description="Showcase professional biography, verified skills, featured projects, and recruiter links."
+                  title="My Portfolio"
+                  subtitle="Public Profile & Bio"
+                  description="Manage your professional presence, resume links, tech skills showcase, and GitHub links."
                   icon={Award}
                   theme={DOOR_THEMES.portfolio}
-                  telemetryBadge={profile?.name ? 'Profile Live' : 'Customize'}
-                  telemetrySub="Verified"
+                  telemetryBadge={profile.careerGoal || 'Full-Stack'}
+                  telemetrySub="Career"
                   isOpening={openingDoorId === 'portfolio'}
                   onClick={() => handleDoorClick('portfolio', '/portfolio')}
                 />
@@ -339,12 +367,12 @@ export default function FiveDoorDashboard({
                   id="goals"
                   doorNumber="05"
                   title="Goal Analytics"
-                  subtitle="Metrics & Reviews"
-                  description="Analyze study logs, weekly consistency scores, milestone completion, and habit streaks."
+                  subtitle="Consistency & Streaks"
+                  description="Analyze your weekly momentum, track target hours, completed milestones, and weekly reviews."
                   icon={TrendingUp}
                   theme={DOOR_THEMES.goals}
-                  telemetryBadge={goals.length > 0 ? `${completedGoals}/${goals.length} Goals` : 'Set Targets'}
-                  telemetrySub="Analytics"
+                  telemetryBadge={`${completedGoals}/${goals.length} Goals`}
+                  telemetrySub="Momentum"
                   isOpening={openingDoorId === 'goals'}
                   onClick={() => handleDoorClick('goals', '/goals')}
                 />
@@ -354,15 +382,25 @@ export default function FiveDoorDashboard({
         </AnimatePresence>
       </main>
 
-      {/* ── FOOTER TELEMETRY STRIP ── */}
-      <footer className="relative z-20 px-4 sm:px-8 py-3 border-t border-slate-800/60 bg-slate-950/60 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono text-slate-500">
+      {/* ── BOTTOM TELEMETRY FOOTER ── */}
+      <footer className="relative z-20 px-4 sm:px-8 py-3 border-t border-slate-800/40 bg-slate-950/30 backdrop-blur-xs flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500 shrink-0">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-          <span>DEVPILOT 3D ENGINE • HARDWARE ACCELERATED PERSPECTIVE</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span>Core Engine Active</span>
+          <span className="text-slate-700">|</span>
+          <span>Google Gemini Flash 3D</span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span>ALL DATA PERSISTENT IN INDEXEDDB + SUPABASE</span>
+        <div className="flex items-center gap-4 text-slate-400">
+          <Link to="/weekly-planner" className="hover:text-cyan-400 transition-colors">
+            Weekly Planner
+          </Link>
+          <Link to="/weekly-review" className="hover:text-cyan-400 transition-colors">
+            Weekly Review
+          </Link>
+          <Link to="/settings" className="hover:text-cyan-400 transition-colors">
+            Settings
+          </Link>
         </div>
       </footer>
     </div>
